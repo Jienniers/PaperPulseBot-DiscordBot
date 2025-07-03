@@ -3,8 +3,13 @@ const { REST, Routes, SlashCommandBuilder } = require('discord.js');
 
 const commands = [
     new SlashCommandBuilder()
-        .setName('ping')
-        .setDescription('Replies with Pong!')
+        .setName('startpaper')
+        .setDescription('Starts the paper with timer.')
+        .addStringOption(option =>
+            option.setName('paper')
+                .setDescription('Paper Code e.g 0580/12')
+                .setRequired(true)
+        )
 ].map(command => command.toJSON());
 
 const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);

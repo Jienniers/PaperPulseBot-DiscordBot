@@ -21,8 +21,9 @@ client.on('messageCreate', message => {
 client.on(Events.InteractionCreate, async interaction => {
     if (!interaction.isChatInputCommand()) return;
 
-    if (interaction.commandName === 'ping') {
-        await interaction.reply('🏓 Pong!');
+    if (interaction.commandName === 'startpaper') {
+        const paperCode = interaction.options.getString('paper');
+        await interaction.reply(`👋 Hello, ${interaction.user} Starting the Paper ${paperCode}!!`);
     }
 });
 
