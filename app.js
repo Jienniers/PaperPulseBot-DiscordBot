@@ -74,6 +74,10 @@ client.on(Events.InteractionCreate, async interaction => {
             content: `A new channel has been created for this paper <#${paperChannel.id}>!`,
             ephemeral: true
         });
+
+        setTimeout(() => {
+            paperChannel.channel.send(`⏰ Time's up! Please stop writing and put your pen down.`);
+        }, paperTime * 60 * 1000);
     }
 });
 
@@ -84,7 +88,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
     if (interaction.customId === 'done') {
         await interaction.reply({
-            content: '🛑 Time is up! Please stop writing and put your pen down.',
+            content: 'Please stop writing and put your pen down.',
             ephemeral: true
         });
         await interaction.channel.send(`${interaction.user} completed the paper!`)
