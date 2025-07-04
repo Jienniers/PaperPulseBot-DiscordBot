@@ -7,9 +7,13 @@ const commands = [
         .setDescription('Starts the paper with timer.')
         .addStringOption(option =>
             option.setName('paper')
-                .setDescription('Paper Code e.g 0580/12')
-                .setRequired(true)
-        )
+                .setDescription('Paper Code e.g 0580-12')
+                .setRequired(true))
+        .addIntegerOption(option =>
+            option.setName('time')
+                .setDescription('Paper Time (mins) e.g 60')
+                .setRequired(true))
+
 ].map(command => command.toJSON());
 
 const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);

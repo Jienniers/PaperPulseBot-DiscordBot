@@ -1,4 +1,6 @@
 require('dotenv').config();
+const fs = require('fs');
+
 const { Client, GatewayIntentBits, Events, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 
 const client = new Client({
@@ -7,12 +9,14 @@ const client = new Client({
     GatewayIntentBits.MessageContent]
 });
 
+const configFilePath = "./config.json"
+
 
 client.once(Events.ClientReady, () => {
     console.log(`Logged in as ${client.user.tag}!`);
 });
 
-client.on('messageCreate', message => {
+client.on(Events.MessageCreate, message => {
     if (message.content === '!ping') {
         message.reply('Pong!');
     }
@@ -23,11 +27,34 @@ client.on(Events.InteractionCreate, async interaction => {
 
     if (interaction.commandName === 'startpaper') {
         const paperCode = interaction.options.getString('paper');
+        const paperTime = interaction.options.getInteger('time');
+
+        const raw = fs.readFileSync(configFilePath, 'utf-8');
+        const config = JSON.parse(raw);
+
+        if (!fs.existsSync(configFilePath)) {
+            console.error('❌ config.json not found. Please copy it from examples/config.json and fill it.');
+            process.exit(1);
+        }
+
+        console.log(config.category_id);
+        const paperChannel = await interaction.guild.channels.create({
+            name: `${paperCode} paper code`,
+            type: 0,
+            parent: config.category_id,
+        })
+
+        const hours = Math.floor(paperTime / 60);
+        const minutes = paperTime % 60;
+
+        const timeString = `${hours} hour${hours !== 1 ? 's' : ''} ${minutes} minute${minutes !== 1 ? 's' : ''}`;
+
         const embed = new EmbedBuilder()
             .setColor(0x0099ff)
             .setTitle("Started the Paper, Good Luck!")
             .setDescription(`Started by: ${interaction.user}
-                            Paper Code: ${paperCode}`)
+                            Paper Code: ${paperCode}
+                            Time: ${timeString}`)
             .setTimestamp();
 
         const buttonsRow = new ActionRowBuilder().addComponents(
@@ -37,13 +64,20 @@ client.on(Events.InteractionCreate, async interaction => {
                 .setStyle(ButtonStyle.Primary)
         )
 
-        await interaction.reply({
+        await paperChannel.send({
             content: `👋 Hello, ${interaction.user} Starting the Paper ${paperCode}!!`,
             embeds: [embed],
             components: [buttonsRow],
         })
+
+        await interaction.reply({
+            content: `A new channel has been created for this paper <#${paperChannel.id}>!`,
+            ephemeral: true
+        });
     }
 });
+
+
 
 client.on(Events.InteractionCreate, async interaction => {
     if (!interaction.isButton()) return;
