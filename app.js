@@ -37,6 +37,8 @@ client.on(Events.InteractionCreate, async interaction => {
             process.exit(1);
         }
 
+        await interaction.deferReply({ ephemeral: true });
+
         console.log(config.category_id);
         const paperChannel = await interaction.guild.channels.create({
             name: `${paperCode} paper code`,
@@ -70,18 +72,15 @@ client.on(Events.InteractionCreate, async interaction => {
             components: [buttonsRow],
         })
 
-        await interaction.reply({
-            content: `A new channel has been created for this paper <#${paperChannel.id}>!`,
-            ephemeral: true
-        });
+        await interaction.editReply(
+            `A new channel has been created for this paper <#${paperChannel.id}>!`,
+        );
 
         setTimeout(() => {
             paperChannel.channel.send(`⏰ Time's up! Please stop writing and put your pen down.`);
         }, paperTime * 60 * 1000);
     }
 });
-
-
 
 client.on(Events.InteractionCreate, async interaction => {
     if (!interaction.isButton()) return;
