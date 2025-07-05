@@ -13,6 +13,10 @@ const commands = [
             option.setName('time')
                 .setDescription('Paper Time (mins) e.g 60')
                 .setRequired(true))
+        .addUserOption(option =>
+            option.setName("examiner")
+                .setDescription("Assign an examiner")
+                .setRequired(true))
 
 ].map(command => command.toJSON());
 

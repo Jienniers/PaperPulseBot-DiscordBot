@@ -11,6 +11,7 @@ const client = new Client({
 
 const configFilePath = "./config.json"
 
+const paperChannels = []
 
 client.once(Events.ClientReady, () => {
     console.log(`Logged in as ${client.user.tag}!`);
@@ -28,6 +29,7 @@ client.on(Events.InteractionCreate, async interaction => {
     if (interaction.commandName === 'startpaper') {
         const paperCode = interaction.options.getString('paper');
         const paperTime = interaction.options.getInteger('time');
+        const examiner = interaction.options.getUser('examiner')
 
         const raw = fs.readFileSync(configFilePath, 'utf-8');
         const config = JSON.parse(raw);
@@ -45,6 +47,8 @@ client.on(Events.InteractionCreate, async interaction => {
             type: 0,
             parent: config.category_id,
         })
+
+        paperChannels.push(paperChannel.id)
 
         const hours = Math.floor(paperTime / 60);
         const minutes = paperTime % 60;
@@ -93,5 +97,25 @@ client.on(Events.InteractionCreate, async interaction => {
         await interaction.channel.send(`${interaction.user} completed the paper!`)
     }
 });
+
+
+client.on(Events.MessageCreate, (message) => {
+    if (message.author.bot) return;
+
+    if (message.content.startsWith("!add") && paperChannels.includes(message.channel.id)) {
+        console.log(paperChannels)
+
+        const mentionedUsers = message.mentions.users;
+
+        if (mentionedUsers.size === 0) {
+            return message.reply("❌ No users mentioned.");
+        }
+
+        mentionedUsers.forEach(user => {
+            console.log(`Mentioned: ${user.username} (${user.id})`);
+        });
+    }
+});
+
 
 client.login(process.env.TOKEN);
