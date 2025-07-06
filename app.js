@@ -3,18 +3,18 @@ const fs = require('fs');
 
 const { Client,
     GatewayIntentBits,
-    Events} = require('discord.js');
+    Events } = require('discord.js');
 
 const { createPaperEmbed } = require('./utils/embeds');
 const { createPaperButtons } = require('./utils/buttons');
+const { getConfig } = require('./utils/config');
+const { formatPaperTime } = require('./utils/time');
 
 const client = new Client({
     intents: [GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent]
 });
-
-const configFilePath = "./config.json"
 
 const paperChannels = []
 const candidatesMap = new Map()
@@ -34,20 +34,13 @@ client.on(Events.InteractionCreate, async interaction => {
 
     if (interaction.commandName === 'startpaper') {
         const paperCode = interaction.options.getString('paper');
-        const paperTime = interaction.options.getInteger('time');
+        const paperTimeMins = interaction.options.getInteger('time');
         const examiner = interaction.options.getUser('examiner')
 
-        const raw = fs.readFileSync(configFilePath, 'utf-8');
-        const config = JSON.parse(raw);
-
-        if (!fs.existsSync(configFilePath)) {
-            console.error('❌ config.json not found. Please copy it from examples/config.json and fill it.');
-            process.exit(1);
-        }
+        const config = getConfig()
 
         await interaction.deferReply({ ephemeral: true });
 
-        console.log(config.category_id);
         const paperChannel = await interaction.guild.channels.create({
             name: `${paperCode} paper code`,
             type: 0,
@@ -58,10 +51,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
         candidatesMap.set(paperChannel.id, [])
 
-        const hours = Math.floor(paperTime / 60);
-        const minutes = paperTime % 60;
-
-        const timeString = `${hours} hour${hours !== 1 ? 's' : ''} ${minutes} minute${minutes !== 1 ? 's' : ''}`;
+        const timeString = formatPaperTime(paperTimeMins);
 
         const embed = createPaperEmbed(interaction.user, paperCode, timeString);
 
@@ -79,7 +69,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
         setTimeout(() => {
             paperChannel.channel.send(`⏰ Time's up! Please stop writing and put your pen down.`);
-        }, paperTime * 60 * 1000);
+        }, paperTimeMins * 60 * 1000);
     }
 });
 
