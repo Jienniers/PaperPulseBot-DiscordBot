@@ -8,7 +8,9 @@ const { createPaperEmbed } = require('./utils/embeds');
 const { createPaperButtons } = require('./utils/buttons');
 const { getConfig } = require('./utils/config');
 const { formatPaperTime } = require('./utils/time');
-const { handleAddCommand, paperRunningMap } = require('./utils/messageHandlers');
+
+//commands
+const { handleAddCommand, paperRunningMap } = require('./commands/add');
 
 const client = new Client({
     intents: [GatewayIntentBits.Guilds,
@@ -30,7 +32,7 @@ client.on(Events.MessageCreate, async message => {
     if (message.content === '!ping') {
         await message.reply('Pong!');
     }
-
+    
     await handleAddCommand(message, paperChannels, candidatesMap, paperTimeMinsMap.get(message.channel.id));
 });
 

@@ -1,4 +1,5 @@
-const { formatPaperTime } = require('./time');
+const path = require('path');
+const { formatPaperTime } = require(path.resolve(__dirname, '..', 'utils', 'time.js'));
 
 const paperRunningMap = new Map()
 
@@ -66,6 +67,7 @@ async function startPaperTimer(channel, paperMinutes) {
     }, 60_000);
 }
 
-module.exports = { handleAddCommand };
-
-module.exports = { paperRunningMap };
+module.exports = {
+    handleAddCommand,
+    paperRunningMap
+};
