@@ -1,5 +1,6 @@
 const { EmbedBuilder } = require('discord.js');
 
+// Returns the embed shown in the paper channel when a paper is started with /startpaper
 function createPaperEmbed(user, paperCode, timeString) {
     return new EmbedBuilder()
         .setColor(0x0099ff)

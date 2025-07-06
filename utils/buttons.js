@@ -1,5 +1,6 @@
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 
+// Returns the action buttons shown in the paper channel when /startpaper is used
 function createPaperButtons() {
     return new ActionRowBuilder().addComponents(
         new ButtonBuilder()

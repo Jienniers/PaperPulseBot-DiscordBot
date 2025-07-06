@@ -1,3 +1,4 @@
+// Handles the !add command: adds mentioned users as candidates for the current paper session
 function handleAddCommand(message, paperChannels, candidatesMap) {
     if (!message.content.startsWith("!add")) return;
     if (!paperChannels.includes(message.channel.id)) return;
