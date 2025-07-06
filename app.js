@@ -39,7 +39,8 @@ client.on(Events.InteractionCreate, async interaction => {
 
         const config = getConfig()
 
-        await interaction.deferReply({ ephemeral: true });
+        // flags: 64 is used for that "Only you can see this message" thing
+        await interaction.deferReply({ flags: 64 });
 
         const paperChannel = await interaction.guild.channels.create({
             name: `${paperCode.split('/')[0]} by ${examiner.username}`,
