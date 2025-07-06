@@ -7,7 +7,7 @@ const commands = [
         .setDescription('Starts the paper with timer.')
         .addStringOption(option =>
             option.setName('paper')
-                .setDescription('Paper Code e.g 0580-12')
+                .setDescription('Paper Code e.g 0580/12')
                 .setRequired(true))
         .addIntegerOption(option =>
             option.setName('time')

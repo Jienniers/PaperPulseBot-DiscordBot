@@ -42,7 +42,7 @@ client.on(Events.InteractionCreate, async interaction => {
         await interaction.deferReply({ ephemeral: true });
 
         const paperChannel = await interaction.guild.channels.create({
-            name: `${paperCode} paper code`,
+            name: `${paperCode.split('/')[0]} by ${examiner.username}`,
             type: 0,
             parent: config.category_id,
         })
