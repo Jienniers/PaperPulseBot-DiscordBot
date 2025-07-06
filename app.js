@@ -1,7 +1,12 @@
 require('dotenv').config();
 const fs = require('fs');
 
-const { Client, GatewayIntentBits, Events, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const { Client,
+    GatewayIntentBits,
+    Events} = require('discord.js');
+
+const { createPaperEmbed } = require('./utils/embeds');
+const { createPaperButtons } = require('./utils/buttons');
 
 const client = new Client({
     intents: [GatewayIntentBits.Guilds,
@@ -58,20 +63,9 @@ client.on(Events.InteractionCreate, async interaction => {
 
         const timeString = `${hours} hour${hours !== 1 ? 's' : ''} ${minutes} minute${minutes !== 1 ? 's' : ''}`;
 
-        const embed = new EmbedBuilder()
-            .setColor(0x0099ff)
-            .setTitle("Started the Paper, Good Luck!")
-            .setDescription(`Started by: ${interaction.user}
-                            Paper Code: ${paperCode}
-                            Time: ${timeString}`)
-            .setTimestamp();
+        const embed = createPaperEmbed(interaction.user, paperCode, timeString);
 
-        const buttonsRow = new ActionRowBuilder().addComponents(
-            new ButtonBuilder()
-                .setCustomId('done')
-                .setLabel('Done!')
-                .setStyle(ButtonStyle.Primary)
-        )
+        const buttonsRow = createPaperButtons();
 
         await paperChannel.send({
             content: `👋 Hello, ${interaction.user} Starting the Paper ${paperCode}!!`,
