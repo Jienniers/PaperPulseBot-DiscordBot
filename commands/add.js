@@ -18,8 +18,7 @@ async function handleAddCommand(message, paperChannels, candidatesMap, paperTime
         message.reply("❌ No users mentioned.");
         return;
     }
-
-    const sessionCandidates = candidatesMap.get(message.channel.id) || [];
+    const sessionCandidates = candidatesMap.get(message.channel.id) ?? [];
     mentionedUsers.forEach(user => {
         sessionCandidates.push(user);
     });
@@ -28,11 +27,9 @@ async function handleAddCommand(message, paperChannels, candidatesMap, paperTime
 
     message.channel.send(`📝 Following candidates have been added: ${candidateNames}`);
 
-    paperRunningMap.set(message.channel.id, false)
+    paperRunningMap.set(message.channel.id, true)
 
     await startPaperTimer(message.channel, paperTimeMins);
-
-    paperRunningMap.set(message.channel.id, true)
 }
 
 async function startPaperTimer(channel, paperMinutes) {
@@ -57,7 +54,7 @@ async function startPaperTimer(channel, paperMinutes) {
                 `⏰ **Time's up!** Please stop writing and put your pen down.`
             );
 
-            paperRunningMap.set(message.channel.id, false)
+            paperRunningMap.set(channel.id, false)
             return;
         }
 
