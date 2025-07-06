@@ -8,7 +8,7 @@ const { createPaperEmbed } = require('./utils/embeds');
 const { createPaperButtons } = require('./utils/buttons');
 const { getConfig } = require('./utils/config');
 const { formatPaperTime } = require('./utils/time');
-const { handleAddCommand } = require('./utils/messageHandlers');
+const { handleAddCommand, paperRunningMap } = require('./utils/messageHandlers');
 
 const client = new Client({
     intents: [GatewayIntentBits.Guilds,
@@ -104,6 +104,8 @@ client.on(Events.InteractionCreate, async interaction => {
         candidatesMap.delete(interaction.channel.id)
 
         paperTimeMinsMap.delete(interaction.channel.id)
+
+        paperRunningMap.delete(interaction.channel.id)
 
         await interaction.channel.delete()
     }

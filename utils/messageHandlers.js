@@ -67,3 +67,5 @@ async function startPaperTimer(channel, paperMinutes) {
 }
 
 module.exports = { handleAddCommand };
+
+module.exports = { paperRunningMap };
