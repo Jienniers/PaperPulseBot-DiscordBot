@@ -1,6 +1,6 @@
 require('dotenv').config();
-const fs = require('fs');
 
+const fs = require('fs');
 const { Client,
     GatewayIntentBits,
     Events } = require('discord.js');
@@ -9,6 +9,7 @@ const { createPaperEmbed } = require('./utils/embeds');
 const { createPaperButtons } = require('./utils/buttons');
 const { getConfig } = require('./utils/config');
 const { formatPaperTime } = require('./utils/time');
+const { handleAddCommand } = require('./utils/messageHandlers');
 
 const client = new Client({
     intents: [GatewayIntentBits.Guilds,
@@ -24,9 +25,13 @@ client.once(Events.ClientReady, () => {
 });
 
 client.on(Events.MessageCreate, message => {
+    if (message.author.bot) return;
+
     if (message.content === '!ping') {
         message.reply('Pong!');
     }
+
+    handleAddCommand(message, paperChannels, candidatesMap);
 });
 
 client.on(Events.InteractionCreate, async interaction => {
@@ -85,31 +90,5 @@ client.on(Events.InteractionCreate, async interaction => {
         await interaction.channel.send(`${interaction.user} completed the paper!`)
     }
 });
-
-
-client.on(Events.MessageCreate, (message) => {
-    if (message.author.bot) return;
-
-    if (message.content.startsWith("!add") && paperChannels.includes(message.channel.id)) {
-        const sessionCandidates = candidatesMap.get(message.channel.id);
-        console.log(paperChannels)
-
-        const mentionedUsers = message.mentions.users;
-
-        if (mentionedUsers.size === 0) {
-            return message.reply("❌ No users mentioned.");
-        }
-
-        mentionedUsers.forEach(user => {
-            console.log(`Mentioned: ${user.username} (${user.id})`);
-            sessionCandidates.push(user)
-        });
-
-        const candidates = sessionCandidates.join(` `)
-
-        message.channel.send(`Following candidates have been added: ${candidates}`)
-    }
-});
-
 
 client.login(process.env.TOKEN);
