@@ -25,20 +25,28 @@ client.once(Events.ClientReady, () => {
     console.log(`Logged in as ${client.user.tag}!`);
 });
 
-client.on(Events.MessageCreate, message => {
+client.on(Events.MessageCreate, async message => {
     if (message.author.bot) return;
 
     if (message.content === '!ping') {
-        message.reply('Pong!');
+        await message.reply('Pong!');
     }
 
-    handleAddCommand(message, paperChannels, candidatesMap, paperTimeMinsMap.get(message.channel.id));
+    await handleAddCommand(message, paperChannels, candidatesMap, paperTimeMinsMap.get(message.channel.id));
 });
 
 client.on(Events.InteractionCreate, async interaction => {
     if (!interaction.isChatInputCommand()) return;
 
     if (interaction.commandName === 'startpaper') {
+        if (paperChannels.includes(interaction.channel.id)) {
+            await interaction.reply({
+                content: "You can not use this command here.",
+                flags: 64
+            });
+            return;
+        }
+
         const paperCode = interaction.options.getString('paper');
         const examiner = interaction.options.getUser('examiner')
 
