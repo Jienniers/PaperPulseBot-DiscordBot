@@ -12,6 +12,7 @@ const client = new Client({
 const configFilePath = "./config.json"
 
 const paperChannels = []
+const candidatesMap = new Map()
 
 client.once(Events.ClientReady, () => {
     console.log(`Logged in as ${client.user.tag}!`);
@@ -48,7 +49,9 @@ client.on(Events.InteractionCreate, async interaction => {
             parent: config.category_id,
         })
 
-        paperChannels.push(paperChannel.id)
+        paperChannels.push(paperChannel.id);
+
+        candidatesMap.set(paperChannel.id, [])
 
         const hours = Math.floor(paperTime / 60);
         const minutes = paperTime % 60;
@@ -103,6 +106,7 @@ client.on(Events.MessageCreate, (message) => {
     if (message.author.bot) return;
 
     if (message.content.startsWith("!add") && paperChannels.includes(message.channel.id)) {
+        const sessionCandidates = candidatesMap.get(message.channel.id);
         console.log(paperChannels)
 
         const mentionedUsers = message.mentions.users;
@@ -113,7 +117,12 @@ client.on(Events.MessageCreate, (message) => {
 
         mentionedUsers.forEach(user => {
             console.log(`Mentioned: ${user.username} (${user.id})`);
+            sessionCandidates.push(user)
         });
+
+        const candidates = sessionCandidates.join(` `)
+
+        message.channel.send(`Following candidates have been added: ${candidates}`)
     }
 });
 
