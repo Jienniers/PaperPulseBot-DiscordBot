@@ -5,7 +5,11 @@ function createPaperButtons() {
         new ButtonBuilder()
             .setCustomId('done')
             .setLabel('Done!')
-            .setStyle(ButtonStyle.Primary)
+            .setStyle(ButtonStyle.Primary),
+        new ButtonBuilder()
+            .setCustomId('close')
+            .setLabel("Stop/Close")
+            .setStyle(ButtonStyle.Danger)
     );
 }
 

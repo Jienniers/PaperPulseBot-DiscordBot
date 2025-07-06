@@ -81,13 +81,24 @@ client.on(Events.InteractionCreate, async interaction => {
 
 client.on(Events.InteractionCreate, async interaction => {
     if (!interaction.isButton()) return;
+    const buttonIDs = interaction.customId
 
-    if (interaction.customId === 'done') {
+    if (buttonIDs === 'done') {
         await interaction.reply({
             content: 'Please stop writing and put your pen down.',
             ephemeral: true
         });
         await interaction.channel.send(`${interaction.user} completed the paper!`)
+    } else if (buttonIDs === 'close') {
+        const index = paperChannels.indexOf(interaction.channel.id);
+
+        if (index > -1) {
+            paperChannels.splice(index, 1)
+        }
+
+        candidatesMap.delete(interaction.channel.id)
+
+        await interaction.channel.delete()
     }
 });
 
