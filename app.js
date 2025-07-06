@@ -19,6 +19,7 @@ const client = new Client({
 
 const paperChannels = []
 const candidatesMap = new Map()
+let paperTimeMinsMap = new Map();
 
 client.once(Events.ClientReady, () => {
     console.log(`Logged in as ${client.user.tag}!`);
@@ -31,7 +32,7 @@ client.on(Events.MessageCreate, message => {
         message.reply('Pong!');
     }
 
-    handleAddCommand(message, paperChannels, candidatesMap);
+    handleAddCommand(message, paperChannels, candidatesMap, paperTimeMinsMap.get(message.channel.id));
 });
 
 client.on(Events.InteractionCreate, async interaction => {
@@ -39,7 +40,6 @@ client.on(Events.InteractionCreate, async interaction => {
 
     if (interaction.commandName === 'startpaper') {
         const paperCode = interaction.options.getString('paper');
-        const paperTimeMins = interaction.options.getInteger('time');
         const examiner = interaction.options.getUser('examiner')
 
         const config = getConfig()
@@ -53,11 +53,13 @@ client.on(Events.InteractionCreate, async interaction => {
             parent: config.category_id,
         })
 
+        paperTimeMinsMap.set(paperChannel.id, interaction.options.getInteger('time'));
+
         paperChannels.push(paperChannel.id);
 
         candidatesMap.set(paperChannel.id, [])
 
-        const timeString = formatPaperTime(paperTimeMins);
+        const timeString = formatPaperTime(paperTimeMinsMap.get(paperChannel.id));
 
         const embed = createPaperEmbed(interaction.user, paperCode, timeString);
 
@@ -72,10 +74,6 @@ client.on(Events.InteractionCreate, async interaction => {
         await interaction.editReply(
             `A new channel has been created for this paper <#${paperChannel.id}>!`,
         );
-
-        setTimeout(() => {
-            paperChannel.channel.send(`⏰ Time's up! Please stop writing and put your pen down.`);
-        }, paperTimeMins * 60 * 1000);
     }
 });
 
@@ -97,6 +95,8 @@ client.on(Events.InteractionCreate, async interaction => {
         }
 
         candidatesMap.delete(interaction.channel.id)
+
+        paperTimeMinsMap.delete(interaction.channel.id)
 
         await interaction.channel.delete()
     }
