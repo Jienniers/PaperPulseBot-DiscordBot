@@ -1,12 +1,12 @@
 const path = require('path');
-const { formatPaperTime } = require(path.resolve(__dirname, '..', 'utils', 'time.js'));
+const { formatPaperTime } = require(path.resolve(__dirname, '..', '..', 'utils', 'time.js'));
 
 const {
     candidatesMap,
     paperChannels,
     paperTimeMinsMap,
     paperRunningMap
-} = require(path.resolve(__dirname, '..', 'data', 'state.js'));
+} = require(path.resolve(__dirname, '..', '..', 'data', 'state.js'));
 
 // Handles the !add command: adds mentioned users as candidates for the current paper session
 async function handleAddCommand(message) {

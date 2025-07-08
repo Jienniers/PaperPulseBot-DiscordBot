@@ -1,15 +1,15 @@
 const path = require('path');
-const { getConfig } = require(path.resolve(__dirname, '..', 'utils', 'config.js'));
-const { formatPaperTime } = require(path.resolve(__dirname, '..', 'utils', 'time.js'));
-const { createPaperEmbed } = require(path.resolve(__dirname, '..', 'utils', 'embeds.js'));
-const { createPaperButtons } = require(path.resolve(__dirname, '..', 'utils', 'buttons.js'));
+const { getConfig } = require(path.resolve(__dirname, '..', '..', 'utils', 'config.js'));
+const { formatPaperTime } = require(path.resolve(__dirname, '..', '..', 'utils', 'time.js'));
+const { createPaperEmbed } = require(path.resolve(__dirname, '..', '..', 'utils', 'embeds.js'));
+const { createPaperButtons } = require(path.resolve(__dirname, '..', '..', 'utils', 'buttons.js'));
 
 const {
     examinersMap,
     candidatesMap,
     paperChannels,
     paperTimeMinsMap
-} = require(path.resolve(__dirname, '..', 'data', 'state.js'));
+} = require(path.resolve(__dirname, '..', '..', 'data', 'state.js'));
 
 async function handleStartPaper(interaction) {
     const channelId = interaction.channel.id;

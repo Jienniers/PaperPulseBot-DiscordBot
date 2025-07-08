@@ -7,9 +7,9 @@ const { Client,
 const { buttonHandlers } = require('./utils/buttonHandlers');
 
 //commands
-const { handleAddCommand } = require('./commands/add');
-const { handleStartPaper } = require('./slashCommands/startpaper');
-const { handleUpload } = require('./slashCommands/upload');
+const { handleAddCommand } = require('./commands/messageCommands/add');
+const { handleStartPaper } = require('./commands/slashCommands/startpaper');
+const { handleUpload } = require('./commands/slashCommands/upload');
 
 const client = new Client({
     intents: [GatewayIntentBits.Guilds,

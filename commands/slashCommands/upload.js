@@ -1,6 +1,6 @@
 const path = require('path');
-const { examinersMap, paperChannels } = require(path.resolve(__dirname, '..', 'data', 'state.js'));
-const { sendExaminerSubmissionEmbed } = require(path.resolve(__dirname, '..', 'utils', 'embeds.js'));
+const { examinersMap, paperChannels } = require(path.resolve(__dirname, '..', '..', 'data', 'state.js'));
+const { sendExaminerSubmissionEmbed } = require(path.resolve(__dirname, '..', '..', 'utils', 'embeds.js'));
 
 async function handleUpload(interaction) {
     const channelId = interaction.channel.id;
