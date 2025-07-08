@@ -1,12 +1,19 @@
 const path = require('path');
 const { formatPaperTime } = require(path.resolve(__dirname, '..', 'utils', 'time.js'));
 
-const paperRunningMap = new Map()
+const {
+    candidatesMap,
+    paperChannels,
+    paperTimeMinsMap,
+    paperRunningMap
+} = require(path.resolve(__dirname, '..', 'data', 'state.js'));
 
 // Handles the !add command: adds mentioned users as candidates for the current paper session
-async function handleAddCommand(message, paperChannels, candidatesMap, paperTimeMins) {
+async function handleAddCommand(message) {
     if (!message.content.startsWith("!add")) return;
     if (!paperChannels.includes(message.channel.id)) return;
+
+    const paperTimeMins = paperTimeMinsMap.get(message.channel.id);
 
     if (paperRunningMap.has(message.channel.id)) {
         await message.reply("✅ The paper session in this channel is already complete or is running. No more users can be added.");

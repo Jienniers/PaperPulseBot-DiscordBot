@@ -1,5 +1,14 @@
-async function handleDoneButton(interaction, channelID, variables) {
-    const examinersMap = variables[4];
+const path = require('path');
+
+const {
+    examinersMap,
+    candidatesMap,
+    paperChannels,
+    paperTimeMinsMap,
+    paperRunningMap
+} = require(path.resolve(__dirname, '..', 'data', 'state.js'));
+
+async function handleDoneButton(interaction, channelID) {
     if (interaction.user.id === examinersMap.get(channelID)?.id) return;
 
     await interaction.reply({
@@ -9,12 +18,7 @@ async function handleDoneButton(interaction, channelID, variables) {
     await interaction.channel.send(`${interaction.user} completed the paper!`);
 }
 
-async function handleCloseButton(interaction, channelID, variables) {
-    const paperChannels = variables[0]
-    const candidatesMap = variables[1]
-    const paperTimeMinsMap = variables[2]
-    const paperRunningMap = variables[3]
-    const examinersMap = variables[4]
+async function handleCloseButton(interaction, channelID) {
 
     if (interaction.user.id !== examinersMap.get(channelID)?.id) {
         await interaction.reply({
