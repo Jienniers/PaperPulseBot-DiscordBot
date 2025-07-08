@@ -4,18 +4,26 @@ const { REST, Routes, SlashCommandBuilder } = require('discord.js');
 const commands = [
     new SlashCommandBuilder()
         .setName('startpaper')
-        .setDescription('Starts the paper with timer.')
+        .setDescription('Start a new paper session with a timer and assign an examiner.')
         .addStringOption(option =>
             option.setName('paper')
-                .setDescription('Paper Code e.g 0580/12')
+                .setDescription('Enter the paper code (e.g., 0580/12).')
                 .setRequired(true))
         .addIntegerOption(option =>
             option.setName('time')
-                .setDescription('Paper Time (mins) e.g 60')
+                .setDescription('Set the duration of the paper in minutes (e.g., 60).')
                 .setRequired(true))
         .addUserOption(option =>
             option.setName("examiner")
-                .setDescription("Assign an examiner")
+                .setDescription("Select a user to assign as the examiner for this session.")
+                .setRequired(true)),
+
+    new SlashCommandBuilder()
+        .setName("upload")
+        .setDescription("Upload your solved paper as a PDF for the assigned examiner to review.")
+        .addAttachmentOption(option =>
+            option.setName('file')
+                .setDescription('Attach your solved paper as a PDF file.')
                 .setRequired(true))
 
 ].map(command => command.toJSON());
