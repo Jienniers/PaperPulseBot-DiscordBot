@@ -21,15 +21,10 @@ A work-in-progress **Discord bot** built using **Node.js** and the **discord.js*
 
 ### ✅ In Development
 
-- `startpaper` slash command: Initiates a paper session with an embed + button interaction
-- Auto-generates a new channel under a specific category for the paper
-- Timer support (with setTimeout) for sending reminders when paper time is up
-
 ### ⏳ Planned
 
 - Awarding marks to candidates
 - Verify the candidates if they did not cheat during the session
-- Upload the paper pdf or images through the bot to the examiner
 - View the profile of candidates and examiner
 
 > ℹ️ **Note:** Planned features will be updated as per development needs.
@@ -82,7 +77,7 @@ node deploy_commands.js
 ### 6. Start the Bot
 
 ```bash
-node app.js
+node index.js
 ```
 
 ---
