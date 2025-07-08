@@ -4,8 +4,10 @@ const { EmbedBuilder } = require('discord.js');
 function createPaperEmbed(user, paperCode, timeString) {
     return new EmbedBuilder()
         .setColor(0x0099ff)
-        .setTitle("📝 Paper Started, Good Luck!")
-        .setDescription(`👨‍🏫 Started by: ${user}\n📄 Paper Code: ${paperCode}\n⏱️ Duration: ${timeString}`)
+        .setTitle('📝 Paper Started, Good Luck!')
+        .setDescription(
+            `👨‍🏫 Started by: ${user}\n📄 Paper Code: ${paperCode}\n⏱️ Duration: ${timeString}`,
+        )
         .setTimestamp();
 }
 
@@ -16,13 +18,16 @@ function sendExaminerSubmissionEmbed(channelId, candidate, attachment, guild) {
         .addFields(
             { name: '🆔 Session Channel ID', value: `\`${channelId}\``, inline: true },
             { name: '🆔 Session Server ID', value: `\`${guild.id}\``, inline: true },
-            { name: '🔗 Session Channel Link', value: `[Click to view channel](https://discord.com/channels/${guild.id}/${channelId})`, inline: false },
+            {
+                name: '🔗 Session Channel Link',
+                value: `[Click to view channel](https://discord.com/channels/${guild.id}/${channelId})`,
+                inline: false,
+            },
             { name: '👤 Candidate', value: `${candidate.tag}`, inline: true },
-            { name: '📎 File Name', value: attachment.name, inline: false }
+            { name: '📎 File Name', value: attachment.name, inline: false },
         )
 
-
-        .setColor(0x2F3136)
+        .setColor(0x2f3136)
         .setThumbnail('https://cdn-icons-png.flaticon.com/512/337/337946.png')
         .setFooter({ text: 'PaperPulse Bot • Examiner Dashboard' })
         .setTimestamp();
@@ -32,5 +37,5 @@ function sendExaminerSubmissionEmbed(channelId, candidate, attachment, guild) {
 
 module.exports = {
     createPaperEmbed,
-    sendExaminerSubmissionEmbed
+    sendExaminerSubmissionEmbed,
 };

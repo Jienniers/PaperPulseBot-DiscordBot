@@ -4,12 +4,9 @@ const { formatPaperTime } = require(path.resolve(__dirname, '..', '..', 'utils',
 const { createPaperEmbed } = require(path.resolve(__dirname, '..', '..', 'utils', 'embeds.js'));
 const { createPaperButtons } = require(path.resolve(__dirname, '..', '..', 'utils', 'buttons.js'));
 
-const {
-    examinersMap,
-    candidatesMap,
-    paperChannels,
-    paperTimeMinsMap
-} = require(path.resolve(__dirname, '..', '..', 'data', 'state.js'));
+const { examinersMap, candidatesMap, paperChannels, paperTimeMinsMap } = require(
+    path.resolve(__dirname, '..', '..', 'data', 'state.js'),
+);
 
 async function handleStartPaper(interaction) {
     const channelId = interaction.channel.id;
@@ -17,7 +14,7 @@ async function handleStartPaper(interaction) {
     if (paperChannels.includes(channelId)) {
         return interaction.reply({
             content: '❌ You cannot use this command here.',
-            flags: 64
+            flags: 64,
         });
     }
 
@@ -32,7 +29,7 @@ async function handleStartPaper(interaction) {
     const paperChannel = await interaction.guild.channels.create({
         name: channelName,
         type: 0,
-        parent: config.category_id
+        parent: config.category_id,
     });
 
     examinersMap.set(paperChannel.id, examiner);
@@ -47,12 +44,12 @@ async function handleStartPaper(interaction) {
     await paperChannel.send({
         content: `👋 Hello ${interaction.user}, starting the paper **${paperCode}**!`,
         embeds: [embed],
-        components: [buttonsRow]
+        components: [buttonsRow],
     });
 
     await interaction.editReply(`✅ Channel created: <#${paperChannel.id}>`);
 }
 
 module.exports = {
-    handleStartPaper
+    handleStartPaper,
 };

@@ -1,8 +1,6 @@
 require('dotenv').config();
 
-const { Client,
-    GatewayIntentBits,
-    Events } = require('discord.js');
+const { Client, GatewayIntentBits, Events } = require('discord.js');
 
 const { buttonHandlers } = require('./utils/buttonHandlers');
 
@@ -12,17 +10,18 @@ const { handleStartPaper } = require('./commands/slashCommands/startpaper');
 const { handleUpload } = require('./commands/slashCommands/upload');
 
 const client = new Client({
-    intents: [GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent]
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent,
+    ],
 });
-
 
 client.once(Events.ClientReady, () => {
     console.log(`Logged in as ${client.user.tag}!`);
 });
 
-client.on(Events.MessageCreate, async message => {
+client.on(Events.MessageCreate, async (message) => {
     if (message.author.bot) return;
 
     if (message.content === '!ping') {
@@ -32,7 +31,7 @@ client.on(Events.MessageCreate, async message => {
     await handleAddCommand(message);
 });
 
-client.on(Events.InteractionCreate, async interaction => {
+client.on(Events.InteractionCreate, async (interaction) => {
     if (!interaction.isChatInputCommand()) return;
 
     // ───── 🧾 START PAPER COMMAND ─────
@@ -47,7 +46,7 @@ client.on(Events.InteractionCreate, async interaction => {
 });
 
 // Listen for all button interactions
-client.on(Events.InteractionCreate, async interaction => {
+client.on(Events.InteractionCreate, async (interaction) => {
     if (!interaction.isButton()) return;
 
     const buttonID = interaction.customId;
