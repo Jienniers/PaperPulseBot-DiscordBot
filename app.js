@@ -130,15 +130,18 @@ client.on(Events.InteractionCreate, async interaction => {
 client.on(Events.InteractionCreate, async interaction => {
     if (!interaction.isButton()) return;
     const buttonIDs = interaction.customId
+    const channelID = interaction.channel.id
 
     if (buttonIDs === 'done') {
+        if (interaction.user.id === examinersMap.get(channelID)?.id) return;
+
         await interaction.reply({
             content: 'Please stop writing and put your pen down.',
             ephemeral: true
         });
         await interaction.channel.send(`${interaction.user} completed the paper!`)
     } else if (buttonIDs === 'close') {
-        const channelID = interaction.channel.id
+        if (interaction.user.id !== examinersMap.get(channelID)?.id) return;
 
         const index = paperChannels.indexOf(channelID);
         if (index > -1) {
