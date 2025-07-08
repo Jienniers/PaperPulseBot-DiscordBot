@@ -1,5 +1,6 @@
 import js from '@eslint/js';
 import globals from 'globals';
+import prettier from 'eslint-config-prettier';
 import { defineConfig } from 'eslint/config';
 
 export default defineConfig([
@@ -8,12 +9,13 @@ export default defineConfig([
         languageOptions: {
             sourceType: 'commonjs',
             globals: {
-                ...globals.node, // ✅ Includes process, __dirname, etc.
-                ...globals.es2021, // ✅ ES2021 globals like Promise, etc.
+                ...globals.node,
+                ...globals.es2021,
             },
         },
         plugins: { js },
-        extends: ['js/recommended', 'prettier'],
+        // ✅ Use the imported object directly here
+        extends: [js.configs.recommended, prettier],
     },
     {
         ignores: ['node_modules', '.env', 'eslint.config.mjs'],
