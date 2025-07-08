@@ -8,6 +8,7 @@ const { createPaperEmbed, sendExaminerSubmissionEmbed } = require('./utils/embed
 const { createPaperButtons } = require('./utils/buttons');
 const { getConfig } = require('./utils/config');
 const { formatPaperTime } = require('./utils/time');
+const { buttonHandlers } = require('./utils/buttonHandlers');
 
 //commands
 const { handleAddCommand, paperRunningMap } = require('./commands/add');
@@ -41,122 +42,101 @@ client.on(Events.MessageCreate, async message => {
 client.on(Events.InteractionCreate, async interaction => {
     if (!interaction.isChatInputCommand()) return;
 
+    const channelId = interaction.channel.id;
+
+    // ───── 🧾 START PAPER COMMAND ─────
     if (interaction.commandName === 'startpaper') {
-        if (paperChannels.includes(interaction.channel.id)) {
-            await interaction.reply({
-                content: "You can not use this command here.",
-                flags: 64
+        if (paperChannels.includes(channelId)) {
+            return interaction.reply({
+                content: '❌ You cannot use this command here.',
+                flags: 64 // ephemeral
             });
-            return;
         }
 
         const paperCode = interaction.options.getString('paper');
-        const examiner = interaction.options.getUser('examiner')
+        const examiner = interaction.options.getUser('examiner');
+        const paperTime = interaction.options.getInteger('time');
+        const config = getConfig();
 
-        const config = getConfig()
-
-        // flags: 64 is used for that "Only you can see this message" thing
         await interaction.deferReply({ flags: 64 });
 
+        const channelName = `${paperCode.split('/')[0]} by ${examiner.username}`;
         const paperChannel = await interaction.guild.channels.create({
-            name: `${paperCode.split('/')[0]} by ${examiner.username}`,
-            type: 0,
-            parent: config.category_id,
-        })
+            name: channelName,
+            type: 0, // GuildText
+            parent: config.category_id
+        });
 
-        examinersMap.set(paperChannel.id, examiner)
-
-        paperTimeMinsMap.set(paperChannel.id, interaction.options.getInteger('time'));
-
+        // Save session-specific state
+        examinersMap.set(paperChannel.id, examiner);
+        paperTimeMinsMap.set(paperChannel.id, paperTime);
+        candidatesMap.set(paperChannel.id, []);
         paperChannels.push(paperChannel.id);
 
-        candidatesMap.set(paperChannel.id, [])
-
-        const timeString = formatPaperTime(paperTimeMinsMap.get(paperChannel.id));
-
+        const timeString = formatPaperTime(paperTime);
         const embed = createPaperEmbed(interaction.user, paperCode, timeString);
-
         const buttonsRow = createPaperButtons();
 
         await paperChannel.send({
-            content: `👋 Hello, ${interaction.user} Starting the Paper ${paperCode}!!`,
+            content: `👋 Hello ${interaction.user}, starting the paper **${paperCode}**!`,
             embeds: [embed],
-            components: [buttonsRow],
-        })
+            components: [buttonsRow]
+        });
 
-        await interaction.editReply(
-            `A new channel has been created for this paper <#${paperChannel.id}>!`,
-        );
+        await interaction.editReply(`✅ A new channel has been created for this paper <#${paperChannel.id}>!`);
     }
 
-    if (interaction.commandName === "upload") {
-        if (!paperChannels.includes(interaction.channel.id)) {
-            await interaction.reply({
-                content: "You can not use this command here.",
+    // ───── 📤 UPLOAD PAPER COMMAND ─────
+    if (interaction.commandName === 'upload') {
+        if (!paperChannels.includes(channelId)) {
+            return interaction.reply({
+                content: '❌ You cannot use this command here.',
                 flags: 64
             });
-            return;
         }
 
         const attachment = interaction.options.getAttachment('file');
-        const channelID = interaction.channel.id;
+        await interaction.deferReply({ flags: 64 });
 
-        await interaction.deferReply({ ephemeral: true });
-
+        // Strict and safe PDF check
         const isPDF =
-            attachment?.contentType?.includes("pdf") ||
-            attachment?.name?.toLowerCase().endsWith(".pdf");
+            attachment?.contentType?.toLowerCase() === 'application/pdf' ||
+            attachment?.name?.toLowerCase().endsWith('.pdf');
 
         if (!isPDF) {
-            console.log("No PDF")
-            return await interaction.editReply({
+            return interaction.editReply({
                 content: '❌ Only PDF files are allowed. Please upload a `.pdf` file.',
-                ephemeral: true
+                flags: 64
             });
         }
 
         await interaction.editReply({
-            content: `✅ Received your PDF paper file: **${attachment.name}**`,
-            ephemeral: true
+            content: `✅ Received your PDF file: **${attachment.name}**`,
+            flags: 64
         });
-        examinersMap.get(channelID).send({
-            content: `You have received a new paper submission.`,
-            embeds: [sendExaminerSubmissionEmbed(channelID, interaction.user, attachment, interaction.guild)],
-            files: [attachment]
-        });
+
+        const examiner = examinersMap.get(channelId);
+        if (examiner) {
+            await examiner.send({
+                content: '📩 A new paper submission has been received.',
+                embeds: [sendExaminerSubmissionEmbed(channelId, interaction.user, attachment, interaction.guild)],
+                files: [attachment]
+            });
+        }
     }
 });
 
+// Listen for all button interactions
 client.on(Events.InteractionCreate, async interaction => {
     if (!interaction.isButton()) return;
-    const buttonIDs = interaction.customId
-    const channelID = interaction.channel.id
 
-    if (buttonIDs === 'done') {
-        if (interaction.user.id === examinersMap.get(channelID)?.id) return;
+    const buttonID = interaction.customId;
+    const channelID = interaction.channel.id;
 
-        await interaction.reply({
-            content: 'Please stop writing and put your pen down.',
-            ephemeral: true
-        });
-        await interaction.channel.send(`${interaction.user} completed the paper!`)
-    } else if (buttonIDs === 'close') {
-        if (interaction.user.id !== examinersMap.get(channelID)?.id) return;
-
-        const index = paperChannels.indexOf(channelID);
-        if (index > -1) {
-            paperChannels.splice(index, 1)
-        }
-
-        candidatesMap.delete(channelID)
-
-        paperTimeMinsMap.delete(channelID)
-
-        paperRunningMap.delete(channelID)
-
-        examinersMap.delete(channelID)
-
-        await interaction.channel.delete()
+    // Look up the handler for this button by custom ID
+    const handler = buttonHandlers[buttonID];
+    if (handler) {
+        await handler(interaction, channelID, [paperChannels, candidatesMap, paperTimeMinsMap, paperRunningMap, examinersMap]);
     }
 });
 
