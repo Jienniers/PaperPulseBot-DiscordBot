@@ -47,7 +47,7 @@ async function handleStartPaper(interaction) {
         components: [buttonsRow],
     });
 
-    await interaction.editReply(`✅ Channel created: <#${paperChannel.id}>`);
+    await interaction.editReply(`✅ A new channel has been created for this paper session: <#${paperChannel.id}>`);
 }
 
 module.exports = {
