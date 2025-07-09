@@ -45,6 +45,25 @@ const commands = [
                 .setDescription('Enter the candidate you want to verify.')
                 .setRequired(true),
         ),
+
+    new SlashCommandBuilder()
+        .setName('award')
+        .setDescription(
+            "Award marks to a candidate",
+        )
+        .addUserOption((option) =>
+            option
+                .setName('user')
+                .setDescription('Enter the candidate you want to award marks to.')
+                .setRequired(true)
+        )
+        .addStringOption((option) =>
+            option
+                .setName('marks')
+                .setDescription('Enter the awarded marks (e.g., 80/100)')
+                .setRequired(true),
+
+        ),
 ].map((command) => command.toJSON());
 
 const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
