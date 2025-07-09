@@ -141,7 +141,8 @@ node app.js
 │   └── slashCommands/        # Slash (/) commands for Discord
 │       ├── startpaper.js     # Starts an exam session
 │       ├── upload.js         # Handles paper upload
-│       └── verify.js         # Verifies candidate fairness and they did not cheat
+│       ├── verify.js         # Verifies candidate fairness and they did not cheat, Only available for use by examiner
+│       └── award.js          # Handles awarding the marks to a candidate in a specific session channel by the examiner only
 ├── config.json               # Local bot configuration
 ├── data/
 │   └── state.js              # Temporary app state data
