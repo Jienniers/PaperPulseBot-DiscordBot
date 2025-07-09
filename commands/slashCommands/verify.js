@@ -8,16 +8,22 @@ async function handleVerify(interaction) {
     const userOption = interaction.options.getUser('user');
 
     if (!paperChannels.includes(channelID)) {
-        return interaction.reply({
+        return await interaction.reply({
             content: '❌ You cannot use this command here.',
             flags: 64,
         });
     }
     if (interaction.user.id !== examinersMap.get(channelID)?.id) {
         return await interaction.reply({
-            content: '❌ You are not authorized to close this paper session.',
+            content: '❌ You are not authorized to verify candidates in this paper session.',
             flags: 64,
         });
+    }
+
+    if (examinersMap.get(channelID)?.id === userOption.id) {
+        return await interaction.reply({
+            content: '❌ You cannot verify an examiner.'
+        })
     }
 
     const key = `${userOption.id}::${channelID}`;
