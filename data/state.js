@@ -20,5 +20,5 @@ module.exports = {
     paperTimeMinsMap,
     paperRunningMap,
     verifiedCandidates,
-    doubleKeyMaps
+    doubleKeyMaps,
 };

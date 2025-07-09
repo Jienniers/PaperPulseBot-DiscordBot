@@ -7,7 +7,7 @@ const { getVerifiedEmbed } = require(path.resolve(__dirname, '..', '..', 'utils'
 async function handleVerify(interaction) {
     const channelID = interaction.channel.id;
     const userOption = interaction.options.getUser('user');
-    const key = doubleKeyMaps(userOption.id, channelID)
+    const key = doubleKeyMaps(userOption.id, channelID);
 
     if (!paperChannels.includes(channelID)) {
         return await interaction.reply({
@@ -24,14 +24,14 @@ async function handleVerify(interaction) {
 
     if (examinersMap.get(channelID)?.id === userOption.id) {
         return await interaction.reply({
-            content: '❌ You cannot verify an examiner.'
-        })
+            content: '❌ You cannot verify an examiner.',
+        });
     }
 
     if (verifiedCandidates.get(key)) {
         return await interaction.reply({
-            content: '❌ This candidate is already verified for this session.'
-        })
+            content: '❌ This candidate is already verified for this session.',
+        });
     }
 
     verifiedCandidates.set(key, true);

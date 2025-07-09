@@ -60,7 +60,7 @@ function getVerifiedEmbed({ examiner, channel, guild }) {
                 name: '🧾 Paper Channel ID',
                 value: `${channel.id}`,
                 inline: false,
-            }
+            },
         )
         .setFooter({ text: 'PaperPulseBot • Verification Complete' })
         .setTimestamp();
@@ -69,5 +69,5 @@ function getVerifiedEmbed({ examiner, channel, guild }) {
 module.exports = {
     createPaperEmbed,
     sendExaminerSubmissionEmbed,
-    getVerifiedEmbed
+    getVerifiedEmbed,
 };
