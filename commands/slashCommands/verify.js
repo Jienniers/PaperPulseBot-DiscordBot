@@ -2,6 +2,7 @@ const path = require('path');
 const { examinersMap, paperChannels, verifiedCandidates } = require(
     path.resolve(__dirname, '..', '..', 'data', 'state.js'),
 );
+const { getVerifiedEmbed } = require(path.resolve(__dirname, '..', '..', 'utils', 'embeds.js'));
 
 async function handleVerify(interaction) {
     const channelID = interaction.channel.id;
@@ -28,9 +29,18 @@ async function handleVerify(interaction) {
 
     const key = `${userOption.id}::${channelID}`;
     verifiedCandidates.set(key, true);
-    interaction.reply({
+    await interaction.reply({
         content: `${userOption} has been verified. No cheating or unfairness was detected.`,
     });
+
+    const embed = getVerifiedEmbed({
+        examiner: interaction.user,
+        channel: interaction.channel,
+        guild: interaction.guild,
+    });
+
+    userOption.send({ embeds: [embed] });
+
 }
 
 module.exports = {
