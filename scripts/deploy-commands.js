@@ -36,7 +36,9 @@ const commands = [
 
     new SlashCommandBuilder()
         .setName('verify')
-        .setDescription("Verify the candidate's paper after confirming it was completed fairly and without cheating.")
+        .setDescription(
+            "Verify the candidate's paper after confirming it was completed fairly and without cheating.",
+        )
         .addUserOption((option) =>
             option
                 .setName('user')

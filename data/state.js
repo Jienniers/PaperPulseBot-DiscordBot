@@ -14,5 +14,5 @@ module.exports = {
     paperChannels,
     paperTimeMinsMap,
     paperRunningMap,
-    verifiedCandidates
+    verifiedCandidates,
 };
