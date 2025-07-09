@@ -61,9 +61,11 @@ npm install
 
 Create a `.env` file in the root directory.
 You can use the example provided in examples/.env:
+
 ```bash
 cp examples/.env .env
 ```
+
 Edit the file to include your credentials:
 
 ```env
@@ -76,6 +78,7 @@ GUILD_ID=your_guild_id
 
 Create `config.json` in the root directory.
 You can also copy from examples/config.json:
+
 ```bash
 cp examples/config.json config.json
 ```
@@ -89,6 +92,7 @@ Update it as needed:
 ```
 
 ### 5. Clear old Slash Commands (Optional)
+
 ```bash
 node node scripts/clear-commands.js
 ```
@@ -174,10 +178,10 @@ If you'd like to contribute to **PaperPulseBot**, follow these steps:
 1. Fork the repository
 2. Clone your fork:
 
-   ```bash
-   git clone https://github.com/Jienniers/paperpulsebot.git
-   cd paperpulsebot
-   ```
+    ```bash
+    git clone https://github.com/Jienniers/paperpulsebot.git
+    cd paperpulsebot
+    ```
 
 ### 🌱 Create a Branch
 
@@ -189,14 +193,14 @@ git checkout -b feature/your-feature-name
 
 ### ✍️ Make Changes
 
-* Add your code or fix bugs
-* Follow existing coding style
-* Run linter and formatter:
+- Add your code or fix bugs
+- Follow existing coding style
+- Run linter and formatter:
 
-  ```bash
-  npm run lint
-  npm run format
-  ```
+    ```bash
+    npm run lint
+    npm run format
+    ```
 
 ### ✅ Commit
 
@@ -216,13 +220,12 @@ git push origin feature/your-feature-name
 
 Then open a Pull Request on GitHub. Make sure to:
 
-* Describe your changes clearly
-* Reference any related issues if applicable
+- Describe your changes clearly
+- Reference any related issues if applicable
 
 ### 📋 Code Review
 
 Your PR will be reviewed and tested. Make necessary changes if requested. Once approved, it will be merged into `main`.
-
 
 > Thanks for helping improve **PaperPulseBot**! Your contributions make the project better for everyone. 💙
 
