@@ -33,13 +33,25 @@ const commands = [
                 .setDescription('Attach your solved paper as a PDF file.')
                 .setRequired(true),
         ),
+
+    new SlashCommandBuilder()
+        .setName('verify')
+        .setDescription(
+            "Verify the candidate's paper after confirming it was completed fairly and without cheating.",
+        )
+        .addUserOption((option) =>
+            option
+                .setName('user')
+                .setDescription('Enter the candidate you want to verify.')
+                .setRequired(true),
+        ),
 ].map((command) => command.toJSON());
 
 const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
 
 (async () => {
     try {
-        console.log('Registering slash command...');
+        console.log('Registering slash commands...');
 
         await rest.put(
             Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.GUILD_ID),
@@ -48,8 +60,8 @@ const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
             },
         );
 
-        console.log('Slash command registered ✅');
+        console.log('Slash commands registered successfully. ✅');
     } catch (err) {
-        console.error('Error registering command:', err);
+        console.error('Error registering commands.', err);
     }
 })();

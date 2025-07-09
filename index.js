@@ -8,6 +8,7 @@ const { buttonHandlers } = require('./utils/buttonHandlers');
 const { handleAddCommand } = require('./commands/messageCommands/add');
 const { handleStartPaper } = require('./commands/slashCommands/startpaper');
 const { handleUpload } = require('./commands/slashCommands/upload');
+const { handleVerify } = require('./commands/slashCommands/verify');
 
 const client = new Client({
     intents: [
@@ -42,6 +43,11 @@ client.on(Events.InteractionCreate, async (interaction) => {
     // ───── 📤 UPLOAD PAPER COMMAND ─────
     if (interaction.commandName === 'upload') {
         await handleUpload(interaction);
+    }
+
+    // ───── ✔️ VERIFY PAPER COMMAND ─────
+    if (interaction.commandName === 'verify') {
+        await handleVerify(interaction);
     }
 });
 

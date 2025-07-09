@@ -32,7 +32,6 @@ A **Discord bot** designed to simulate a virtual exam system. Built with **Node.
 ### ⏳ In Progress / Planned
 
 - Mark awarding system
-- candidate verification
 - Candidate and examiner profiles
 - leaderboard command
 
@@ -141,7 +140,8 @@ node app.js
 │   │   └── add.js
 │   └── slashCommands/        # Slash (/) commands for Discord
 │       ├── startpaper.js     # Starts an exam session
-│       └── upload.js         # Handles paper upload
+│       ├── upload.js         # Handles paper upload
+│       └── verify.js         # Verifies candidate fairness and they did not cheat
 ├── config.json               # Local bot configuration
 ├── data/
 │   └── state.js              # Temporary app state data

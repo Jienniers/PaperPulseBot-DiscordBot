@@ -35,7 +35,39 @@ function sendExaminerSubmissionEmbed(channelId, candidate, attachment, guild) {
     return embed;
 }
 
+function getVerifiedEmbed({ examiner, channel, guild }) {
+    return new EmbedBuilder()
+        .setColor(0x4ade80) // Green color
+        .setTitle('✅ Candidate Verified')
+        .setDescription(`You have been verified by **${examiner.tag}** for the paper session.`)
+        .addFields(
+            {
+                name: '🧑‍🏫 Examiner',
+                value: `${examiner.tag}`,
+                inline: true,
+            },
+            {
+                name: '🗂️ Session ID (Channel)',
+                value: `[${channel.name}](https://discord.com/channels/${guild.id}/${channel.id})`,
+                inline: true,
+            },
+            {
+                name: '🧾 Server ID',
+                value: `${guild.id}`,
+                inline: true,
+            },
+            {
+                name: '🧾 Paper Channel ID',
+                value: `${channel.id}`,
+                inline: false,
+            },
+        )
+        .setFooter({ text: 'PaperPulseBot • Verification Complete' })
+        .setTimestamp();
+}
+
 module.exports = {
     createPaperEmbed,
     sendExaminerSubmissionEmbed,
+    getVerifiedEmbed,
 };
