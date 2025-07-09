@@ -6,6 +6,7 @@ const candidatesMap = new Map();
 const paperChannels = [];
 const paperTimeMinsMap = new Map();
 const paperRunningMap = new Map();
+const verifiedCandidates = new Map();
 
 module.exports = {
     examinersMap,
@@ -13,4 +14,5 @@ module.exports = {
     paperChannels,
     paperTimeMinsMap,
     paperRunningMap,
+    verifiedCandidates
 };

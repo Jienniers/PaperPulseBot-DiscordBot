@@ -1,10 +1,12 @@
 const path = require('path');
-const { examinersMap, paperChannels } = require(
+const { examinersMap, paperChannels, verifiedCandidates } = require(
     path.resolve(__dirname, '..', '..', 'data', 'state.js'),
 );
 
 async function handleVerify(interaction) {
-    const channelID = interaction.channel.id
+    const channelID = interaction.channel.id;
+    const userOption = interaction.options.getUser("user");
+
     if (!paperChannels.includes(channelID)) {
         return interaction.reply({
             content: '❌ You cannot use this command here.',
@@ -18,8 +20,11 @@ async function handleVerify(interaction) {
         });
     }
 
-    interaction.reply("HELLOW")
-
+    const key = `${userOption.id}::${channelID}`;
+    verifiedCandidates.set(key, true);
+    interaction.reply({
+        content: `${userOption} has been verified. No cheating or unfairness was detected.`
+    });
 }
 
 module.exports = {
