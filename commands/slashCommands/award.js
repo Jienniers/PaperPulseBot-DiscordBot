@@ -2,10 +2,14 @@ const path = require('path');
 const { examinersMap, paperChannels, candidateMarksMap, doubleKeyMaps } = require(
     path.resolve(__dirname, '..', '..', 'data', 'state.js'),
 );
+
+const { getAwardEmbed } = require(path.resolve(__dirname, '..', '..', 'utils', 'embeds.js'));
+
 async function handleAward(interaction) {
     const channelID = interaction.channel.id;
     const userOption = interaction.options.getUser('user');
     const marksOption = interaction.options.getString('marks');
+    const examiner = examinersMap.get(channelID)
 
     const key = doubleKeyMaps(userOption.id, channelID);
 
@@ -35,6 +39,16 @@ async function handleAward(interaction) {
             content: `${userOption} has been awarded ${marksOption} marks.`,
         });
     }
+
+    const embed = getAwardEmbed({
+        candidate: userOption,
+        examiner: examiner,
+        marks: marksOption,
+        guildId: interaction.guild.id,
+        channelId: channelID
+    });
+
+    await userOption.send({ embeds: [embed] });
 }
 
 module.exports = {

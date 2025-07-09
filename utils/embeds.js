@@ -66,8 +66,27 @@ function getVerifiedEmbed({ examiner, channel, guild }) {
         .setTimestamp();
 }
 
+
+function getAwardEmbed({ candidate, examiner, marks, guildId, channelId }) {
+    return new EmbedBuilder()
+        .setTitle('🏅 You Have Been Awarded Marks!')
+        .setDescription(`Your performance has been evaluated.`)
+        .setColor(0x4caf50)
+        .addFields(
+            { name: '👤 Candidate', value: `<@${candidate.id}>`, inline: true },
+            { name: '🧑‍🏫 Examiner', value: `${examiner.tag}#${examiner.discriminator}`, inline: true },
+            { name: '📊 Marks Awarded', value: `**${marks}**`, inline: true },
+            { name: '🗂️ Session ID', value: `\`${channelId}\`` },
+            { name: '🌐 Server ID', value: `\`${guildId}\`` },
+            { name: '🔗 Paper Channel', value: `[Jump to session](https://discord.com/channels/${guildId}/${channelId})` }
+        )
+        .setFooter({ text: 'PaperPulse • Marks Award System' })
+        .setTimestamp();
+}
+
 module.exports = {
     createPaperEmbed,
     sendExaminerSubmissionEmbed,
     getVerifiedEmbed,
+    getAwardEmbed
 };
