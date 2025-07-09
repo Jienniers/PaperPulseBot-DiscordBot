@@ -1,10 +1,13 @@
 const path = require('path');
-const { examinersMap, paperChannels } = require(
+const { examinersMap, paperChannels, candidateMarksMap, doubleKeyMaps } = require(
     path.resolve(__dirname, '..', '..', 'data', 'state.js'),
 );
 async function handleAward(interaction) {
     const channelID = interaction.channel.id;
     const userOption = interaction.options.getUser('user');
+    const marksOption = interaction.options.getString('marks');
+
+    const key = doubleKeyMaps(userOption.id, channelID);
 
     if (!paperChannels.includes(channelID)) {
         return await interaction.reply({
@@ -23,7 +26,15 @@ async function handleAward(interaction) {
         return await interaction.reply({
             content: '❌ You cannot award marks to an examiner.',
         });
-    } 
+    }
+
+    candidateMarksMap.set(key, marksOption);
+
+    if (candidateMarksMap.get(key)) {
+        await interaction.reply({
+            content: `${userOption} has been awarded ${marksOption} marks.`,
+        });
+    }
 }
 
 module.exports = {
