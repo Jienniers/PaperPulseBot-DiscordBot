@@ -66,7 +66,6 @@ function getVerifiedEmbed({ examiner, channel, guild }) {
         .setTimestamp();
 }
 
-
 function getAwardEmbed({ candidate, examiner, marks, guildId, channelId }) {
     return new EmbedBuilder()
         .setTitle('🏅 You Have Been Awarded Marks!')
@@ -78,7 +77,10 @@ function getAwardEmbed({ candidate, examiner, marks, guildId, channelId }) {
             { name: '📊 Marks Awarded', value: `**${marks}**`, inline: true },
             { name: '🗂️ Session ID', value: `\`${channelId}\`` },
             { name: '🌐 Server ID', value: `\`${guildId}\`` },
-            { name: '🔗 Paper Channel', value: `[Jump to session](https://discord.com/channels/${guildId}/${channelId})` }
+            {
+                name: '🔗 Paper Channel',
+                value: `[Jump to session](https://discord.com/channels/${guildId}/${channelId})`,
+            },
         )
         .setFooter({ text: 'PaperPulse • Marks Award System' })
         .setTimestamp();
@@ -88,5 +90,5 @@ module.exports = {
     createPaperEmbed,
     sendExaminerSubmissionEmbed,
     getVerifiedEmbed,
-    getAwardEmbed
+    getAwardEmbed,
 };

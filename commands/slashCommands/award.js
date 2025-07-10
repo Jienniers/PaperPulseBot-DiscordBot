@@ -9,7 +9,7 @@ async function handleAward(interaction) {
     const channelID = interaction.channel.id;
     const userOption = interaction.options.getUser('user');
     const marksOption = interaction.options.getString('marks');
-    const examiner = examinersMap.get(channelID)
+    const examiner = examinersMap.get(channelID);
 
     const key = doubleKeyMaps(userOption.id, channelID);
 
@@ -45,7 +45,7 @@ async function handleAward(interaction) {
         examiner: examiner,
         marks: marksOption,
         guildId: interaction.guild.id,
-        channelId: channelID
+        channelId: channelID,
     });
 
     await userOption.send({ embeds: [embed] });
