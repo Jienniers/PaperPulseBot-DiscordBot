@@ -9,6 +9,7 @@ const { handleAddCommand } = require('./commands/messageCommands/add');
 const { handleStartPaper } = require('./commands/slashCommands/startpaper');
 const { handleUpload } = require('./commands/slashCommands/upload');
 const { handleVerify } = require('./commands/slashCommands/verify');
+const { handleAward } = require('./commands/slashCommands/award');
 
 const client = new Client({
     intents: [
@@ -48,6 +49,11 @@ client.on(Events.InteractionCreate, async (interaction) => {
     // ───── ✔️ VERIFY PAPER COMMAND ─────
     if (interaction.commandName === 'verify') {
         await handleVerify(interaction);
+    }
+
+    // ───── 🏆 AWARD PAPER COMMAND ─────
+    if (interaction.commandName === 'award') {
+        await handleAward(interaction);
     }
 });
 
