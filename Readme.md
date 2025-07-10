@@ -139,6 +139,7 @@ node app.js
 │   ├── messageCommands/      # Legacy or message-based commands
 │   │   └── add.js
 │   └── slashCommands/        # Slash (/) commands for Discord
+│       ├── award.js          # Awards marks from examiner to candidate
 │       ├── startpaper.js     # Starts an exam session
 │       ├── upload.js         # Handles paper upload
 │       ├── verify.js         # Verifies candidate fairness and they did not cheat, Only available for use by examiner
