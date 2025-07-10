@@ -74,7 +74,7 @@ function getAwardEmbed({ candidate, examiner, marks, guildId, channelId }) {
         .setColor(0x4caf50)
         .addFields(
             { name: '👤 Candidate', value: `<@${candidate.id}>`, inline: true },
-            { name: '🧑‍🏫 Examiner', value: `${examiner.tag}#${examiner.discriminator}`, inline: true },
+            { name: '🧑‍🏫 Examiner', value: `${examiner.tag}`, inline: true },
             { name: '📊 Marks Awarded', value: `**${marks}**`, inline: true },
             { name: '🗂️ Session ID', value: `\`${channelId}\`` },
             { name: '🌐 Server ID', value: `\`${guildId}\`` },
