@@ -5,8 +5,7 @@ const examinersMap = new Map();
 const paperChannels = [];
 const paperTimeMinsMap = new Map();
 const paperRunningMap = new Map();
-const candidateSessionsMap = new Map()
-
+const candidateSessionsMap = new Map();
 
 function doubleKeyMaps(firstKey, SecondKey) {
     const key = `${firstKey}::${SecondKey}`;
@@ -32,5 +31,5 @@ module.exports = {
     paperRunningMap,
     candidateSessionsMap,
     doubleKeyMaps,
-    createCandidateSessionEntry
+    createCandidateSessionEntry,
 };

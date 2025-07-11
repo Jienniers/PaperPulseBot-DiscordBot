@@ -12,7 +12,7 @@ async function handleAddCommand(message) {
     if (!paperChannels.includes(message.channel.id)) return;
 
     const paperTimeMins = paperTimeMinsMap.get(message.channel.id);
-    const candidatesMap = new Map()
+    const candidatesMap = new Map();
 
     if (paperRunningMap.has(message.channel.id)) {
         await message.reply(
@@ -30,7 +30,7 @@ async function handleAddCommand(message) {
     mentionedUsers.forEach((user) => {
         sessionCandidates.push(user);
 
-        createCandidateSessionEntry(user, message, false, null)
+        createCandidateSessionEntry(user, message, false, null);
     });
 
     const candidateNames = sessionCandidates.map((user) => user.toString()).join(' ');

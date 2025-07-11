@@ -40,7 +40,7 @@ async function handleAward(interaction) {
     }
 
     if (candidateData) {
-        candidateData.marks = marksOption
+        candidateData.marks = marksOption;
 
         await interaction.reply({
             content: `${userOption} has been awarded ${marksOption} marks.`,

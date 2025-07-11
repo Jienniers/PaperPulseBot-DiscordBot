@@ -1,8 +1,12 @@
 const path = require('path');
 
-const { examinersMap, paperChannels, paperTimeMinsMap, paperRunningMap, candidateSessionsMap } = require(
-    path.resolve(__dirname, '..', 'data', 'state.js'),
-);
+const {
+    examinersMap,
+    paperChannels,
+    paperTimeMinsMap,
+    paperRunningMap,
+    candidateSessionsMap,
+} = require(path.resolve(__dirname, '..', 'data', 'state.js'));
 
 async function handleDoneButton(interaction, channelID) {
     if (interaction.user.id === examinersMap.get(channelID)?.id) return;
@@ -36,7 +40,6 @@ async function handleCloseButton(interaction, channelID) {
             candidateSessionsMap.delete(key);
         }
     }
-
 
     interaction.channel.delete();
 }
