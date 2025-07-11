@@ -1,5 +1,5 @@
 const path = require('path');
-const { examinersMap, paperChannels, verifiedCandidates, doubleKeyMaps } = require(
+const { examinersMap, paperChannels, doubleKeyMaps, candidateSessionsMap } = require(
     path.resolve(__dirname, '..', '..', 'data', 'state.js'),
 );
 const { getVerifiedEmbed } = require(path.resolve(__dirname, '..', '..', 'utils', 'embeds.js'));
@@ -7,7 +7,9 @@ const { getVerifiedEmbed } = require(path.resolve(__dirname, '..', '..', 'utils'
 async function handleVerify(interaction) {
     const channelID = interaction.channel.id;
     const userOption = interaction.options.getUser('user');
+
     const key = doubleKeyMaps(userOption.id, channelID);
+    const candidateData = candidateSessionsMap.get(key);
 
     if (!paperChannels.includes(channelID)) {
         return await interaction.reply({
@@ -15,6 +17,7 @@ async function handleVerify(interaction) {
             flags: 64,
         });
     }
+
     if (interaction.user.id !== examinersMap.get(channelID)?.id) {
         return await interaction.reply({
             content: '❌ You are not authorized to verify candidates in this paper session.',
@@ -34,21 +37,27 @@ async function handleVerify(interaction) {
         });
     }
 
-    verifiedCandidates.set(key, true);
-
-    if (verifiedCandidates.get(key)) {
-        await interaction.reply({
-            content: `${userOption} has been verified. No cheating or unfairness was detected.`,
+    if (!candidateData) {
+        return await interaction.reply({
+            content: '❌ There were no users added in this session nor the paper was started.',
         });
     }
 
-    const embed = getVerifiedEmbed({
-        examiner: interaction.user,
-        channel: interaction.channel,
-        guild: interaction.guild,
-    });
+    if (candidateData) {
+        candidateData.verified = true;
 
-    userOption.send({ embeds: [embed] });
+        await interaction.reply({
+            content: `${userOption} has been verified. No cheating or unfairness was detected.`,
+        });
+
+        const embed = getVerifiedEmbed({
+            examiner: interaction.user,
+            channel: interaction.channel,
+            guild: interaction.guild,
+        });
+
+        await userOption.send({ embeds: [embed] });
+    }
 }
 
 module.exports = {
