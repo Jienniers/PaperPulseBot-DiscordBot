@@ -13,6 +13,18 @@ function doubleKeyMaps(firstKey, SecondKey) {
     return key;
 }
 
+function createCandidateSessionEntry(user, message, verified, marks) {
+    const key = doubleKeyMaps(user.id, message.channel.id);
+    candidateSessionsMap.set(key, {
+        userId: user.id,
+        channelId: message.channel.id,
+        verified: verified,
+        marks: marks,
+        examinerId: examinersMap.get(message.channel.id)?.id || null,
+        guildId: message.guild.id,
+    });
+}
+
 module.exports = {
     examinersMap,
     paperChannels,
@@ -20,4 +32,5 @@ module.exports = {
     paperRunningMap,
     candidateSessionsMap,
     doubleKeyMaps,
+    createCandidateSessionEntry
 };

@@ -31,7 +31,7 @@ async function handleVerify(interaction) {
         });
     }
 
-    if (verifiedCandidates.get(key)) {
+    if (candidateData.verified) {
         return await interaction.reply({
             content: '❌ This candidate is already verified for this session.',
         });
