@@ -1,4 +1,3 @@
-const { channel } = require('diagnostics_channel');
 const path = require('path');
 const { formatPaperTime } = require(path.resolve(__dirname, '..', '..', 'utils', 'time.js'));
 
