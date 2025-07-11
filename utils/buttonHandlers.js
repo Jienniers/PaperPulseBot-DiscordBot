@@ -1,6 +1,6 @@
 const path = require('path');
 
-const { examinersMap, candidatesMap, paperChannels, paperTimeMinsMap, paperRunningMap } = require(
+const { examinersMap, candidatesMap, paperChannels, paperTimeMinsMap, paperRunningMap, candidateSessionsMap } = require(
     path.resolve(__dirname, '..', 'data', 'state.js'),
 );
 
@@ -32,6 +32,12 @@ async function handleCloseButton(interaction, channelID) {
     paperTimeMinsMap.delete(channelID);
     paperRunningMap.delete(channelID);
     examinersMap.delete(channelID);
+    for (const key of candidateSessionsMap.keys()) {
+        if (key.includes(channelID)) {
+            candidateSessionsMap.delete(key);
+        }
+    }
+
 
     interaction.channel.delete();
 }
