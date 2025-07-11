@@ -142,8 +142,7 @@ node app.js
 │       ├── award.js          # Awards marks from examiner to candidate
 │       ├── startpaper.js     # Starts an exam session
 │       ├── upload.js         # Handles paper upload
-│       ├── verify.js         # Verifies candidate fairness and they did not cheat, Only available for use by examiner
-│       └── award.js          # Handles awarding the marks to a candidate in a specific session channel by the examiner only
+│       └── verify.js         # Verifies candidate fairness and that they did not cheat
 ├── config.json               # Local bot configuration
 ├── data/
 │   └── state.js              # Temporary app state data
