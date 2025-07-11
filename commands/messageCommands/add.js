@@ -1,7 +1,7 @@
 const path = require('path');
 const { formatPaperTime } = require(path.resolve(__dirname, '..', '..', 'utils', 'time.js'));
 
-const { candidatesMap, paperChannels, paperTimeMinsMap, paperRunningMap, candidateSessionsMap, doubleKeyMaps, examinersMap } = require(
+const { paperChannels, paperTimeMinsMap, paperRunningMap, candidateSessionsMap, doubleKeyMaps, examinersMap } = require(
     path.resolve(__dirname, '..', '..', 'data', 'state.js'),
 );
 
@@ -11,6 +11,7 @@ async function handleAddCommand(message) {
     if (!paperChannels.includes(message.channel.id)) return;
 
     const paperTimeMins = paperTimeMinsMap.get(message.channel.id);
+    const candidatesMap = new Map()
 
     if (paperRunningMap.has(message.channel.id)) {
         await message.reply(

@@ -4,7 +4,7 @@ const { formatPaperTime } = require(path.resolve(__dirname, '..', '..', 'utils',
 const { createPaperEmbed } = require(path.resolve(__dirname, '..', '..', 'utils', 'embeds.js'));
 const { createPaperButtons } = require(path.resolve(__dirname, '..', '..', 'utils', 'buttons.js'));
 
-const { examinersMap, candidatesMap, paperChannels, paperTimeMinsMap } = require(
+const { examinersMap, paperChannels, paperTimeMinsMap } = require(
     path.resolve(__dirname, '..', '..', 'data', 'state.js'),
 );
 
@@ -34,7 +34,6 @@ async function handleStartPaper(interaction) {
 
     examinersMap.set(paperChannel.id, examiner);
     paperTimeMinsMap.set(paperChannel.id, paperTime);
-    candidatesMap.set(paperChannel.id, []);
     paperChannels.push(paperChannel.id);
 
     const timeString = formatPaperTime(paperTime);

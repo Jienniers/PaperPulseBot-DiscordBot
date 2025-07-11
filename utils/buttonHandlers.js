@@ -1,6 +1,6 @@
 const path = require('path');
 
-const { examinersMap, candidatesMap, paperChannels, paperTimeMinsMap, paperRunningMap, candidateSessionsMap } = require(
+const { examinersMap, paperChannels, paperTimeMinsMap, paperRunningMap, candidateSessionsMap } = require(
     path.resolve(__dirname, '..', 'data', 'state.js'),
 );
 
@@ -28,7 +28,6 @@ async function handleCloseButton(interaction, channelID) {
     const index = paperChannels.indexOf(channelID);
     if (index > -1) paperChannels.splice(index, 1);
 
-    candidatesMap.delete(channelID);
     paperTimeMinsMap.delete(channelID);
     paperRunningMap.delete(channelID);
     examinersMap.delete(channelID);
