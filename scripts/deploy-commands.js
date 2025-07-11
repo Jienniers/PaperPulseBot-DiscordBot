@@ -61,6 +61,15 @@ const commands = [
                 .setDescription('Enter the awarded marks (e.g., 80/100)')
                 .setRequired(true),
         ),
+    new SlashCommandBuilder()
+        .setName('profile')
+        .setDescription('View the profile of a candidate.')
+        .addUserOption((option) =>
+            option
+                .setName('user')
+                .setDescription('Enter the candidate you want to view profile of.')
+                .setRequired(false),
+        ),
 ].map((command) => command.toJSON());
 
 const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
