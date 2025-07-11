@@ -8,6 +8,8 @@ const paperTimeMinsMap = new Map();
 const paperRunningMap = new Map();
 const verifiedCandidates = new Map();
 const candidateMarksMap = new Map();
+const candidateSessionsMap = new Map()
+
 
 function doubleKeyMaps(firstKey, SecondKey) {
     const key = `${firstKey}::${SecondKey}`;
@@ -22,5 +24,6 @@ module.exports = {
     paperRunningMap,
     verifiedCandidates,
     candidateMarksMap,
+    candidateSessionsMap,
     doubleKeyMaps,
 };

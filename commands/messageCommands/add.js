@@ -1,7 +1,7 @@
 const path = require('path');
 const { formatPaperTime } = require(path.resolve(__dirname, '..', '..', 'utils', 'time.js'));
 
-const { candidatesMap, paperChannels, paperTimeMinsMap, paperRunningMap } = require(
+const { candidatesMap, paperChannels, paperTimeMinsMap, paperRunningMap, candidateSessionsMap, doubleKeyMaps, examinersMap } = require(
     path.resolve(__dirname, '..', '..', 'data', 'state.js'),
 );
 
@@ -27,6 +27,16 @@ async function handleAddCommand(message) {
     const sessionCandidates = candidatesMap.get(message.channel.id) ?? [];
     mentionedUsers.forEach((user) => {
         sessionCandidates.push(user);
+
+        const key = doubleKeyMaps(user.id, message.channel.id);
+        candidateSessionsMap.set(key, {
+            userId: user.id,
+            channelId: message.channel.id,
+            verified: false,
+            marks: null,
+            examinerId: examinersMap.get(message.channel.id)?.id || null,
+            guildId: message.guild.id,
+        });
     });
 
     const candidateNames = sessionCandidates.map((user) => user.toString()).join(' ');
