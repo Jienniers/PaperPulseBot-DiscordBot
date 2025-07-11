@@ -1,5 +1,5 @@
 const path = require('path');
-const { examinersMap, paperChannels, candidateMarksMap, doubleKeyMaps } = require(
+const { examinersMap, paperChannels, doubleKeyMaps, candidateSessionsMap } = require(
     path.resolve(__dirname, '..', '..', 'data', 'state.js'),
 );
 
@@ -12,6 +12,7 @@ async function handleAward(interaction) {
     const examiner = examinersMap.get(channelID);
 
     const key = doubleKeyMaps(userOption.id, channelID);
+    const candidateData = candidateSessionsMap.get(key);
 
     if (!paperChannels.includes(channelID)) {
         return await interaction.reply({
@@ -32,9 +33,15 @@ async function handleAward(interaction) {
         });
     }
 
-    candidateMarksMap.set(key, marksOption);
+    if (!candidateData) {
+        return await interaction.reply({
+            content: '❌ There were no users added in this session nor the paper was started.',
+        });
+    }
 
-    if (candidateMarksMap.get(key)) {
+    if (candidateData) {
+        candidateData.marks = marksOption
+
         await interaction.reply({
             content: `${userOption} has been awarded ${marksOption} marks.`,
         });
