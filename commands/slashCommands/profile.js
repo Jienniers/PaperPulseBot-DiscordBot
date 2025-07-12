@@ -6,9 +6,17 @@ const { candidateSessionsMap } = require(
 );
 
 async function handleProfile(interaction) {
-    const user = interaction.user;
-    const member = interaction.member;
+    let member;
+    const userOption = interaction.options.getUser('user');
+    const user = userOption ?? interaction.user;
     const userId = user.id;
+
+    try {
+        member = await interaction.guild.members.fetch(userId);
+    } catch (err) {
+        console.error('Failed to fetch member:', err);
+        member = null;
+    }
 
     const sessionStats = {
         totalSessions: countSessions(userId),
@@ -19,7 +27,7 @@ async function handleProfile(interaction) {
     };
 
     const embed = generateProfileEmbed(user, member, sessionStats);
-    
+
     await interaction.reply({
         embeds: [embed],
         // components: [buttonsRow],
