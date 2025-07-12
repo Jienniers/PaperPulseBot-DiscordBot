@@ -128,10 +128,44 @@ function generateProfileEmbed(user, member, sessionStats) {
 }
 
 
+function generateAllSessionsEmbed(sessions, user) {
+    const embed = new EmbedBuilder()
+        .setTitle(`📚 All Sessions: ${user.username}`)
+        .setThumbnail(user.displayAvatarURL({ dynamic: true }))
+        .setColor('#00BFFF')
+        .setFooter({ text: 'PaperPulse | All Sessions Overview' })
+        .setTimestamp();
+
+    if (!sessions.length) {
+        embed.setDescription('No sessions found for this candidate.');
+        return embed;
+    }
+
+    for (const session of sessions) {
+        const created = session.createdAt
+            ? `<t:${Math.floor(session.createdAt / 1000)}:R>`
+            : 'N/A';
+
+        embed.addFields({
+            name: `📝 Session in <#${session.channelId}>`,
+            value: [
+                `• **Marks:** ${session.marks ?? 'N/A'}`,
+                `• **Verified:** ${session.verified ? '✅ Yes' : '❌ No'}`,
+                `• **Examiner:** <@${session.examinerId}>`,
+                `• **Started:** ${created}`,
+            ].join('\n'),
+            inline: false,
+        });
+    }
+
+    return embed;
+}
+
 module.exports = {
     createPaperEmbed,
     sendExaminerSubmissionEmbed,
     getVerifiedEmbed,
     getAwardEmbed,
-    generateProfileEmbed
+    generateProfileEmbed,
+    generateAllSessionsEmbed,
 };

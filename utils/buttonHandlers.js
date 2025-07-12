@@ -8,6 +8,8 @@ const {
     candidateSessionsMap,
 } = require(path.resolve(__dirname, '..', 'data', 'state.js'));
 
+const { generateAllSessionsEmbed } = require(path.resolve(__dirname, 'embeds.js'));
+
 async function handleDoneButton(interaction, channelID) {
     if (interaction.user.id === examinersMap.get(channelID)?.id) return;
 
@@ -45,9 +47,20 @@ async function handleCloseButton(interaction, channelID) {
 }
 
 async function handleViewAllSessions(interaction, channelID) {
-    interaction.reply({
-        content: "Hellow viewing all stats"
-    })
+    const sessions = [];
+    const user = interaction.user
+
+    for (const [key, session] of candidateSessionsMap.entries()) {
+        const [candidateId, sessionId] = key.split('::');
+        console.log(`Candidate ID: ${candidateId}, Session ID: ${sessionId}`);
+        if (candidateId === user.id) {
+            sessions.push(session);
+        }
+    }
+
+    const embed = generateAllSessionsEmbed(sessions, user);
+    await interaction.reply({ embeds: [embed], ephemeral: true });
+
 }
 
 
