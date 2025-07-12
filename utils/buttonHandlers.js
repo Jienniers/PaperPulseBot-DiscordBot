@@ -44,12 +44,19 @@ async function handleCloseButton(interaction, channelID) {
     interaction.channel.delete();
 }
 
+async function handleViewAllSessions(interaction, channelID) {
+    interaction.reply({
+        content: "Hellow viewing all stats"
+    })
+}
+
 
 
 // 🔧 Maps button IDs to their corresponding handler functions
 const buttonHandlers = {
     done: handleDoneButton,
     close: handleCloseButton,
+    view_sessions: handleViewAllSessions,
     // Add more handlers as needed
 };
 
