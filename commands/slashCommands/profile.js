@@ -5,6 +5,8 @@ const { candidateSessionsMap } = require(
     path.resolve(__dirname, '..', '..', 'data', 'state.js'),
 );
 
+const { createProfileCommandButtons } = require(path.resolve(__dirname, '..', '..', 'utils', 'buttons.js'));
+
 async function handleProfile(interaction) {
     let member;
     const userOption = interaction.options.getUser('user');
@@ -28,9 +30,11 @@ async function handleProfile(interaction) {
 
     const embed = generateProfileEmbed(user, member, sessionStats);
 
+    const buttonsRow = createProfileCommandButtons()
+
     await interaction.reply({
         embeds: [embed],
-        // components: [buttonsRow],
+        components: [buttonsRow],
     });
 }
 

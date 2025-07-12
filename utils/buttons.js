@@ -11,4 +11,17 @@ function createPaperButtons() {
     );
 }
 
-module.exports = { createPaperButtons };
+function createProfileCommandButtons() {
+    const buttonsRow = new ActionRowBuilder().addComponents(
+        new ButtonBuilder()
+            .setCustomId('view_sessions')
+            .setLabel('📘 View All Sessions')
+            .setStyle(ButtonStyle.Primary),
+    );
+    return buttonsRow;
+}
+
+module.exports = {
+    createPaperButtons,
+    createProfileCommandButtons
+};
