@@ -140,6 +140,7 @@ node app.js
 │   │   └── add.js
 │   └── slashCommands/        # Slash (/) commands for Discord
 │       ├── award.js          # Awards marks from examiner to candidate
+│       ├── profile.js        # Slash command to display a candidate's profile summary
 │       ├── startpaper.js     # Starts an exam session
 │       ├── upload.js         # Handles paper upload
 │       └── verify.js         # Verifies candidate fairness and that they did not cheat
