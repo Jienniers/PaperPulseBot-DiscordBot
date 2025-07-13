@@ -23,5 +23,5 @@ function createProfileCommandButtons() {
 
 module.exports = {
     createPaperButtons,
-    createProfileCommandButtons
+    createProfileCommandButtons,
 };

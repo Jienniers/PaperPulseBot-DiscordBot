@@ -87,13 +87,8 @@ function getAwardEmbed({ candidate, examiner, marks, guildId, channelId }) {
 }
 
 function generateProfileEmbed(user, member, sessionStats) {
-    const {
-        totalSessions,
-        verifiedSessions,
-        averageMarks,
-        highestMarks,
-        recentSession,
-    } = sessionStats;
+    const { totalSessions, verifiedSessions, averageMarks, highestMarks, recentSession } =
+        sessionStats;
 
     const embed = new EmbedBuilder()
         .setTitle(`📄 Profile: ${user.username}`)
@@ -104,7 +99,11 @@ function generateProfileEmbed(user, member, sessionStats) {
             { name: '✅ Verified Sessions', value: `${verifiedSessions}`, inline: true },
             { name: '📊 Average Marks', value: `${averageMarks ?? 'N/A'}`, inline: true },
             { name: '🏅 Highest Marks', value: `${highestMarks ?? 'N/A'}`, inline: true },
-            { name: '📅 Joined Server', value: `<t:${Math.floor(member.joinedTimestamp / 1000)}:D>`, inline: true },
+            {
+                name: '📅 Joined Server',
+                value: `<t:${Math.floor(member.joinedTimestamp / 1000)}:D>`,
+                inline: true,
+            },
             { name: '🆔 User ID', value: `${user.id}`, inline: true },
             { name: '🔖 Tag', value: `${user.tag}`, inline: true },
         )
@@ -127,7 +126,6 @@ function generateProfileEmbed(user, member, sessionStats) {
     return embed;
 }
 
-
 function generateAllSessionsEmbed(sessions, user) {
     const embed = new EmbedBuilder()
         .setTitle(`📚 All Sessions: ${user.username}`)
@@ -142,9 +140,7 @@ function generateAllSessionsEmbed(sessions, user) {
     }
 
     for (const session of sessions) {
-        const created = session.createdAt
-            ? `<t:${Math.floor(session.createdAt / 1000)}:R>`
-            : 'N/A';
+        const created = session.createdAt ? `<t:${Math.floor(session.createdAt / 1000)}:R>` : 'N/A';
 
         embed.addFields({
             name: `📝 Session in <#${session.channelId}>`,

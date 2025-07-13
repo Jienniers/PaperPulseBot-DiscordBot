@@ -1,11 +1,11 @@
 const path = require('path');
 const { generateProfileEmbed } = require(path.resolve(__dirname, '..', '..', 'utils', 'embeds.js'));
 
-const { candidateSessionsMap } = require(
-    path.resolve(__dirname, '..', '..', 'data', 'state.js'),
-);
+const { candidateSessionsMap } = require(path.resolve(__dirname, '..', '..', 'data', 'state.js'));
 
-const { createProfileCommandButtons } = require(path.resolve(__dirname, '..', '..', 'utils', 'buttons.js'));
+const { createProfileCommandButtons } = require(
+    path.resolve(__dirname, '..', '..', 'utils', 'buttons.js'),
+);
 
 async function handleProfile(interaction) {
     let member;
@@ -25,12 +25,12 @@ async function handleProfile(interaction) {
         verifiedSessions: countVerifiedSessions(userId),
         averageMarks: calculateAveragePercentage(userId),
         highestMarks: getHighestMarks(userId),
-        recentSession: getMostRecentSession(userId)
+        recentSession: getMostRecentSession(userId),
     };
 
     const embed = generateProfileEmbed(user, member, sessionStats);
 
-    const buttonsRow = createProfileCommandButtons()
+    const buttonsRow = createProfileCommandButtons();
 
     await interaction.reply({
         embeds: [embed],
@@ -112,8 +112,6 @@ function getMostRecentSession(userId) {
     return mostRecentSession;
 }
 
-
-
 module.exports = {
-    handleProfile
-}
+    handleProfile,
+};

@@ -48,7 +48,7 @@ async function handleCloseButton(interaction, channelID) {
 
 async function handleViewAllSessions(interaction, channelID) {
     const sessions = [];
-    const user = interaction.user
+    const user = interaction.user;
 
     for (const [key, session] of candidateSessionsMap.entries()) {
         const [candidateId, sessionId] = key.split('::');
@@ -59,9 +59,7 @@ async function handleViewAllSessions(interaction, channelID) {
 
     const embed = generateAllSessionsEmbed(sessions, user);
     await interaction.reply({ embeds: [embed], flags: 64 });
-
 }
-
 
 // 🔧 Maps button IDs to their corresponding handler functions
 const buttonHandlers = {
