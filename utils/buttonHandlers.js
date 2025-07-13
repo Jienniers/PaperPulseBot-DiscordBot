@@ -59,10 +59,9 @@ async function handleViewAllSessions(interaction, channelID) {
     }
 
     const embed = generateAllSessionsEmbed(sessions, user);
-    await interaction.reply({ embeds: [embed], ephemeral: true });
+    await interaction.reply({ embeds: [embed], flags: 64 });
 
 }
-
 
 
 // 🔧 Maps button IDs to their corresponding handler functions
