@@ -46,12 +46,12 @@ async function handleCloseButton(interaction, channelID) {
     interaction.channel.delete();
 }
 
-async function handleViewAllSessions(interaction, channelID) {
+async function handleViewAllSessions(interaction, _channelID) {
     const sessions = [];
     const user = interaction.user;
 
     for (const [key, session] of candidateSessionsMap.entries()) {
-        const [candidateId, sessionId] = key.split('::');
+        const [candidateId, _sessionId] = key.split('::');
         if (candidateId === user.id) {
             sessions.push(session);
         }
