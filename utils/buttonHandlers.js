@@ -46,11 +46,13 @@ async function handleCloseButton(interaction, channelID) {
     interaction.channel.delete();
 }
 
-async function handleViewAllSessions(interaction, _channelID) {
+// eslint-disable-next-line no-unused-vars
+async function handleViewAllSessions(interaction, channelID) {
     const sessions = [];
     const user = interaction.user;
 
     for (const [key, session] of candidateSessionsMap.entries()) {
+        // eslint-disable-next-line no-unused-vars
         const [candidateId, _sessionId] = key.split('::');
         if (candidateId === user.id) {
             sessions.push(session);
