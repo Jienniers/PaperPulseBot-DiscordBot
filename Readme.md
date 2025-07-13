@@ -31,9 +31,7 @@ A **Discord bot** designed to simulate a virtual exam system. Built with **Node.
 
 ### ⏳ In Progress / Planned
 
-- Candidate and examiner profiles
 - leaderboard command
-- Stats command for candidates
 
 > 🔄 Features evolve as per development and testing feedback.
 
