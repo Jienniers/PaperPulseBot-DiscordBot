@@ -52,7 +52,6 @@ async function handleViewAllSessions(interaction, channelID) {
 
     for (const [key, session] of candidateSessionsMap.entries()) {
         const [candidateId, sessionId] = key.split('::');
-        console.log(`Candidate ID: ${candidateId}, Session ID: ${sessionId}`);
         if (candidateId === user.id) {
             sessions.push(session);
         }
