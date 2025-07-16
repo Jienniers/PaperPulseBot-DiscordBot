@@ -20,7 +20,7 @@ async function handleVerify(interaction) {
 
     if (!candidateData) {
         return await interaction.reply({
-            content: '❌ There were no users added in this session nor the paper was started.',
+            content: '❌ This user was not added as a candidate, or the paper session hasn’t started yet.',
         });
     }
 
