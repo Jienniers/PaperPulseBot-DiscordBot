@@ -28,17 +28,29 @@ async function handleAddCommand(message) {
     const sessionCandidates = candidatesMap.get(message.channel.id) ?? [];
     const examinerId = examinersMap.get(message.channel.id).id;
 
+    let validUsersAdded = false;
+    let skipped = false;
+
     for (const user of mentionedUsers.values()) {
-        if (user.id === examinerId) {
-            await message.reply(
-                '❌ You cannot add examiners.',
-            );
-            return;
+        if (user.bot || user.id === examinerId) {
+            skipped = true;
+            continue;
         }
 
         sessionCandidates.push(user);
         createCandidateSessionEntry(user, message, false, null);
+        validUsersAdded = true;
     }
+
+    if (!validUsersAdded) {
+        await message.reply('❌ No valid users to add. All mentioned users were either bots or the examiner.');
+        return;
+    }
+
+    if (skipped) {
+        await message.reply('⚠️ Some mentioned users were skipped because they were either bots or the examiner.');
+    }
+
 
     const candidateNames = sessionCandidates.map((user) => user.toString()).join(' ');
 

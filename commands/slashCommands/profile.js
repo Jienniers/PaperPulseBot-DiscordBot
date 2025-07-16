@@ -13,6 +13,13 @@ async function handleProfile(interaction) {
     const user = userOption ?? interaction.user;
     const userId = user.id;
 
+
+    if (userOption.bot) {
+        return await interaction.reply({
+            content: '❌ You cannot view the profile of a bot.',
+        });
+    }
+
     try {
         member = await interaction.guild.members.fetch(userId);
     } catch (err) {

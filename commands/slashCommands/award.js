@@ -21,6 +21,12 @@ async function handleAward(interaction) {
         });
     }
 
+    if (userOption.bot) {
+        return await interaction.reply({
+            content: '❌ You cannot award marks to a bot.',
+        });
+    }
+
     if (!candidateData) {
         return await interaction.reply({
             content: '❌ There were no users added in this session nor the paper was started.',

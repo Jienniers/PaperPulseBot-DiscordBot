@@ -23,6 +23,12 @@ async function handleStartPaper(interaction) {
     const paperTime = interaction.options.getInteger('time');
     const config = getConfig();
 
+    if (examiner.bot) {
+        return await interaction.reply({
+            content: '❌ You cannot make examiner a bot.',
+        });
+    }
+
     await interaction.deferReply({ flags: 64 });
 
     const channelName = `${paperCode.split('/')[0]} by ${examiner.username}`;

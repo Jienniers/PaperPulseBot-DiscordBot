@@ -18,6 +18,12 @@ async function handleVerify(interaction) {
         });
     }
 
+    if (userOption.bot) {
+        return await interaction.reply({
+            content: '❌ You cannot verify a bot.',
+        });
+    }
+
     if (!candidateData) {
         return await interaction.reply({
             content: '❌ This user was not added as a candidate, or the paper session hasn’t started yet.',
