@@ -20,6 +20,13 @@ async function handleAward(interaction) {
             flags: 64,
         });
     }
+
+    if (!candidateData) {
+        return await interaction.reply({
+            content: '❌ There were no users added in this session nor the paper was started.',
+        });
+    }
+
     if (interaction.user.id !== examinersMap.get(channelID)?.id) {
         return await interaction.reply({
             content: '❌ You are not authorized to award marks to candidates.',
@@ -30,12 +37,6 @@ async function handleAward(interaction) {
     if (examinersMap.get(channelID)?.id === userOption.id) {
         return await interaction.reply({
             content: '❌ You cannot award marks to an examiner.',
-        });
-    }
-
-    if (!candidateData) {
-        return await interaction.reply({
-            content: '❌ There were no users added in this session nor the paper was started.',
         });
     }
 
