@@ -1,7 +1,7 @@
 const path = require('path');
 const { formatPaperTime } = require(path.resolve(__dirname, '..', '..', 'utils', 'time.js'));
 
-const { paperChannels, paperTimeMinsMap, paperRunningMap, createCandidateSessionEntry } = require(
+const { paperChannels, paperTimeMinsMap, paperRunningMap, createCandidateSessionEntry, examinersMap } = require(
     path.resolve(__dirname, '..', '..', 'data', 'state.js'),
 );
 
@@ -26,11 +26,19 @@ async function handleAddCommand(message) {
         return;
     }
     const sessionCandidates = candidatesMap.get(message.channel.id) ?? [];
-    mentionedUsers.forEach((user) => {
-        sessionCandidates.push(user);
+    const examinerId = examinersMap.get(message.channel.id).id;
 
+    for (const user of mentionedUsers.values()) {
+        if (user.id === examinerId) {
+            await message.reply(
+                '❌ You cannot add examiners.',
+            );
+            return;
+        }
+
+        sessionCandidates.push(user);
         createCandidateSessionEntry(user, message, false, null);
-    });
+    }
 
     const candidateNames = sessionCandidates.map((user) => user.toString()).join(' ');
 
