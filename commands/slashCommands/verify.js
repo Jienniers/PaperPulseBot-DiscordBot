@@ -18,6 +18,12 @@ async function handleVerify(interaction) {
         });
     }
 
+    if (!candidateData) {
+        return await interaction.reply({
+            content: '❌ There were no users added in this session nor the paper was started.',
+        });
+    }
+
     if (interaction.user.id !== examinersMap.get(channelID)?.id) {
         return await interaction.reply({
             content: '❌ You are not authorized to verify candidates in this paper session.',
@@ -34,12 +40,6 @@ async function handleVerify(interaction) {
     if (candidateData.verified) {
         return await interaction.reply({
             content: '❌ This candidate is already verified for this session.',
-        });
-    }
-
-    if (!candidateData) {
-        return await interaction.reply({
-            content: '❌ There were no users added in this session nor the paper was started.',
         });
     }
 
