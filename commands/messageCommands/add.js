@@ -8,12 +8,17 @@ const { paperChannels, paperTimeMinsMap, paperRunningMap, createCandidateSession
 // Handles the !add command: adds mentioned users as candidates for the current paper session
 async function handleAddCommand(message) {
     if (!message.content.startsWith('!add')) return;
-    if (!paperChannels.includes(message.channel.id)) return;
 
-    const paperTimeMins = paperTimeMinsMap.get(message.channel.id);
+    const channelId = message.channel.id
+
+    if (!paperChannels.includes(channelId)) return;
+
+    const paperTimeMins = paperTimeMinsMap.get(channelId);
+    const examinerId = examinersMap.get(channelId).id;
+
     const candidatesMap = new Map();
 
-    if (paperRunningMap.has(message.channel.id)) {
+    if (paperRunningMap.has(channelId)) {
         await message.reply(
             '✅ The paper session in this channel is already complete or is running. No more users can be added.',
         );
@@ -25,8 +30,7 @@ async function handleAddCommand(message) {
         message.reply('❌ No users mentioned.');
         return;
     }
-    const sessionCandidates = candidatesMap.get(message.channel.id) ?? [];
-    const examinerId = examinersMap.get(message.channel.id).id;
+    const sessionCandidates = candidatesMap.get(channelId) ?? [];
 
     let validUsersAdded = false;
     let skipped = false;
@@ -51,12 +55,11 @@ async function handleAddCommand(message) {
         await message.reply('⚠️ Some mentioned users were skipped because they were either bots or the examiner.');
     }
 
-
     const candidateNames = sessionCandidates.map((user) => user.toString()).join(' ');
 
     message.channel.send(`📝 Following candidates have been added: ${candidateNames}`);
 
-    paperRunningMap.set(message.channel.id, true);
+    paperRunningMap.set(channelId, true);
 
     await startPaperTimer(message.channel, paperTimeMins);
 }
