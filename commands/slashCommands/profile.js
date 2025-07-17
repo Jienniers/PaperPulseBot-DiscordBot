@@ -13,17 +13,20 @@ async function handleProfile(interaction) {
     const user = userOption ?? interaction.user;
     const userId = user.id;
 
+    await interaction.deferReply({ flags: 64 });
 
-    if (userOption.bot) {
+    if (userOption && userOption.bot) {
         return await interaction.reply({
             content: '❌ You cannot view the profile of a bot.',
+            flags: 64,
         });
     }
+
 
     try {
         member = await interaction.guild.members.fetch(userId);
     } catch (err) {
-        console.error('Failed to fetch member:', err);
+        console.error('❗ Failed to fetch member for profile:', err);
         member = null;
     }
 
@@ -39,7 +42,7 @@ async function handleProfile(interaction) {
 
     const buttonsRow = createProfileCommandButtons();
 
-    await interaction.reply({
+    await interaction.editReply({
         embeds: [embed],
         components: [buttonsRow],
     });
