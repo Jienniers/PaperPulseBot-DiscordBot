@@ -18,6 +18,13 @@ async function handleUpload(interaction) {
 
     const attachment = interaction.options.getAttachment('file');
 
+    if (!attachment) {
+        return interaction.editReply({
+            content: '❌ No file was uploaded. Please attach a PDF file.',
+            flags: 64,
+        });
+    }
+
     // Strict and safe PDF check
     const isPDF =
         attachment?.contentType?.toLowerCase() === 'application/pdf' ||
@@ -36,19 +43,24 @@ async function handleUpload(interaction) {
     });
 
     const examiner = examinersMap.get(channelId);
+
     if (examiner) {
-        await examiner.send({
-            content: '📩 A new paper submission has been received.',
-            embeds: [
-                sendExaminerSubmissionEmbed(
-                    channelId,
-                    interaction.user,
-                    attachment,
-                    interaction.guild,
-                ),
-            ],
-            files: [attachment],
-        });
+        try {
+            await examiner.send({
+                content: '📩 A new paper submission has been received.',
+                embeds: [
+                    sendExaminerSubmissionEmbed(
+                        channelId,
+                        interaction.user,
+                        attachment,
+                        interaction.guild,
+                    ),
+                ],
+                files: [attachment],
+            });
+        } catch (err) {
+            console.warn(`❗ Failed to send DM to examiner ${examiner.id}:`, err.message);
+        }
     }
 }
 
