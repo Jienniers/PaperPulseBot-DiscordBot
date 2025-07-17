@@ -27,7 +27,7 @@ async function handleAddCommand(message) {
 
     const mentionedUsers = message.mentions.users;
     if (mentionedUsers.size === 0) {
-        message.reply('❌ No users mentioned.');
+        await message.reply('❌ No users mentioned.');
         return;
     }
     const sessionCandidates = candidatesMap.get(channelId) ?? [];
