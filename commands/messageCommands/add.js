@@ -16,8 +16,6 @@ async function handleAddCommand(message) {
     const paperTimeMins = paperTimeMinsMap.get(channelId);
     const examinerId = examinersMap.get(channelId).id;
 
-    const candidatesMap = new Map();
-
     if (paperRunningMap.has(channelId)) {
         await message.reply(
             '✅ The paper session in this channel is already complete or is running. No more users can be added.',
@@ -30,7 +28,7 @@ async function handleAddCommand(message) {
         await message.reply('❌ No users mentioned.');
         return;
     }
-    const sessionCandidates = candidatesMap.get(channelId) ?? [];
+    const sessionCandidates = [];
 
     let validUsersAdded = false;
     let skipped = false;
