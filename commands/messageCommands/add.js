@@ -55,12 +55,16 @@ async function handleAddCommand(message) {
     }
 
     if (sessionCandidates.length === 0) {
-        await message.reply('❌ No valid users to add. All mentioned users were either bots or the examiner.');
+        await message.reply(
+            '❌ No valid users to add. All mentioned users were either bots or the examiner.',
+        );
         return;
     }
 
     if (skipped) {
-        await message.reply('⚠️ Some mentioned users were skipped because they were either bots or the examiner.');
+        await message.reply(
+            '⚠️ Some mentioned users were skipped because they were either bots or the examiner.',
+        );
     }
 
     const candidateMentions = sessionCandidates.map((user) => user.toString()).join(' ');
@@ -84,7 +88,9 @@ async function startPaperTimer(channel, paperMinutes) {
         remaining -= 1;
 
         if (warningThresholds.has(remaining)) {
-            await channel.send(`⚠️ **${remaining} minute${remaining === 1 ? '' : 's'} remaining!** Keep working.`);
+            await channel.send(
+                `⚠️ **${remaining} minute${remaining === 1 ? '' : 's'} remaining!** Keep working.`,
+            );
         }
 
         if (remaining <= 0) {
@@ -102,7 +108,6 @@ async function startPaperTimer(channel, paperMinutes) {
         );
     }, 60_000);
 }
-
 
 module.exports = {
     handleAddCommand,

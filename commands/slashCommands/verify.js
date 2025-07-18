@@ -1,10 +1,7 @@
 const path = require('path');
-const {
-    examinersMap,
-    paperChannels,
-    doubleKeyMaps,
-    candidateSessionsMap,
-} = require(path.resolve(__dirname, '..', '..', 'data', 'state.js'));
+const { examinersMap, paperChannels, doubleKeyMaps, candidateSessionsMap } = require(
+    path.resolve(__dirname, '..', '..', 'data', 'state.js'),
+);
 
 const { getVerifiedEmbed } = require(path.resolve(__dirname, '..', '..', 'utils', 'embeds.js'));
 
@@ -58,7 +55,8 @@ async function handleVerify(interaction) {
 
     if (!candidateData) {
         return interaction.reply({
-            content: '❌ This user was not added as a candidate, or the paper session hasn’t started yet.',
+            content:
+                '❌ This user was not added as a candidate, or the paper session hasn’t started yet.',
             flags: 64,
         });
     }

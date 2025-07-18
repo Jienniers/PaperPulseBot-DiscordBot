@@ -1,12 +1,8 @@
 const path = require('path');
-const { generateProfileEmbed } = require(
-    path.resolve(__dirname, '..', '..', 'utils', 'embeds.js')
-);
-const { candidateSessionsMap } = require(
-    path.resolve(__dirname, '..', '..', 'data', 'state.js')
-);
+const { generateProfileEmbed } = require(path.resolve(__dirname, '..', '..', 'utils', 'embeds.js'));
+const { candidateSessionsMap } = require(path.resolve(__dirname, '..', '..', 'data', 'state.js'));
 const { createProfileCommandButtons } = require(
-    path.resolve(__dirname, '..', '..', 'utils', 'buttons.js')
+    path.resolve(__dirname, '..', '..', 'utils', 'buttons.js'),
 );
 
 async function handleProfile(interaction) {
@@ -124,9 +120,7 @@ function parseMarkPair(markStr) {
     const [scoredStr, totalStr] = markStr.split('/');
     const scored = parseFloat(scoredStr);
     const total = parseFloat(totalStr);
-    return (!isNaN(scored) && !isNaN(total) && total > 0)
-        ? { scored, total }
-        : null;
+    return !isNaN(scored) && !isNaN(total) && total > 0 ? { scored, total } : null;
 }
 
 module.exports = {

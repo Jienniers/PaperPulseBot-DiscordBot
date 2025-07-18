@@ -20,7 +20,7 @@ async function handleStartPaper(interaction) {
         });
     }
 
-    const paperCode = interaction.options.getString('paper')?.trim();;
+    const paperCode = interaction.options.getString('paper')?.trim();
     const examiner = interaction.options.getUser('examiner');
     const paperTime = interaction.options.getInteger('time');
     const config = getConfig();
