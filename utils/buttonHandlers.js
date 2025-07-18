@@ -43,7 +43,15 @@ async function handleCloseButton(interaction, channelID) {
         }
     }
 
-    interaction.channel.delete();
+    try {
+        await interaction.channel.delete();
+    } catch (err) {
+        console.error('Failed to delete channel:', err);
+        await interaction.reply({
+            content: '❌ Failed to delete the channel. Please check bot permissions.',
+            flags: 64,
+        });
+    }
 }
 
 // eslint-disable-next-line no-unused-vars

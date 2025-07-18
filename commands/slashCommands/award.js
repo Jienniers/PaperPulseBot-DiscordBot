@@ -2,7 +2,6 @@ const path = require('path');
 const { examinersMap, paperChannels, doubleKeyMaps, candidateSessionsMap } = require(
     path.resolve(__dirname, '..', '..', 'data', 'state.js'),
 );
-
 const { getAwardEmbed } = require(path.resolve(__dirname, '..', '..', 'utils', 'embeds.js'));
 
 async function handleAward(interaction) {
@@ -11,27 +10,41 @@ async function handleAward(interaction) {
     const marksOption = interaction.options.getString('marks');
     const examiner = examinersMap.get(channelID);
 
-    const key = doubleKeyMaps(userOption.id, channelID);
-    const candidateData = candidateSessionsMap.get(key);
-
     if (!paperChannels.includes(channelID)) {
         return await interaction.reply({
             content: '❌ You cannot use this command here.',
             flags: 64,
         });
     }
-    if (interaction.user.id !== examinersMap.get(channelID)?.id) {
+
+    if (userOption.bot) {
+        return await interaction.reply({
+            content: '❌ You cannot award marks to a bot.',
+        });
+    }
+
+    if (interaction.user.id !== examiner?.id) {
         return await interaction.reply({
             content: '❌ You are not authorized to award marks to candidates.',
             flags: 64,
         });
     }
 
-    if (examinersMap.get(channelID)?.id === userOption.id) {
+    if (examiner?.id === userOption.id) {
         return await interaction.reply({
             content: '❌ You cannot award marks to an examiner.',
         });
     }
+
+    if (!/^\d{1,3}\/\d{1,3}$/.test(marksOption)) {
+        return await interaction.reply({
+            content: '❌ Please provide marks in the format `score/total`, like `70/100`.',
+            flags: 64,
+        });
+    }
+
+    const key = doubleKeyMaps(userOption.id, channelID);
+    const candidateData = candidateSessionsMap.get(key);
 
     if (!candidateData) {
         return await interaction.reply({
@@ -39,13 +52,11 @@ async function handleAward(interaction) {
         });
     }
 
-    if (candidateData) {
-        candidateData.marks = marksOption;
+    candidateData.marks = marksOption;
 
-        await interaction.reply({
-            content: `${userOption} has been awarded ${marksOption} marks.`,
-        });
-    }
+    await interaction.reply({
+        content: `${userOption} has been awarded ${marksOption} marks.`,
+    });
 
     const embed = getAwardEmbed({
         candidate: userOption,
@@ -55,7 +66,11 @@ async function handleAward(interaction) {
         channelId: channelID,
     });
 
-    await userOption.send({ embeds: [embed] });
+    try {
+        await userOption.send({ embeds: [embed] });
+    } catch (err) {
+        console.warn(`❗ Failed to send DM to user ${userOption.id}:`, err.message);
+    }
 }
 
 module.exports = {

@@ -2,61 +2,94 @@ const path = require('path');
 const { examinersMap, paperChannels, doubleKeyMaps, candidateSessionsMap } = require(
     path.resolve(__dirname, '..', '..', 'data', 'state.js'),
 );
+
 const { getVerifiedEmbed } = require(path.resolve(__dirname, '..', '..', 'utils', 'embeds.js'));
 
 async function handleVerify(interaction) {
-    const channelID = interaction.channel.id;
+    const channel = interaction.channel;
+    const guild = interaction.guild;
+    const examiner = interaction.user;
+    const channelId = channel.id;
     const userOption = interaction.options.getUser('user');
 
-    const key = doubleKeyMaps(userOption.id, channelID);
-    const candidateData = candidateSessionsMap.get(key);
-
-    if (!paperChannels.includes(channelID)) {
-        return await interaction.reply({
+    if (!paperChannels.includes(channelId)) {
+        return interaction.reply({
             content: '❌ You cannot use this command here.',
             flags: 64,
         });
     }
 
-    if (interaction.user.id !== examinersMap.get(channelID)?.id) {
-        return await interaction.reply({
+    if (!userOption) {
+        return interaction.reply({
+            content: '❌ No user was mentioned for verification.',
+            flags: 64,
+        });
+    }
+
+    if (userOption.bot) {
+        return interaction.reply({
+            content: '❌ You cannot verify a bot.',
+            flags: 64,
+        });
+    }
+
+    const assignedExaminer = examinersMap.get(channelId);
+    const userId = userOption.id;
+
+    if (!assignedExaminer || assignedExaminer.id !== examiner.id) {
+        return interaction.reply({
             content: '❌ You are not authorized to verify candidates in this paper session.',
             flags: 64,
         });
     }
 
-    if (examinersMap.get(channelID)?.id === userOption.id) {
-        return await interaction.reply({
-            content: '❌ You cannot verify an examiner.',
+    if (userId === examiner.id) {
+        return interaction.reply({
+            content: '❌ You cannot verify yourself.',
+            flags: 64,
+        });
+    }
+
+    const key = doubleKeyMaps(userId, channelId);
+    const candidateData = candidateSessionsMap.get(key);
+
+    if (!candidateData) {
+        return interaction.reply({
+            content:
+                '❌ This user was not added as a candidate, or the paper session hasn’t started yet.',
+            flags: 64,
         });
     }
 
     if (candidateData.verified) {
-        return await interaction.reply({
+        return interaction.reply({
             content: '❌ This candidate is already verified for this session.',
+            flags: 64,
         });
     }
 
-    if (!candidateData) {
-        return await interaction.reply({
-            content: '❌ There were no users added in this session nor the paper was started.',
-        });
-    }
+    candidateData.verified = true;
 
-    if (candidateData) {
-        candidateData.verified = true;
+    await interaction.reply({
+        content: `✅ ${userOption} has been verified. No cheating or unfairness was detected.`,
+        flags: 64,
+    });
 
-        await interaction.reply({
-            content: `${userOption} has been verified. No cheating or unfairness was detected.`,
-        });
+    const embed = getVerifiedEmbed({
+        examiner: examiner,
+        channel: channel,
+        guild: guild,
+    });
 
-        const embed = getVerifiedEmbed({
-            examiner: interaction.user,
-            channel: interaction.channel,
-            guild: interaction.guild,
-        });
-
+    try {
         await userOption.send({ embeds: [embed] });
+    } catch (err) {
+        console.warn(`❗ Could not DM candidate ${userId}: ${err.message}`);
+
+        await interaction.followUp({
+            content: '⚠️ Candidate could not be notified via DM (possibly disabled).',
+            ephemeral: true,
+        });
     }
 }
 

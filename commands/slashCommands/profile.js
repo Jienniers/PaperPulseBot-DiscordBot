@@ -1,22 +1,28 @@
 const path = require('path');
 const { generateProfileEmbed } = require(path.resolve(__dirname, '..', '..', 'utils', 'embeds.js'));
-
 const { candidateSessionsMap } = require(path.resolve(__dirname, '..', '..', 'data', 'state.js'));
-
 const { createProfileCommandButtons } = require(
     path.resolve(__dirname, '..', '..', 'utils', 'buttons.js'),
 );
 
 async function handleProfile(interaction) {
-    let member;
     const userOption = interaction.options.getUser('user');
     const user = userOption ?? interaction.user;
     const userId = user.id;
 
+    await interaction.deferReply({ flags: 64 });
+
+    if (userOption && userOption.bot) {
+        return await interaction.editReply({
+            content: '❌ You cannot view the profile of a bot.',
+        });
+    }
+
+    let member;
     try {
         member = await interaction.guild.members.fetch(userId);
     } catch (err) {
-        console.error('Failed to fetch member:', err);
+        console.error('❗ Failed to fetch member for profile:', err);
         member = null;
     }
 
@@ -29,25 +35,18 @@ async function handleProfile(interaction) {
     };
 
     const embed = generateProfileEmbed(user, member, sessionStats);
+    if (!embed) {
+        return await interaction.editReply({
+            content: '❌ Could not generate profile embed.',
+        });
+    }
 
     const buttonsRow = createProfileCommandButtons();
 
-    await interaction.reply({
+    await interaction.editReply({
         embeds: [embed],
         components: [buttonsRow],
     });
-}
-
-function countVerifiedSessions(userId) {
-    let verifiedCount = 0;
-
-    for (const [key, session] of candidateSessionsMap.entries()) {
-        if (key.startsWith(`${userId}::`) && session.verified) {
-            verifiedCount++;
-        }
-    }
-
-    return verifiedCount;
 }
 
 function countSessions(userId) {
@@ -60,19 +59,26 @@ function countSessions(userId) {
     return sessionCount;
 }
 
+function countVerifiedSessions(userId) {
+    let verifiedCount = 0;
+    for (const [key, session] of candidateSessionsMap.entries()) {
+        if (key.startsWith(`${userId}::`) && session.verified) {
+            verifiedCount++;
+        }
+    }
+    return verifiedCount;
+}
+
 function calculateAveragePercentage(userId) {
     let totalEarned = 0;
     let totalMax = 0;
 
     for (const [key, session] of candidateSessionsMap.entries()) {
         if (key.startsWith(`${userId}::`) && typeof session.marks === 'string') {
-            const [earnedStr, maxStr] = session.marks.split('/');
-            const earned = parseFloat(earnedStr);
-            const max = parseFloat(maxStr);
-
-            if (!isNaN(earned) && !isNaN(max) && max > 0) {
-                totalEarned += earned;
-                totalMax += max;
+            const parsed = parseMarkPair(session.marks);
+            if (parsed) {
+                totalEarned += parsed.scored;
+                totalMax += parsed.total;
             }
         }
     }
@@ -84,17 +90,14 @@ function calculateAveragePercentage(userId) {
 
 function getHighestMarks(userId) {
     let highest = 0;
-
     for (const [key, session] of candidateSessionsMap.entries()) {
-        if (key.startsWith(`${userId}::`) && session.marks) {
-            const [scoredStr] = session.marks.split('/');
-            const scored = parseFloat(scoredStr);
-            if (!isNaN(scored) && scored > highest) {
-                highest = scored;
+        if (key.startsWith(`${userId}::`) && typeof session.marks === 'string') {
+            const parsed = parseMarkPair(session.marks);
+            if (parsed && parsed.scored > highest) {
+                highest = parsed.scored;
             }
         }
     }
-
     return highest;
 }
 
@@ -110,6 +113,14 @@ function getMostRecentSession(userId) {
     }
 
     return mostRecentSession;
+}
+
+function parseMarkPair(markStr) {
+    if (typeof markStr !== 'string' || !markStr.includes('/')) return null;
+    const [scoredStr, totalStr] = markStr.split('/');
+    const scored = parseFloat(scoredStr);
+    const total = parseFloat(totalStr);
+    return !isNaN(scored) && !isNaN(total) && total > 0 ? { scored, total } : null;
 }
 
 module.exports = {
