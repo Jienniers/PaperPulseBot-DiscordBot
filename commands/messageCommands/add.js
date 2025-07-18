@@ -1,20 +1,31 @@
 const path = require('path');
 const { formatPaperTime } = require(path.resolve(__dirname, '..', '..', 'utils', 'time.js'));
 
-const { paperChannels, paperTimeMinsMap, paperRunningMap, createCandidateSessionEntry, examinersMap } = require(
-    path.resolve(__dirname, '..', '..', 'data', 'state.js'),
-);
+const {
+    paperChannels,
+    paperTimeMinsMap,
+    paperRunningMap,
+    createCandidateSessionEntry,
+    examinersMap,
+} = require(path.resolve(__dirname, '..', '..', 'data', 'state.js'));
 
 // Handles the !add command: adds mentioned users as candidates for the current paper session
 async function handleAddCommand(message) {
     if (!message.content.startsWith('!add')) return;
 
-    const channelId = message.channel.id
+    const channel = message.channel;
+    const channelId = channel.id;
 
     if (!paperChannels.includes(channelId)) return;
 
     const paperTimeMins = paperTimeMinsMap.get(channelId);
-    const examinerId = examinersMap.get(channelId).id;
+    const examinerEntry = examinersMap.get(channelId);
+    const examinerId = examinerEntry?.id;
+
+    if (!examinerId) {
+        await message.reply('❌ Examiner not found for this session.');
+        return;
+    }
 
     if (paperRunningMap.has(channelId)) {
         await message.reply(
@@ -24,13 +35,13 @@ async function handleAddCommand(message) {
     }
 
     const mentionedUsers = message.mentions.users;
+
     if (mentionedUsers.size === 0) {
         await message.reply('❌ No users mentioned.');
         return;
     }
-    const sessionCandidates = [];
 
-    let validUsersAdded = false;
+    const sessionCandidates = [];
     let skipped = false;
 
     for (const user of mentionedUsers.values()) {
@@ -41,10 +52,9 @@ async function handleAddCommand(message) {
 
         sessionCandidates.push(user);
         createCandidateSessionEntry(user, message, false, null);
-        validUsersAdded = true;
     }
 
-    if (!validUsersAdded) {
+    if (sessionCandidates.length === 0) {
         await message.reply('❌ No valid users to add. All mentioned users were either bots or the examiner.');
         return;
     }
@@ -53,13 +63,11 @@ async function handleAddCommand(message) {
         await message.reply('⚠️ Some mentioned users were skipped because they were either bots or the examiner.');
     }
 
-    const candidateNames = sessionCandidates.map((user) => user.toString()).join(' ');
-
-    message.channel.send(`📝 Following candidates have been added: ${candidateNames}`);
+    const candidateMentions = sessionCandidates.map((user) => user.toString()).join(' ');
+    await channel.send(`📝 Following candidates have been added: ${candidateMentions}`);
 
     paperRunningMap.set(channelId, true);
-
-    await startPaperTimer(message.channel, paperTimeMins);
+    await startPaperTimer(channel, paperTimeMins);
 }
 
 async function startPaperTimer(channel, paperMinutes) {
@@ -77,7 +85,6 @@ async function startPaperTimer(channel, paperMinutes) {
             clearInterval(interval);
 
             await timerMsg.edit(`⏰ **Time's up!** Please stop writing and put your pen down.`);
-
             await channel.send(`⏰ **Time's up!** Please stop writing and put your pen down.`);
 
             paperRunningMap.set(channel.id, false);
