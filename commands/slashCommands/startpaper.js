@@ -32,6 +32,13 @@ async function handleStartPaper(interaction) {
         });
     }
 
+    if (!/^\d{1,3}\/\d{1,3}$/.test(paperCode)) {
+        return await interaction.reply({
+            content: '❌ Please provide paper code in the format `code/variant`, like `0580/12`.',
+            flags: 64,
+        });
+    }
+
     if (examiner.bot) {
         return interaction.reply({
             content: '❌ You cannot make examiner a bot.',
