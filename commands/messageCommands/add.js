@@ -78,8 +78,14 @@ async function startPaperTimer(channel, paperMinutes) {
         `📝 Candidates, please begin your paper.\n⏱️ Time remaining: **${formatPaperTime(remaining)}**`,
     );
 
+    const warningThresholds = new Set([5, 1]);
+
     const interval = setInterval(async () => {
         remaining -= 1;
+
+        if (warningThresholds.has(remaining)) {
+            await channel.send(`⚠️ **${remaining} minute${remaining === 1 ? '' : 's'} remaining!** Keep working.`);
+        }
 
         if (remaining <= 0) {
             clearInterval(interval);
@@ -96,6 +102,7 @@ async function startPaperTimer(channel, paperMinutes) {
         );
     }, 60_000);
 }
+
 
 module.exports = {
     handleAddCommand,
