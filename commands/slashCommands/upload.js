@@ -21,7 +21,6 @@ async function handleUpload(interaction) {
     if (!attachment) {
         return interaction.editReply({
             content: '❌ No file was uploaded. Please attach a PDF file.',
-            flags: 64,
         });
     }
 
@@ -33,13 +32,18 @@ async function handleUpload(interaction) {
     if (!isPDF) {
         return interaction.editReply({
             content: '❌ Only PDF files are allowed. Please upload a `.pdf` file.',
-            flags: 64,
+        });
+    }
+
+    const maxSizeMB = 10;
+    if (attachment.size > maxSizeMB * 1024 * 1024) {
+        return interaction.editReply({
+            content: `❌ File size exceeds the ${maxSizeMB}MB limit.`,
         });
     }
 
     await interaction.editReply({
         content: `✅ Received your PDF file: **${attachment.name}**`,
-        flags: 64,
     });
 
     const examiner = examinersMap.get(channelId);
@@ -60,6 +64,11 @@ async function handleUpload(interaction) {
             });
         } catch (err) {
             console.warn(`❗ Failed to send DM to examiner ${examiner.id}:`, err.message);
+
+            await interaction.followUp({
+                content: '⚠️ Examiner could not receive your file (DMs might be disabled).',
+                ephemeral: true,
+            });
         }
     }
 }
