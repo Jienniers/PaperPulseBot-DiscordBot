@@ -2,10 +2,6 @@
 
 A **Discord bot** designed to simulate a virtual exam system. Built with **Node.js** and **discord.js**, the bot enables candidates to take timed papers under examiner supervision in a fully automated environment on Discord.
 
-> 🚧 **Under Active Development**
->
-> Features and structure are actively evolving. Expect frequent updates — and note that this README may occasionally be out of date.
-
 ---
 
 ## 🔧 Tech Stack
@@ -17,23 +13,6 @@ A **Discord bot** designed to simulate a virtual exam system. Built with **Node.
 - **CI:** GitHub Actions (ESLint, Prettier)
 - **Code Style:** Prettier
 - **Config:** Local JSON files
-
----
-
-## 🧪 Features
-
-### ✅ Currently Available
-
-- `startpaper` slash command to begin an exam
-- Auto-creation of paper channels under specified category
-- Timer and reminder logic when paper time is up
-- ESLint and Prettier enforced formatting and linting
-
-### ⏳ In Progress / Planned
-
-- leaderboard command
-
-> 🔄 Features evolve as per development and testing feedback.
 
 ---
 
