@@ -16,14 +16,6 @@ A **Discord bot** designed to simulate a virtual exam system. Built with **Node.
 
 ---
 
-## 🧪 Features
-
-### ⏳ In Progress / Planned
-
-- leaderboard command
-
----
-
 ## 🚀 Getting Started
 
 > Ensure [Node.js](https://nodejs.org/) is installed before setup.
@@ -125,6 +117,7 @@ node app.js
 │   │   └── add.js
 │   └── slashCommands/        # Slash (/) commands for Discord
 │       ├── award.js          # Awards marks from examiner to candidate
+│       ├── leaderboard.js    # Handles /leaderboard command to show top candidates by marks.
 │       ├── profile.js        # Slash command to display a candidate's profile summary
 │       ├── startpaper.js     # Starts an exam session
 │       ├── upload.js         # Handles paper upload

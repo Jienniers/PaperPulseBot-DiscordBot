@@ -11,6 +11,7 @@ const { handleUpload } = require('./commands/slashCommands/upload');
 const { handleVerify } = require('./commands/slashCommands/verify');
 const { handleAward } = require('./commands/slashCommands/award');
 const { handleProfile } = require('./commands/slashCommands/profile');
+const { handleLeaderboard } = require('./commands/slashCommands/leaderboard');
 
 const client = new Client({
     intents: [
@@ -60,6 +61,11 @@ client.on(Events.InteractionCreate, async (interaction) => {
     // ───── 👤 PROFILE COMMAND ─────
     if (interaction.commandName === 'profile') {
         await handleProfile(interaction);
+    }
+
+    // ───── 📊 LEADERBOARD COMMAND ─────
+    if (interaction.commandName === 'leaderboard') {
+        await handleLeaderboard(interaction);
     }
 });
 
