@@ -3,12 +3,14 @@ const { getLeaderboardEmbed } = require(path.resolve(__dirname, '..', '..', 'uti
 const { candidateSessionsMap } = require(path.resolve(__dirname, '..', '..', 'data', 'state.js'));
 
 async function handleLeaderboard(interaction) {
+    const channelId = interaction.channel.id;
+
     await interaction.deferReply();
 
     const allEntries = [...candidateSessionsMap.values()];
 
     const validEntries = allEntries.filter((entry) => {
-        return entry.verified && typeof entry.marks === 'string' && /^\d+\/\d+$/.test(entry.marks);
+        return entry.verified && typeof entry.marks === 'string' && /^\d+\/\d+$/.test(entry.marks) && entry.channelId === channelId;
     });
 
     const totals = new Map();
