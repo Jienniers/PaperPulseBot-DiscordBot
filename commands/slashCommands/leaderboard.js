@@ -10,7 +10,12 @@ async function handleLeaderboard(interaction) {
     const allEntries = [...candidateSessionsMap.values()];
 
     const validEntries = allEntries.filter((entry) => {
-        return entry.verified && typeof entry.marks === 'string' && /^\d+\/\d+$/.test(entry.marks) && entry.channelId === channelId;
+        return (
+            entry.verified &&
+            typeof entry.marks === 'string' &&
+            /^\d+\/\d+$/.test(entry.marks) &&
+            entry.channelId === channelId
+        );
     });
 
     const totals = new Map();
