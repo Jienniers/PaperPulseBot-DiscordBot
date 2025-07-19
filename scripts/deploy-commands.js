@@ -72,8 +72,7 @@ const commands = [
         ),
     new SlashCommandBuilder()
         .setName('leaderboard')
-        .setDescription('View the leaderboard of the current channel')
-
+        .setDescription('View the leaderboard of the current channel'),
 ].map((command) => command.toJSON());
 
 const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);

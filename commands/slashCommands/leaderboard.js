@@ -8,11 +8,7 @@ async function handleLeaderboard(interaction) {
     const allEntries = [...candidateSessionsMap.values()];
 
     const validEntries = allEntries.filter((entry) => {
-        return (
-            entry.verified &&
-            typeof entry.marks === 'string' &&
-            /^\d+\/\d+$/.test(entry.marks)
-        );
+        return entry.verified && typeof entry.marks === 'string' && /^\d+\/\d+$/.test(entry.marks);
     });
 
     const totals = new Map();
@@ -31,8 +27,9 @@ async function handleLeaderboard(interaction) {
         });
     }
 
-    const leaderboardData = [...totals.values()]
-        .sort((a, b) => (b.scored / b.total) - (a.scored / a.total));
+    const leaderboardData = [...totals.values()].sort(
+        (a, b) => b.scored / b.total - a.scored / a.total,
+    );
 
     const embed = getLeaderboardEmbed(leaderboardData);
 

@@ -160,11 +160,11 @@ function generateAllSessionsEmbed(sessions, user) {
 function getLeaderboardEmbed(leaderboardData) {
     const leaderboardText = leaderboardData.length
         ? leaderboardData
-            .map((entry, index) => {
-                const percentage = ((entry.scored / entry.total) * 100).toFixed(1);
-                return `**#${index + 1}** ${entry.username} — **${entry.scored}/${entry.total} marks** (${percentage}%)`;
-            })
-            .join('\n')
+              .map((entry, index) => {
+                  const percentage = ((entry.scored / entry.total) * 100).toFixed(1);
+                  return `**#${index + 1}** ${entry.username} — **${entry.scored}/${entry.total} marks** (${percentage}%)`;
+              })
+              .join('\n')
         : '_No verified candidate marks found yet._';
 
     return new EmbedBuilder()
@@ -181,5 +181,5 @@ module.exports = {
     getAwardEmbed,
     generateProfileEmbed,
     generateAllSessionsEmbed,
-    getLeaderboardEmbed
+    getLeaderboardEmbed,
 };
