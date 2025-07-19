@@ -157,6 +157,23 @@ function generateAllSessionsEmbed(sessions, user) {
     return embed;
 }
 
+function getLeaderboardEmbed(leaderboardData) {
+    const leaderboardText = leaderboardData.length
+        ? leaderboardData
+            .map((entry, index) => {
+                const percentage = ((entry.scored / entry.total) * 100).toFixed(1);
+                return `**#${index + 1}** ${entry.username} — **${entry.scored}/${entry.total} marks** (${percentage}%)`;
+            })
+            .join('\n')
+        : '_No verified candidate marks found yet._';
+
+    return new EmbedBuilder()
+        .setTitle('🏆 Leaderboard')
+        .setDescription(`Top candidates ranked by total marks\n\n${leaderboardText}`)
+        .setColor(0xfacc15) // Tailwind yellow-400
+        .setTimestamp();
+}
+
 module.exports = {
     createPaperEmbed,
     sendExaminerSubmissionEmbed,
@@ -164,4 +181,5 @@ module.exports = {
     getAwardEmbed,
     generateProfileEmbed,
     generateAllSessionsEmbed,
+    getLeaderboardEmbed
 };
