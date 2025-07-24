@@ -16,6 +16,29 @@ A **Discord bot** designed to simulate a virtual exam system. Built with **Node.
 
 ---
 
+## 📘 Slash Commands Overview
+
+| Command        | Description                                                                                        | Usage                                    |
+| -------------- | ---------------------------------------------------------------------------------------------------|----------------------------------------- |
+| `/startpaper`  | Starts a new paper session for candidates in the server                                            | `/startpaper`                            |
+| `/upload`      | Uploads a paper file for examiner to check *(Requires a PDF file)*                                 | `/upload file:<paper.pdf>`               |
+| `/award`       | Examiner awards marks to a candidate                                                               | `/award user:@candidate marks:50/100`    |
+| `/verify`      | Verifies that a candidate completed the paper fairly *(Examiner-only, within the session channel)* | `/verify user:@candidate`                |
+| `/profile`     | Displays a candidate's profile summary *(User argument is optional — defaults to command user)*    | `/profile` or `/profile user:@candidate` |
+| `/leaderboard` | Shows the leaderboard ranked by percentage *(Only shows results for the current channel)*          | `/leaderboard`                           |
+
+---
+
+### 💬 Message Commands
+
+| Command          | Description                                                                                           | Usage                       |
+| ---------------- | ----------------------------------------------------------------------------------------------------- | --------------------------- |
+| `!add @users...` | Starts the paper timer for the mentioned users in the current paper session *(examiner-only command)* | `!add @user1 @user2 @user3` |
+
+> ⚠️ `!add` must be used inside a **paper session channel**. It supports **multiple mentions** and starts the exam timer for added users.
+
+---
+
 ## 🚀 Getting Started
 
 > Ensure [Node.js](https://nodejs.org/) is installed before setup.
