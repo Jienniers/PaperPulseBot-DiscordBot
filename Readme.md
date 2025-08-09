@@ -137,17 +137,17 @@ node app.js
 ├── .prettierrc               # Prettier formatting rules
 ├── commands/                 # Command handler modules
 │   ├── messageCommands/      # Legacy or message-based commands
-│   │   └── add.js
+│   │   └── add.js            # Adds candidates to the session and starts the exam timer (examiner-only).
 │   └── slashCommands/        # Slash (/) commands for Discord
-│       ├── award.js          # Awards marks from examiner to candidate
+│       ├── award.js          # Awards marks to candidate (examiner-only).
 │       ├── leaderboard.js    # Handles /leaderboard command to show top candidates by marks.
 │       ├── profile.js        # Slash command to display a candidate's profile summary
-│       ├── startpaper.js     # Starts an exam session
-│       ├── upload.js         # Handles paper upload
-│       └── verify.js         # Verifies candidate fairness and that they did not cheat
+│       ├── startpaper.js     # Starts an exam session by creating a new channel for the paper
+│       ├── upload.js         # Handles paper PDF upload to the examiner
+│       └── verify.js         # Verifies candidate fairness and that they did not cheat (examiner-only).
 ├── config.json               # Local bot configuration
 ├── data/
-│   └── state.js              # Temporary app state data
+│   └── state.js              # Temporary discord bot data
 ├── eslint.config.mjs         # ESLint config using flat config system
 ├── examples/                 # Sample config and env files
 │   ├── .env
