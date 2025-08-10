@@ -26,11 +26,9 @@ async function updatePaperChannelsInDB(paperChannels) {
         if (!doc) {
             const newDoc = new PaperChannelsModel({ channels: paperChannels });
             await newDoc.save();
-            console.log('Paper channels document created in DB');
         } else {
             doc.channels = paperChannels;
             await doc.save();
-            console.log('Paper channels updated in DB');
         }
     } catch (err) {
         console.error('Failed to update paper channels:', err);
