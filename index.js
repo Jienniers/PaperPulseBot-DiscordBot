@@ -13,6 +13,9 @@ const { handleAward } = require('./commands/slashCommands/award');
 const { handleProfile } = require('./commands/slashCommands/profile');
 const { handleLeaderboard } = require('./commands/slashCommands/leaderboard');
 
+//database
+const connectToMongoDB = require('./utils/mongo');
+
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
@@ -21,9 +24,15 @@ const client = new Client({
     ],
 });
 
-client.once(Events.ClientReady, () => {
-    console.log(`Logged in as ${client.user.tag}!`);
-});
+async function startBot() {
+    await connectToMongoDB();
+
+    client.once(Events.ClientReady, () => {
+        console.log(`Logged in as ${client.user.tag}!`);
+    });
+
+    await client.login(process.env.TOKEN);
+}
 
 client.on(Events.MessageCreate, async (message) => {
     if (message.author.bot) return;
@@ -83,4 +92,5 @@ client.on(Events.InteractionCreate, async (interaction) => {
     }
 });
 
-client.login(process.env.TOKEN);
+
+startBot();
