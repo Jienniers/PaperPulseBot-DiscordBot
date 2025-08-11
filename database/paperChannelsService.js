@@ -1,19 +1,18 @@
-const PaperChannels = require('./models/paperChannels');
 const PaperChannelsModel = require('./models/paperChannels');
 
 async function getPaperChannels() {
-    let doc = await PaperChannels.findOne();
+    let doc = await PaperChannelsModel.findOne();
     if (!doc) {
-        doc = new PaperChannels();
+        doc = new PaperChannelsModel();
         await doc.save();
     }
     return doc.channels;
 }
 
 async function setPaperChannels(channels) {
-    let doc = await PaperChannels.findOne();
+    let doc = await PaperChannelsModel.findOne();
     if (!doc) {
-        doc = new PaperChannels();
+        doc = new PaperChannelsModel();
     }
     doc.channels = channels;
     await doc.save();
