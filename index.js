@@ -4,7 +4,7 @@ const { Client, GatewayIntentBits, Events } = require('discord.js');
 
 const { buttonHandlers } = require('./utils/buttonHandlers');
 
-const { paperChannels } = require('./data/state');
+let { paperChannels } = require('./data/state');
 
 //commands
 const { handleAddCommand } = require('./commands/messageCommands/add');
@@ -17,7 +17,7 @@ const { handleLeaderboard } = require('./commands/slashCommands/leaderboard');
 
 //database
 const connectToMongoDB = require('./utils/mongo');
-const { updatePaperChannelsInDB } = require('./database/paperChannelsService');
+const { updatePaperChannelsInDB, getPaperChannels } = require('./database/paperChannelsService');
 
 const client = new Client({
     intents: [
@@ -30,15 +30,20 @@ const client = new Client({
 async function startBot() {
     await connectToMongoDB();
 
-    client.once(Events.ClientReady, () => {
+    client.once(Events.ClientReady, async () => {
         console.log(`Logged in as ${client.user.tag}!`);
+
+        const channelsFromDB = await getPaperChannels();
+
+        paperChannels.length = 0;
+        paperChannels.push(...channelsFromDB);
+
+        setInterval(() => {
+            updatePaperChannelsInDB(paperChannels);
+        }, 3000);
     });
 
     await client.login(process.env.TOKEN);
-
-    setInterval(() => {
-        updatePaperChannelsInDB(paperChannels);
-    }, 3000);
 }
 
 client.on(Events.MessageCreate, async (message) => {
