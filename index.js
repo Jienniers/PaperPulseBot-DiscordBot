@@ -4,7 +4,7 @@ const { Client, GatewayIntentBits, Events } = require('discord.js');
 
 const { buttonHandlers } = require('./utils/buttonHandlers');
 
-let { paperChannels, paperTimeMinsMap } = require('./data/state');
+let { paperChannels, paperTimeMinsMap, examinersMap } = require('./data/state');
 
 //commands
 const { handleAddCommand } = require('./commands/messageCommands/add');
@@ -19,6 +19,7 @@ const { handleLeaderboard } = require('./commands/slashCommands/leaderboard');
 const connectToMongoDB = require('./utils/mongo');
 const { updatePaperChannelsInDB, getPaperChannels } = require('./database/paperChannelsService');
 const { upsertPaperMins } = require('./database/paperTimeMinsService');
+const { upsertexaminerMap } = require('./database/examinerMapService');
 
 
 const client = new Client({
@@ -43,6 +44,7 @@ async function startBot() {
         setInterval(() => {
             updatePaperChannelsInDB(paperChannels);
             upsertPaperMins(paperTimeMinsMap)
+            upsertexaminerMap(examinersMap);
         }, 3000);
     });
 
