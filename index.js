@@ -4,7 +4,7 @@ const { Client, GatewayIntentBits, Events } = require('discord.js');
 
 const { buttonHandlers } = require('./utils/buttonHandlers');
 
-let { paperChannels, paperTimeMinsMap, examinersMap, paperRunningMap } = require('./data/state');
+let { paperChannels, paperTimeMinsMap, examinersMap, paperRunningMap, candidateSessionsMap } = require('./data/state');
 
 //commands
 const { handleAddCommand } = require('./commands/messageCommands/add');
@@ -21,6 +21,7 @@ const { updatePaperChannelsInDB, getPaperChannels } = require('./database/paperC
 const { upsertPaperMins } = require('./database/paperTimeMinsService');
 const { upsertexaminerMap } = require('./database/examinerMapService');
 const { upsertPaperRunningMap } = require('./database/paperRunningMapService');
+const { upsertCandidateSessionMap } = require('./database/candidateSessionMapService');
 
 
 const client = new Client({
@@ -47,6 +48,7 @@ async function startBot() {
             upsertPaperMins(paperTimeMinsMap)
             upsertexaminerMap(examinersMap);
             upsertPaperRunningMap(paperRunningMap);
+            upsertCandidateSessionMap(candidateSessionsMap)
         }, 3000);
     });
 
