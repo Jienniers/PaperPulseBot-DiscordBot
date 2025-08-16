@@ -21,7 +21,7 @@ const { updatePaperChannelsInDB, getPaperChannels } = require('./database/paperC
 const { upsertPaperMins } = require('./database/paperTimeMinsService');
 const { upsertexaminerMap } = require('./database/examinerMapService');
 const { upsertPaperRunningMap } = require('./database/paperRunningMapService');
-const { upsertCandidateSessionMap } = require('./database/candidateSessionMapService');
+const { upsertCandidateSessionMap, loadCandidateSessionMap } = require('./database/candidateSessionMapService');
 
 
 const client = new Client({
@@ -42,6 +42,18 @@ async function startBot() {
 
         paperChannels.length = 0;
         paperChannels.push(...channelsFromDB);
+
+        const candidateMap = await loadCandidateSessionMap();
+        candidateSessionsMap.clear();
+
+        for (const [key, value] of candidateMap) {
+            candidateSessionsMap.set(key, value);
+        }
+
+        candidateSessionsMap.forEach((value, key) => {
+            console.log(key, value);
+        });
+
 
         setInterval(() => {
             updatePaperChannelsInDB(paperChannels);
