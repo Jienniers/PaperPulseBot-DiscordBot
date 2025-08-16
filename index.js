@@ -18,9 +18,9 @@ const { handleLeaderboard } = require('./commands/slashCommands/leaderboard');
 //database
 const connectToMongoDB = require('./utils/mongo');
 const { updatePaperChannelsInDB, getPaperChannels } = require('./database/paperChannelsService');
-const { upsertPaperMins } = require('./database/paperTimeMinsService');
-const { upsertexaminerMap } = require('./database/examinerMapService');
-const { upsertPaperRunningMap } = require('./database/paperRunningMapService');
+const { upsertPaperMins, loadPaperTimeMins } = require('./database/paperTimeMinsService');
+const { upsertexaminerMap, loadexaminerMap } = require('./database/examinerMapService');
+const { upsertPaperRunningMap, loadPaperRunningMap } = require('./database/paperRunningMapService');
 const { upsertCandidateSessionMap, loadCandidateSessionMap } = require('./database/candidateSessionMapService');
 
 
@@ -54,6 +54,39 @@ async function startBot() {
             console.log(key, value);
         });
 
+        const examinereMap = await loadexaminerMap();
+        examinersMap.clear();
+
+        for (const [key, value] of examinereMap) {
+            examinersMap.set(key, value);
+        }
+
+        examinersMap.forEach((value, key) => {
+            console.log(key, value);
+        });
+
+        const paperRunMap = await loadPaperRunningMap();
+        paperRunningMap.clear();
+
+        for (const [key, value] of paperRunMap) {
+            paperRunningMap.set(key, value);
+        }
+
+        paperRunningMap.forEach((value, key) => {
+            console.log(key, value);
+        });
+
+
+        const paperTimeMinsDB = await loadPaperTimeMins();
+        paperTimeMinsMap.clear();
+
+        for (const [key, value] of paperTimeMinsDB) {
+            paperTimeMinsMap.set(key, value);
+        }
+
+        paperTimeMinsMap.forEach((value, key) => {
+            console.log(key, value);
+        });
 
         setInterval(() => {
             updatePaperChannelsInDB(paperChannels);

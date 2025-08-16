@@ -17,8 +17,12 @@ async function loadCandidateSessionMap() {
         if (!doc) return new Map(); // empty Map if no document
 
         // Convert document to Map
-        doc.toObject()
-        const map = new Map(Object.entries(doc.toObject()));
+        const obj = doc.toObject()
+
+        delete obj._id;
+        delete obj.__v;
+
+        const map = new Map(Object.entries(obj));
 
         return map;
     } catch (err) {
