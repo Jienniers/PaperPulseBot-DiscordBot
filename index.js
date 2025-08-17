@@ -58,7 +58,7 @@ async function startBot() {
         examinersMap.clear();
 
         for (const [key, value] of examinereMap) {
-            examinersMap.set(key, value);
+            examinersMap.set(String(key), String(value));
         }
 
         examinersMap.forEach((value, key) => {

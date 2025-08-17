@@ -33,10 +33,10 @@ async function handleVerify(interaction) {
         });
     }
 
-    const assignedExaminer = examinersMap.get(channelId);
+    const assignedExaminerID = examinersMap.get(channelId);
     const userId = userOption.id;
 
-    if (!assignedExaminer || assignedExaminer.id !== examiner.id) {
+    if (!assignedExaminerID || assignedExaminerID !== examiner.id) {
         return interaction.reply({
             content: '❌ You are not authorized to verify candidates in this paper session.',
             flags: 64,

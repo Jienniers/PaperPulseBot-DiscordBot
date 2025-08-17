@@ -19,7 +19,7 @@ function createCandidateSessionEntry(user, message, verified, marks) {
         channelId: message.channel.id,
         verified: verified,
         marks: marks,
-        examinerId: examinersMap.get(message.channel.id)?.id || null,
+        examinerId: examinersMap.get(message.channel.id) || null,
         guildId: message.guild.id,
         createdAt: Date.now(),
     });

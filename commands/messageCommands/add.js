@@ -19,10 +19,9 @@ async function handleAddCommand(message) {
     if (!paperChannels.includes(channelId)) return;
 
     const paperTimeMins = paperTimeMinsMap.get(channelId);
-    const examinerEntry = examinersMap.get(channelId);
-    const examinerId = examinerEntry?.id;
+    const examinerEntryID = examinersMap.get(channelId);
 
-    if (!examinerId) {
+    if (!examinerEntryID) {
         await message.reply('❌ Examiner not found for this session.');
         return;
     }
@@ -45,7 +44,7 @@ async function handleAddCommand(message) {
     let skipped = false;
 
     for (const user of mentionedUsers.values()) {
-        if (user.bot || user.id === examinerId) {
+        if (user.bot || user.id === examinerEntryID) {
             skipped = true;
             continue;
         }

@@ -11,7 +11,7 @@ const {
 const { generateAllSessionsEmbed } = require(path.resolve(__dirname, 'embeds.js'));
 
 async function handleDoneButton(interaction, channelID) {
-    if (interaction.user.id === examinersMap.get(channelID)?.id) return;
+    if (interaction.user.id === examinersMap.get(channelID)) return;
 
     await interaction.reply({
         content: 'Please stop writing and put your pen down.',
@@ -21,7 +21,7 @@ async function handleDoneButton(interaction, channelID) {
 }
 
 async function handleCloseButton(interaction, channelID) {
-    if (interaction.user.id !== examinersMap.get(channelID)?.id) {
+    if (interaction.user.id !== examinersMap.get(channelID)) {
         await interaction.reply({
             content: '❌ You are not authorized to close this paper session.',
             flags: 64,

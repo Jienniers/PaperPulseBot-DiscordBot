@@ -23,14 +23,14 @@ async function handleAward(interaction) {
         });
     }
 
-    if (interaction.user.id !== examiner?.id) {
+    if (interaction.user.id !== examiner) {
         return await interaction.reply({
             content: '❌ You are not authorized to award marks to candidates.',
             flags: 64,
         });
     }
 
-    if (examiner?.id === userOption.id) {
+    if (examiner === userOption.id) {
         return await interaction.reply({
             content: '❌ You cannot award marks to an examiner.',
         });

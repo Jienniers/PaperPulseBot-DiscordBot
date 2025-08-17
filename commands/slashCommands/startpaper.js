@@ -65,7 +65,7 @@ async function handleStartPaper(interaction) {
         });
     }
 
-    examinersMap.set(paperChannel.id, examiner);
+    examinersMap.set(paperChannel.id, examiner.id);
     paperTimeMinsMap.set(paperChannel.id, paperTime);
     paperChannels.push(paperChannel.id);
 

@@ -63,7 +63,7 @@ async function handleUpload(interaction) {
                 files: [attachment],
             });
         } catch (err) {
-            console.warn(`❗ Failed to send DM to examiner ${examiner.id}:`, err.message);
+            console.warn(`❗ Failed to send DM to examiner ${examiner}:`, err.message);
 
             await interaction.followUp({
                 content: '⚠️ Examiner could not receive your file (DMs might be disabled).',
