@@ -130,7 +130,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
     // ───── 🏆 AWARD PAPER COMMAND ─────
     if (interaction.commandName === 'award') {
-        await handleAward(interaction);
+        await handleAward(interaction, client);
     }
 
     // ───── 👤 PROFILE COMMAND ─────

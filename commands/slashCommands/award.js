@@ -4,7 +4,7 @@ const { examinersMap, paperChannels, doubleKeyMaps, candidateSessionsMap } = req
 );
 const { getAwardEmbed } = require(path.resolve(__dirname, '..', '..', 'utils', 'embeds.js'));
 
-async function handleAward(interaction) {
+async function handleAward(interaction, client) {
     const channelID = interaction.channel.id;
     const userOption = interaction.options.getUser('user');
     const marksOption = interaction.options.getString('marks');
@@ -58,9 +58,11 @@ async function handleAward(interaction) {
         content: `${userOption} has been awarded ${marksOption} marks.`,
     });
 
+    const examinerUser = client.users.cache.get(examiner)
+
     const embed = getAwardEmbed({
         candidate: userOption,
-        examiner: examiner,
+        examiner: examinerUser,
         marks: marksOption,
         guildId: interaction.guild.id,
         channelId: channelID,
