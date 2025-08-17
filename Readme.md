@@ -16,6 +16,14 @@ A **Discord bot** designed to simulate a virtual exam system. Built with **Node.
 
 ---
 
+## 🚀 Features in Progress
+
+* 🗄️ MongoDB Integration
+
+> More features coming soon!
+
+---
+
 ## 📘 Slash Commands Overview
 
 | Command        | Description                                                                                        | Usage                                    |
