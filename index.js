@@ -14,7 +14,7 @@ const { handleProfile } = require('./commands/slashCommands/profile');
 const { handleLeaderboard } = require('./commands/slashCommands/leaderboard');
 
 //database
-const connectToMongoDB = require('./utils/mongo');
+const connectToMongoDB = require('./utils/mongoConnection');
 const { initializeState } = require('./utils/stateDatabaseSync');
 
 
