@@ -4,8 +4,6 @@ const { Client, GatewayIntentBits, Events } = require('discord.js');
 
 const { buttonHandlers } = require('./utils/buttonHandlers');
 
-let { paperChannels, paperTimeMinsMap, examinersMap, paperRunningMap, candidateSessionsMap } = require('./data/state');
-
 //commands
 const { handleAddCommand } = require('./commands/messageCommands/add');
 const { handleStartPaper } = require('./commands/slashCommands/startpaper');
@@ -17,11 +15,7 @@ const { handleLeaderboard } = require('./commands/slashCommands/leaderboard');
 
 //database
 const connectToMongoDB = require('./utils/mongo');
-const { updatePaperChannelsInDB, getPaperChannels } = require('./database/paperChannelsService');
-const { upsertPaperMins, loadPaperTimeMins } = require('./database/paperTimeMinsService');
-const { upsertexaminerMap, loadexaminerMap } = require('./database/examinerMapService');
-const { upsertPaperRunningMap, loadPaperRunningMap } = require('./database/paperRunningMapService');
-const { upsertCandidateSessionMap, loadCandidateSessionMap } = require('./database/candidateSessionMapService');
+const { initializeState } = require('./utils/stateDatabaseSync');
 
 
 const client = new Client({
@@ -38,63 +32,7 @@ async function startBot() {
     client.once(Events.ClientReady, async () => {
         console.log(`Logged in as ${client.user.tag}!`);
 
-        const channelsFromDB = await getPaperChannels();
-
-        paperChannels.length = 0;
-        paperChannels.push(...channelsFromDB);
-
-        const candidateMap = await loadCandidateSessionMap();
-        candidateSessionsMap.clear();
-
-        for (const [key, value] of candidateMap) {
-            candidateSessionsMap.set(key, value);
-        }
-
-        candidateSessionsMap.forEach((value, key) => {
-            console.log(key, value);
-        });
-
-        const examinereMap = await loadexaminerMap();
-        examinersMap.clear();
-
-        for (const [key, value] of examinereMap) {
-            examinersMap.set(String(key), String(value));
-        }
-
-        examinersMap.forEach((value, key) => {
-            console.log(key, value);
-        });
-
-        const paperRunMap = await loadPaperRunningMap();
-        paperRunningMap.clear();
-
-        for (const [key, value] of paperRunMap) {
-            paperRunningMap.set(key, value);
-        }
-
-        paperRunningMap.forEach((value, key) => {
-            console.log(key, value);
-        });
-
-
-        const paperTimeMinsDB = await loadPaperTimeMins();
-        paperTimeMinsMap.clear();
-
-        for (const [key, value] of paperTimeMinsDB) {
-            paperTimeMinsMap.set(key, value);
-        }
-
-        paperTimeMinsMap.forEach((value, key) => {
-            console.log(key, value);
-        });
-
-        setInterval(() => {
-            updatePaperChannelsInDB(paperChannels);
-            upsertPaperMins(paperTimeMinsMap)
-            upsertexaminerMap(examinersMap);
-            upsertPaperRunningMap(paperRunningMap);
-            upsertCandidateSessionMap(candidateSessionsMap)
-        }, 3000);
+        await initializeState();
     });
 
     await client.login(process.env.TOKEN);
@@ -157,6 +95,5 @@ client.on(Events.InteractionCreate, async (interaction) => {
         await handler(interaction, channelID);
     }
 });
-
 
 startBot();
