@@ -1,4 +1,6 @@
-const {
+require('dotenv').config();
+
+let {
   paperChannels,
   paperTimeMinsMap,
   examinersMap,
@@ -45,12 +47,14 @@ async function syncArrayFromDB(loadFn, targetArray) {
 /**
  * Initialize all in-memory state from the database.
  */
-async function initializeState() {
+async function initializeState(client) {
   await syncArrayFromDB(getPaperChannels, paperChannels);
   await syncMapFromDB(loadCandidateSessionMap, candidateSessionsMap);
   await syncMapFromDB(loadexaminerMap, examinersMap, (k) => String(k), (v) => String(v));
   await syncMapFromDB(loadPaperRunningMap, paperRunningMap);
   await syncMapFromDB(loadPaperTimeMins, paperTimeMinsMap);
+
+  updateDatabaseWithServer(client);
 
   logCurrentState();
 
@@ -78,6 +82,66 @@ function syncStateToDB() {
   upsertexaminerMap(examinersMap);
   upsertPaperRunningMap(paperRunningMap);
   upsertCandidateSessionMap(candidateSessionsMap);
+}
+
+function updateDatabaseWithServer(client) {
+  const guild = client.guilds.cache.get(process.env.GUILD_ID);
+  if (!guild) return console.log("Guild not found!");
+  const channelIDs = guild.channels.cache.map(ch => ch.id);
+
+  //PaperChannels Update Bellow
+
+  const PaperChannelsbefore = paperChannels.length;
+
+  paperChannels = paperChannels.filter(id => channelIDs.includes(id));
+
+  const PaperChannelsafter = paperChannels.length;
+  if (PaperChannelsbefore !== PaperChannelsafter) {
+    updatePaperChannelsInDB(paperChannels);
+  }
+
+  //PaperTimeMinsMap Update Bellow
+  const PaperTimeMinsMapbefore = paperTimeMinsMap.length;
+
+  for (const key of paperTimeMinsMap.keys()) {
+    if (!channelIDs.includes(key)) {
+      paperTimeMinsMap.delete(key);
+    }
+  }
+
+  const PaperTimeMinsMapafter = paperTimeMinsMap.length;
+  if (PaperTimeMinsMapbefore !== PaperTimeMinsMapafter) {
+    upsertPaperMins(paperChannels);
+  }
+
+  //examainerMap Update Bellow
+  const examainerMapbefore = examinersMap.length;
+
+  for (const key of examinersMap.keys()) {
+    if (!channelIDs.includes(key)) {
+      examinersMap.delete(key);
+    }
+  }
+
+  const examainerMapafter = examinersMap.length;
+  if (examainerMapbefore !== examainerMapafter) {
+    upsertexaminerMap(examinersMap);
+  }
+
+  //PaperRunningMap Update Bellow
+  const PaperRunningMapbefore = paperRunningMap.length;
+
+  for (const key of paperRunningMap.keys()) {
+    if (!channelIDs.includes(key)) {
+      paperRunningMap.delete(key);
+    }
+  }
+
+  const PaperRunningMapafter = paperRunningMap.length;
+  if (PaperRunningMapbefore !== PaperRunningMapafter) {
+    upsertPaperRunningMap(paperRunningMap);
+  }
+
 }
 
 module.exports = {

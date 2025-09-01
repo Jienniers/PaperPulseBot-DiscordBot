@@ -32,7 +32,7 @@ async function startBot() {
     client.once(Events.ClientReady, async () => {
         console.log(`Logged in as ${client.user.tag}!`);
 
-        await initializeState();
+        await initializeState(client);
     });
 
     await client.login(process.env.TOKEN);
