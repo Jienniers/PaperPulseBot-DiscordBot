@@ -12,7 +12,10 @@ const { generateAllSessionsEmbed } = require('./embeds');
 
 async function handleDoneButton(interaction, channelID) {
     if (interaction.user.id === examinersMap.get(channelID)) {
-        await interaction.reply({ content: "You are the examiner; you can't submit a paper!", flags: 64 });
+        await interaction.reply({
+            content: "You are the examiner; you can't submit a paper!",
+            flags: 64,
+        });
         return;
     }
 

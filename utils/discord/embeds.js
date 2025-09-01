@@ -20,9 +20,10 @@ function sendExaminerSubmissionEmbed(channelId, candidate, attachment, guild) {
             { name: '🆔 Session Server ID', value: `\`${guild?.id ?? 'N/A'}\``, inline: true },
             {
                 name: '🔗 Session Channel Link',
-                value: guild?.id && channelId
-                    ? `[Click to view channel](https://discord.com/channels/${guild.id}/${channelId})`
-                    : 'Unavailable',
+                value:
+                    guild?.id && channelId
+                        ? `[Click to view channel](https://discord.com/channels/${guild.id}/${channelId})`
+                        : 'Unavailable',
                 inline: false,
             },
             { name: '👤 Candidate', value: candidate?.tag ?? 'Unknown', inline: true },
@@ -40,14 +41,17 @@ function getVerifiedEmbed({ examiner, channel, guild }) {
     return new EmbedBuilder()
         .setColor('#4ADE80') // Green color
         .setTitle('✅ Candidate Verified')
-        .setDescription(`You have been verified by **${examiner?.tag ?? 'Unknown'}** for the paper session.`)
+        .setDescription(
+            `You have been verified by **${examiner?.tag ?? 'Unknown'}** for the paper session.`,
+        )
         .addFields(
             { name: '🧑‍🏫 Examiner', value: examiner?.tag ?? 'Unknown', inline: true },
             {
                 name: '🗂️ Session ID (Channel)',
-                value: channel?.name && guild?.id
-                    ? `[${channel.name}](https://discord.com/channels/${guild.id}/${channel.id})`
-                    : 'Unavailable',
+                value:
+                    channel?.name && guild?.id
+                        ? `[${channel.name}](https://discord.com/channels/${guild.id}/${channel.id})`
+                        : 'Unavailable',
                 inline: true,
             },
             { name: '🧾 Server ID', value: guild?.id ?? 'N/A', inline: true },
@@ -63,16 +67,21 @@ function getAwardEmbed({ candidate, examiner, marks, guildId, channelId }) {
         .setDescription('Your performance has been evaluated.')
         .setColor('#4CAF50')
         .addFields(
-            { name: '👤 Candidate', value: candidate?.id ? `<@${candidate.id}>` : 'Unknown', inline: true },
+            {
+                name: '👤 Candidate',
+                value: candidate?.id ? `<@${candidate.id}>` : 'Unknown',
+                inline: true,
+            },
             { name: '🧑‍🏫 Examiner', value: examiner?.tag ?? 'Unknown', inline: true },
             { name: '📊 Marks Awarded', value: `**${marks ?? 'N/A'}**`, inline: true },
             { name: '🗂️ Session ID', value: `\`${channelId ?? 'N/A'}\`` },
             { name: '🌐 Server ID', value: `\`${guildId ?? 'N/A'}\`` },
             {
                 name: '🔗 Paper Channel',
-                value: guildId && channelId
-                    ? `[Jump to session](https://discord.com/channels/${guildId}/${channelId})`
-                    : 'Unavailable',
+                value:
+                    guildId && channelId
+                        ? `[Jump to session](https://discord.com/channels/${guildId}/${channelId})`
+                        : 'Unavailable',
             },
         )
         .setFooter({ text: 'PaperPulse • Marks Award System' })
@@ -80,7 +89,8 @@ function getAwardEmbed({ candidate, examiner, marks, guildId, channelId }) {
 }
 
 function generateProfileEmbed(user, member, sessionStats) {
-    const { totalSessions, verifiedSessions, averageMarks, highestMarks, recentSession } = sessionStats ?? {};
+    const { totalSessions, verifiedSessions, averageMarks, highestMarks, recentSession } =
+        sessionStats ?? {};
 
     const embed = new EmbedBuilder()
         .setTitle(`📄 Profile: ${user?.username ?? 'Unknown'}`)
@@ -113,7 +123,9 @@ function generateProfileEmbed(user, member, sessionStats) {
                 `• **Verified:** ${recentSession.verified ? 'Yes' : 'No'}`,
                 `• **Examiner:** ${recentSession.examinerId ? `<@${recentSession.examinerId}>` : 'N/A'}`,
                 `• **Started:** ${
-                    recentSession.createdAt ? `<t:${Math.floor(recentSession.createdAt / 1000)}:R>` : 'N/A'
+                    recentSession.createdAt
+                        ? `<t:${Math.floor(recentSession.createdAt / 1000)}:R>`
+                        : 'N/A'
                 }`,
             ].join('\n'),
         });

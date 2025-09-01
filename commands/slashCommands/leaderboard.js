@@ -1,5 +1,7 @@
 const path = require('path');
-const { getLeaderboardEmbed } = require(path.resolve(__dirname, '..', '..', 'utils', 'discord', 'embeds.js'));
+const { getLeaderboardEmbed } = require(
+    path.resolve(__dirname, '..', '..', 'utils', 'discord', 'embeds.js'),
+);
 const { candidateSessionsMap } = require(path.resolve(__dirname, '..', '..', 'data', 'state.js'));
 
 async function handleLeaderboard(interaction) {

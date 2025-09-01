@@ -2,7 +2,9 @@ const path = require('path');
 const { examinersMap, paperChannels, doubleKeyMaps, candidateSessionsMap } = require(
     path.resolve(__dirname, '..', '..', 'data', 'state.js'),
 );
-const { getAwardEmbed } = require(path.resolve(__dirname, '..', '..', 'utils', 'discord', 'embeds.js'));
+const { getAwardEmbed } = require(
+    path.resolve(__dirname, '..', '..', 'utils', 'discord', 'embeds.js'),
+);
 
 async function handleAward(interaction, client) {
     const channelID = interaction.channel.id;
@@ -58,7 +60,7 @@ async function handleAward(interaction, client) {
         content: `${userOption} has been awarded ${marksOption} marks.`,
     });
 
-    const examinerUser = client.users.cache.get(examiner)
+    const examinerUser = client.users.cache.get(examiner);
 
     const embed = getAwardEmbed({
         candidate: userOption,

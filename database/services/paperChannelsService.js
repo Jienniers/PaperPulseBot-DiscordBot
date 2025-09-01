@@ -34,7 +34,6 @@ async function updatePaperChannelsInDB(paperChannels) {
     }
 }
 
-
 module.exports = {
     getPaperChannels,
     setPaperChannels,

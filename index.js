@@ -17,7 +17,6 @@ const { handleLeaderboard } = require('./commands/slashCommands/leaderboard');
 const connectToMongoDB = require('./utils/database/mongoConnection');
 const { initializeState } = require('./utils/database/stateDatabaseSync');
 
-
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,

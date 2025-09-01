@@ -1,5 +1,4 @@
 function createMapService(Model, serviceName) {
-
     function docToMap(doc) {
         if (!doc) return new Map();
         const { _id, __v, ...rest } = doc.toObject();
