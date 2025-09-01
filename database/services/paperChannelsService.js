@@ -1,4 +1,4 @@
-const PaperChannelsModel = require('./models/paperChannels');
+const PaperChannelsModel = require('../models/paperChannels');
 
 async function getPaperChannels() {
     let doc = await PaperChannelsModel.findOne();

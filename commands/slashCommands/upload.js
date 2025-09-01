@@ -3,7 +3,7 @@ const { examinersMap, paperChannels } = require(
     path.resolve(__dirname, '..', '..', 'data', 'state.js'),
 );
 const { sendExaminerSubmissionEmbed } = require(
-    path.resolve(__dirname, '..', '..', 'utils', 'embeds.js'),
+    path.resolve(__dirname, '..', '..', 'utils', 'discord', 'embeds.js'),
 );
 
 async function handleUpload(interaction) {

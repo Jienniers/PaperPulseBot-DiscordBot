@@ -3,7 +3,7 @@ const { examinersMap, paperChannels, doubleKeyMaps, candidateSessionsMap } = req
     path.resolve(__dirname, '..', '..', 'data', 'state.js'),
 );
 
-const { getVerifiedEmbed } = require(path.resolve(__dirname, '..', '..', 'utils', 'embeds.js'));
+const { getVerifiedEmbed } = require(path.resolve(__dirname, '..', '..', 'utils', 'discord', 'embeds.js'));
 
 async function handleVerify(interaction) {
     const channel = interaction.channel;

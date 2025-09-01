@@ -6,7 +6,7 @@ const {
     paperTimeMinsMap,
     paperRunningMap,
     candidateSessionsMap,
-} = require(path.resolve(__dirname, '..', 'data', 'state.js'));
+} = require('../../data/state.js');
 
 const { generateAllSessionsEmbed } = require(path.resolve(__dirname, 'embeds.js'));
 

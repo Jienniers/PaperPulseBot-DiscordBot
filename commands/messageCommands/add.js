@@ -1,5 +1,5 @@
 const path = require('path');
-const { formatPaperTime } = require(path.resolve(__dirname, '..', '..', 'utils', 'time.js'));
+const { formatPaperTime } = require(path.resolve(__dirname, '..', '..', 'utils', 'common', 'time.js'));
 
 const {
     paperChannels,

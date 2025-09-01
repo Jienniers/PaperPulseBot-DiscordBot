@@ -2,7 +2,7 @@ const path = require('path');
 const { examinersMap, paperChannels, doubleKeyMaps, candidateSessionsMap } = require(
     path.resolve(__dirname, '..', '..', 'data', 'state.js'),
 );
-const { getAwardEmbed } = require(path.resolve(__dirname, '..', '..', 'utils', 'embeds.js'));
+const { getAwardEmbed } = require(path.resolve(__dirname, '..', '..', 'utils', 'discord', 'embeds.js'));
 
 async function handleAward(interaction, client) {
     const channelID = interaction.channel.id;

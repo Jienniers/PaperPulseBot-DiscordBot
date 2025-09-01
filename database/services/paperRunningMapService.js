@@ -1,4 +1,4 @@
-const MapModel = require('./models/paperRunningMap');
+const MapModel = require('../models/paperRunningMap');
 
 async function upsertPaperRunningMap(mapData) {
     const objData = Object.fromEntries(mapData); // convert Map to plain object

@@ -1,4 +1,4 @@
-const MapModel = require('./models/candidateSessionMap');
+const MapModel = require('../models/candidateSessionMap');
 
 async function upsertCandidateSessionMap(mapData) {
     const objData = Object.fromEntries(mapData); // convert Map to plain object

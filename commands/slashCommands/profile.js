@@ -1,8 +1,8 @@
 const path = require('path');
-const { generateProfileEmbed } = require(path.resolve(__dirname, '..', '..', 'utils', 'embeds.js'));
+const { generateProfileEmbed } = require(path.resolve(__dirname, '..', '..', 'utils', 'discord', 'embeds.js'));
 const { candidateSessionsMap } = require(path.resolve(__dirname, '..', '..', 'data', 'state.js'));
 const { createProfileCommandButtons } = require(
-    path.resolve(__dirname, '..', '..', 'utils', 'buttons.js'),
+    path.resolve(__dirname, '..', '..', 'utils', 'discord', 'buttons.js'),
 );
 
 async function handleProfile(interaction) {

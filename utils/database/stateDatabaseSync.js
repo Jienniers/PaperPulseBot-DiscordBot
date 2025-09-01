@@ -6,13 +6,13 @@ let {
   examinersMap,
   paperRunningMap,
   candidateSessionsMap,
-} = require('../data/state');
+} = require('../../data/state');
 
-const { updatePaperChannelsInDB, getPaperChannels } = require('../database/paperChannelsService');
-const { upsertPaperMins, loadPaperTimeMins } = require('../database/paperTimeMinsService');
-const { upsertexaminerMap, loadexaminerMap } = require('../database/examinerMapService');
-const { upsertPaperRunningMap, loadPaperRunningMap } = require('../database/paperRunningMapService');
-const { upsertCandidateSessionMap, loadCandidateSessionMap } = require('../database/candidateSessionMapService');
+const { updatePaperChannelsInDB, getPaperChannels } = require('../../database/services/paperChannelsService');
+const { upsertPaperMins, loadPaperTimeMins } = require('../../database/services/paperTimeMinsService');
+const { upsertexaminerMap, loadexaminerMap } = require('../../database/services/examinerMapService');
+const { upsertPaperRunningMap, loadPaperRunningMap } = require('../../database/services/paperRunningMapService');
+const { upsertCandidateSessionMap, loadCandidateSessionMap } = require('../../database/services/candidateSessionMapService');
 
 /**
  * Sync a Map from DB into memory.
