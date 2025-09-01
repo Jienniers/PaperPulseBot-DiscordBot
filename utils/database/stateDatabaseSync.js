@@ -99,9 +99,12 @@ async function updateDatabaseWithServer(client) {
  * Helper: Remove invalid array entries and optionally update DB.
  */
 function syncArrayWithServer(array, validIDs, dbUpdateFn) {
-  const before = array.length;
-  array = array.filter(id => validIDs.includes(id));
-  if (array.length !== before) dbUpdateFn(array);
+  const filtered = array.filter(id => validIDs.includes(id));
+  array.length = 0;
+  array.push(...filtered);
+  if (filtered.length !== array.length) {
+    dbUpdateFn(array);
+  }
 }
 
 /**
