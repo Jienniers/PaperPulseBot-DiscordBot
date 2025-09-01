@@ -130,42 +130,58 @@ node app.js
 
 ```
 ├── .env                      # Environment variables (not committed)
-├── .github/workflows/        # GitHub Actions for CI
-│   ├── lint.yml              # Runs ESLint checks
-│   └── prettier.yaml         # Runs Prettier formatting check
 ├── .gitignore                # Git ignored files config
 ├── .prettierrc               # Prettier formatting rules
-├── commands/                 # Command handler modules
-│   ├── messageCommands/      # Legacy or message-based commands
-│   │   └── add.js            # Adds candidates to the session and starts the exam timer (examiner-only).
-│   └── slashCommands/        # Slash (/) commands for Discord
-│       ├── award.js          # Awards marks to candidate (examiner-only).
-│       ├── leaderboard.js    # Handles /leaderboard command to show top candidates by marks.
-│       ├── profile.js        # Slash command to display a candidate's profile summary
-│       ├── startpaper.js     # Starts an exam session by creating a new channel for the paper
-│       ├── upload.js         # Handles paper PDF upload to the examiner
-│       └── verify.js         # Verifies candidate fairness and that they did not cheat (examiner-only).
 ├── config.json               # Local bot configuration
-├── data/
-│   └── state.js              # Temporary discord bot data
 ├── eslint.config.mjs         # ESLint config using flat config system
-├── examples/                 # Sample config and env files
-│   ├── .env
-│   └── config.json
 ├── index.js                  # Entry point of the bot
 ├── LICENSE                   # License info
 ├── package.json              # Project metadata and dependencies
 ├── package-lock.json         # Lockfile for npm dependencies
 ├── Readme.md                 # Project documentation
+├── .github/workflows/        # GitHub Actions for CI
+│   ├── lint.yml              # Runs ESLint checks
+│   └── prettier.yaml         # Runs Prettier formatting check
+├── commands/                 # Command handler modules
+│   ├── messageCommands/      # Legacy or message-based commands
+│   │   └── add.js            # Adds candidates to the session and starts the exam timer (examiner-only)
+│   └── slashCommands/        # Slash (/) commands for Discord
+│       ├── award.js          # Awards marks to candidate (examiner-only)
+│       ├── leaderboard.js    # Shows top candidates by marks
+│       ├── profile.js        # Displays a candidate's profile summary
+│       ├── startpaper.js     # Starts an exam session by creating a paper channel
+│       ├── upload.js         # Handles paper PDF upload to the examiner
+│       └── verify.js         # Verifies candidate fairness (examiner-only)
+├── data/
+│   └── state.js              # Temporary Discord bot state
+├── database/                 # Database models and services
+│   ├── models/
+│   │   ├── dynamicModelFactory.js # Creates dynamic Mongoose models
+│   │   └── index.js              # Central export for all models
+│   └── services/
+│       ├── candidateSessionMapService.js # Service for candidate-session mapping
+│       ├── examinerMapService.js         # Service for examiner map in Database
+│       ├── mapServiceFactory.js          # Factory for creating map services
+│       ├── paperChannelsService.js       # Service for managing paper channels in Database
+│       ├── paperRunningMapService.js     # Service for tracking running papers in Database
+│       └── paperTimeMinsService.js       # Service for paper channel with time in mins map in Database
+├── examples/                 # Sample config and env files
+│   ├── .env
+│   └── config.json
 ├── scripts/                  # Utility scripts for managing commands
-│   ├── clear-commands.js     # Clear registered slash commands
-│   └── deploy-commands.js    # Register slash commands with Discord
+│   ├── clear-slash-commands.js  # Clear registered slash commands
+│   └── deploy-slash-commands.js # Register slash commands with Discord
 └── utils/                    # Utility and helper modules
-    ├── buttonHandlers.js     # Handles button interactions
-    ├── buttons.js            # Button component definitions
-    ├── config.js             # Shared config helpers
-    ├── embeds.js             # Embed template definitions
-    └── time.js               # Time-related utilities
+    ├── common/
+    │   ├── config.js         # Shared config helpers
+    │   └── time.js           # Time-related utilities
+    ├── database/
+    │   ├── mongoConnection.js    # MongoDB connection logic
+    │   └── stateDatabaseSync.js  # Syncs bot state with database
+    └── discord/
+        ├── buttonHandlers.js  # Handles button interactions
+        ├── buttons.js        # Button component definitions
+        └── embeds.js         # Embed template definitions
 ```
 
 ---
