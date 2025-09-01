@@ -10,7 +10,7 @@ let {
 
 const { updatePaperChannelsInDB, getPaperChannels } = require('../../database/services/paperChannelsService');
 const { upsertPaperMins, loadPaperTimeMins } = require('../../database/services/paperTimeMinsService');
-const { upsertexaminerMap, loadexaminerMap } = require('../../database/services/examinerMapService');
+const { upsertExaminerMap, loadExaminerMap } = require('../../database/services/examinerMapService');
 const { upsertPaperRunningMap, loadPaperRunningMap } = require('../../database/services/paperRunningMapService');
 const { upsertCandidateSessionMap, loadCandidateSessionMap } = require('../../database/services/candidateSessionMapService');
 
@@ -48,14 +48,26 @@ async function syncArrayFromDB(loadFn, targetArray) {
 async function initializeState(client) {
   await syncArrayFromDB(getPaperChannels, paperChannels);
   await syncMapFromDB(loadCandidateSessionMap, candidateSessionsMap);
-  await syncMapFromDB(loadexaminerMap, examinersMap, (k) => String(k), (v) => String(v));
+  await syncMapFromDB(loadExaminerMap, examinersMap, (k) => String(k), (v) => String(v));
   await syncMapFromDB(loadPaperRunningMap, paperRunningMap);
   await syncMapFromDB(loadPaperTimeMins, paperTimeMinsMap);
 
   await updateDatabaseWithServer(client);
   logCurrentState();
 
-  setInterval(syncStateToDB, 3000); // Periodic DB sync
+  const syncInterval = setInterval(syncStateToDB, 3000); // Periodic DB sync
+
+  process.on('SIGINT', () => {
+    clearInterval(syncInterval);
+    console.log('Bot shutting down, sync interval cleared.');
+    process.exit(0);
+  });
+
+  process.on('SIGTERM', () => {
+    clearInterval(syncInterval);
+    console.log('Bot shutting down, sync interval cleared.');
+    process.exit(0);
+  });
 }
 
 /**
@@ -75,7 +87,7 @@ function logCurrentState() {
 function syncStateToDB() {
   updatePaperChannelsInDB(paperChannels);
   upsertPaperMins(paperTimeMinsMap);
-  upsertexaminerMap(examinersMap);
+  upsertExaminerMap(examinersMap);
   upsertPaperRunningMap(paperRunningMap);
   upsertCandidateSessionMap(candidateSessionsMap);
 }
@@ -91,7 +103,7 @@ async function updateDatabaseWithServer(client) {
 
   syncArrayWithServer(paperChannels, serverChannelIDs, updatePaperChannelsInDB);
   syncMapWithServer(paperTimeMinsMap, serverChannelIDs, upsertPaperMins);
-  syncMapWithServer(examinersMap, serverChannelIDs, upsertexaminerMap);
+  syncMapWithServer(examinersMap, serverChannelIDs, upsertExaminerMap);
   syncMapWithServer(paperRunningMap, serverChannelIDs, upsertPaperRunningMap);
 }
 

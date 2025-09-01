@@ -1,6 +1,6 @@
 const MapModel = require('../models/examinersMap');
 
-async function upsertexaminerMap(mapData) {
+async function upsertExaminerMap(mapData) {
     const objData = Object.fromEntries(mapData); // convert Map to plain object
 
     try {
@@ -10,7 +10,7 @@ async function upsertexaminerMap(mapData) {
     }
 }
 
-async function loadexaminerMap() {
+async function loadExaminerMap() {
     try {
         const doc = await MapModel.findOne({});
         if (!doc) return new Map(); // empty Map if no document
@@ -30,4 +30,4 @@ async function loadexaminerMap() {
     }
 }
 
-module.exports = { upsertexaminerMap, loadexaminerMap };
+module.exports = { upsertExaminerMap, loadExaminerMap };
