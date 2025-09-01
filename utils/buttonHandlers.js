@@ -37,11 +37,6 @@ async function handleCloseButton(interaction, channelID) {
     paperTimeMinsMap.delete(channelID);
     paperRunningMap.delete(channelID);
     examinersMap.delete(channelID);
-    for (const key of candidateSessionsMap.keys()) {
-        if (key.includes(channelID)) {
-            candidateSessionsMap.delete(key);
-        }
-    }
 
     try {
         await interaction.channel.delete();
