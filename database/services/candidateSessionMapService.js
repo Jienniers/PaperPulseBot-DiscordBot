@@ -1,10 +1,10 @@
-const MapModel = require('../models/candidateSessionMap');
+const { CandidateSessionMap } = require('../models');
 
 async function upsertCandidateSessionMap(mapData) {
     const objData = Object.fromEntries(mapData); // convert Map to plain object
 
     try {
-        await MapModel.replaceOne({}, objData, { upsert: true });
+        await CandidateSessionMap.replaceOne({}, objData, { upsert: true });
     } catch (err) {
         console.error('Failed to update candidate session map:', err);
     }
@@ -13,7 +13,7 @@ async function upsertCandidateSessionMap(mapData) {
 
 async function loadCandidateSessionMap() {
     try {
-        const doc = await MapModel.findOne({});
+        const doc = await CandidateSessionMap.findOne({});
         if (!doc) return new Map(); // empty Map if no document
 
         // Convert document to Map

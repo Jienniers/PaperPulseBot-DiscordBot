@@ -1,10 +1,10 @@
-const MapModel = require('../models/examinersMap');
+const { ExaminersMap } = require('../models');
 
 async function upsertExaminerMap(mapData) {
     const objData = Object.fromEntries(mapData); // convert Map to plain object
 
     try {
-        await MapModel.replaceOne({}, objData, { upsert: true });
+        await ExaminersMap.replaceOne({}, objData, { upsert: true });
     } catch (err) {
         console.error('Failed to update examiner map:', err);
     }
@@ -12,7 +12,7 @@ async function upsertExaminerMap(mapData) {
 
 async function loadExaminerMap() {
     try {
-        const doc = await MapModel.findOne({});
+        const doc = await ExaminersMap.findOne({});
         if (!doc) return new Map(); // empty Map if no document
 
         // Convert document to Map

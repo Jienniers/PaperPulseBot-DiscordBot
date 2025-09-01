@@ -1,10 +1,10 @@
-const MapModel = require('../models/paperTimeMins');
+const { PaperTimeMins } = require('../models');
 
 async function upsertPaperMins(mapData) {
     const objData = Object.fromEntries(mapData); // convert Map to plain object
 
     try {
-        await MapModel.replaceOne({}, objData, { upsert: true });
+        await PaperTimeMins.replaceOne({}, objData, { upsert: true });
     } catch (err) {
         console.error('Failed to update paper mins:', err);
     }
@@ -12,7 +12,7 @@ async function upsertPaperMins(mapData) {
 
 async function loadPaperTimeMins() {
     try {
-        const doc = await MapModel.findOne({});
+        const doc = await PaperTimeMins.findOne({});
         if (!doc) return new Map(); // empty Map if no document
 
         // Convert document to Map

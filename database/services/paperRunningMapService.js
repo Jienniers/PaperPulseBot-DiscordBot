@@ -1,10 +1,10 @@
-const MapModel = require('../models/paperRunningMap');
+const { PaperRunningMap } = require('../models');
 
 async function upsertPaperRunningMap(mapData) {
     const objData = Object.fromEntries(mapData); // convert Map to plain object
 
     try {
-        await MapModel.replaceOne({}, objData, { upsert: true });
+        await PaperRunningMap.replaceOne({}, objData, { upsert: true });
     } catch (err) {
         console.error('Failed to update paper running map:', err);
     }
@@ -12,7 +12,7 @@ async function upsertPaperRunningMap(mapData) {
 
 async function loadPaperRunningMap() {
     try {
-        const doc = await MapModel.findOne({});
+        const doc = await PaperRunningMap.findOne({});
         if (!doc) return new Map(); // empty Map if no document
 
         // Convert document to Map
