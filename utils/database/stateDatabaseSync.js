@@ -53,7 +53,6 @@ async function initializeState(client) {
   await syncMapFromDB(loadPaperTimeMins, paperTimeMinsMap);
 
   await updateDatabaseWithServer(client);
-  logCurrentState();
 
   const syncInterval = setInterval(syncStateToDB, 3000); // Periodic DB sync
 
@@ -68,17 +67,6 @@ async function initializeState(client) {
     console.log('Bot shutting down, sync interval cleared.');
     process.exit(0);
   });
-}
-
-/**
- * Log current state for debugging.
- */
-function logCurrentState() {
-  console.log("Paper Channels:", paperChannels);
-  console.log("Candidate Sessions:", [...candidateSessionsMap]);
-  console.log("Examiners:", [...examinersMap]);
-  console.log("Paper Running:", [...paperRunningMap]);
-  console.log("Paper Time Mins:", [...paperTimeMinsMap]);
 }
 
 /**
