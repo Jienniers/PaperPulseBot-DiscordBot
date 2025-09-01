@@ -15,14 +15,12 @@ const { upsertPaperRunningMap, loadPaperRunningMap } = require('../database/pape
 const { upsertCandidateSessionMap, loadCandidateSessionMap } = require('../database/candidateSessionMapService');
 
 /**
- * Load a map from DB and sync it into targetMap.
- * @param {Function} loadFn - async DB loader returning a Map
- * @param {Map} targetMap - in-memory map
+ * Sync a Map from DB into memory.
+ * @param {Function} loadFn - async loader returning a Map
+ * @param {Map} targetMap - in-memory Map
  * @param {Function} transformKey - optional key transformer
  * @param {Function} transformValue - optional value transformer
  */
-
-
 async function syncMapFromDB(loadFn, targetMap, transformKey = (k) => k, transformValue = (v) => v) {
   const dbMap = await loadFn();
   targetMap.clear();
@@ -33,8 +31,8 @@ async function syncMapFromDB(loadFn, targetMap, transformKey = (k) => k, transfo
 }
 
 /**
- * Load an array from DB and sync it into targetArray.
- * @param {Function} loadFn - async DB loader returning an array
+ * Sync an array from DB into memory.
+ * @param {Function} loadFn - async loader returning an array
  * @param {Array} targetArray - in-memory array
  */
 async function syncArrayFromDB(loadFn, targetArray) {
@@ -45,7 +43,7 @@ async function syncArrayFromDB(loadFn, targetArray) {
 }
 
 /**
- * Initialize all in-memory state from the database.
+ * Initialize all in-memory state from DB and update invalid entries based on server.
  */
 async function initializeState(client) {
   await syncArrayFromDB(getPaperChannels, paperChannels);
@@ -54,12 +52,10 @@ async function initializeState(client) {
   await syncMapFromDB(loadPaperRunningMap, paperRunningMap);
   await syncMapFromDB(loadPaperTimeMins, paperTimeMinsMap);
 
-  updateDatabaseWithServer(client);
-
+  await updateDatabaseWithServer(client);
   logCurrentState();
 
-  // Periodically sync in-memory state back to DB
-  setInterval(syncStateToDB, 3000);
+  setInterval(syncStateToDB, 3000); // Periodic DB sync
 }
 
 /**
@@ -74,7 +70,7 @@ function logCurrentState() {
 }
 
 /**
- * Write in-memory state back into the database.
+ * Sync in-memory state back to DB.
  */
 function syncStateToDB() {
   updatePaperChannelsInDB(paperChannels);
@@ -84,64 +80,39 @@ function syncStateToDB() {
   upsertCandidateSessionMap(candidateSessionsMap);
 }
 
-function updateDatabaseWithServer(client) {
+/**
+ * Remove any entries from memory that no longer exist on the server, and update DB.
+ */
+async function updateDatabaseWithServer(client) {
   const guild = client.guilds.cache.get(process.env.GUILD_ID);
   if (!guild) return console.log("Guild not found!");
-  const channelIDs = guild.channels.cache.map(ch => ch.id);
 
-  //PaperChannels Update Bellow
+  const serverChannelIDs = guild.channels.cache.map(ch => ch.id);
 
-  const PaperChannelsbefore = paperChannels.length;
+  syncArrayWithServer(paperChannels, serverChannelIDs, updatePaperChannelsInDB);
+  syncMapWithServer(paperTimeMinsMap, serverChannelIDs, upsertPaperMins);
+  syncMapWithServer(examinersMap, serverChannelIDs, upsertexaminerMap);
+  syncMapWithServer(paperRunningMap, serverChannelIDs, upsertPaperRunningMap);
+}
 
-  paperChannels = paperChannels.filter(id => channelIDs.includes(id));
+/**
+ * Helper: Remove invalid array entries and optionally update DB.
+ */
+function syncArrayWithServer(array, validIDs, dbUpdateFn) {
+  const before = array.length;
+  array = array.filter(id => validIDs.includes(id));
+  if (array.length !== before) dbUpdateFn(array);
+}
 
-  const PaperChannelsafter = paperChannels.length;
-  if (PaperChannelsbefore !== PaperChannelsafter) {
-    updatePaperChannelsInDB(paperChannels);
+/**
+ * Helper: Remove invalid Map entries and optionally update DB.
+ */
+function syncMapWithServer(map, validIDs, dbUpdateFn) {
+  const before = map.size;
+  for (const key of [...map.keys()]) {
+    if (!validIDs.includes(key)) map.delete(key);
   }
-
-  //PaperTimeMinsMap Update Bellow
-  const PaperTimeMinsMapbefore = paperTimeMinsMap.length;
-
-  for (const key of paperTimeMinsMap.keys()) {
-    if (!channelIDs.includes(key)) {
-      paperTimeMinsMap.delete(key);
-    }
-  }
-
-  const PaperTimeMinsMapafter = paperTimeMinsMap.length;
-  if (PaperTimeMinsMapbefore !== PaperTimeMinsMapafter) {
-    upsertPaperMins(paperChannels);
-  }
-
-  //examainerMap Update Bellow
-  const examainerMapbefore = examinersMap.length;
-
-  for (const key of examinersMap.keys()) {
-    if (!channelIDs.includes(key)) {
-      examinersMap.delete(key);
-    }
-  }
-
-  const examainerMapafter = examinersMap.length;
-  if (examainerMapbefore !== examainerMapafter) {
-    upsertexaminerMap(examinersMap);
-  }
-
-  //PaperRunningMap Update Bellow
-  const PaperRunningMapbefore = paperRunningMap.length;
-
-  for (const key of paperRunningMap.keys()) {
-    if (!channelIDs.includes(key)) {
-      paperRunningMap.delete(key);
-    }
-  }
-
-  const PaperRunningMapafter = paperRunningMap.length;
-  if (PaperRunningMapbefore !== PaperRunningMapafter) {
-    upsertPaperRunningMap(paperRunningMap);
-  }
-
+  if (map.size !== before) dbUpdateFn(map);
 }
 
 module.exports = {
