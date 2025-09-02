@@ -71,6 +71,7 @@ Edit the file to include your credentials:
 TOKEN=your_discord_bot_token
 CLIENT_ID=your_application_client_id
 GUILD_ID=your_guild_id
+MONGO_URL=your_mongodb_url
 ```
 
 ### 4. Configuration File
@@ -93,13 +94,13 @@ Update it as needed:
 ### 5. Clear old Slash Commands (Optional)
 
 ```bash
-node node scripts/clear-commands.js
+node scripts/clear-slash-commands.js
 ```
 
 ### 6. Register Slash Commands
 
 ```bash
-node scripts/deploy_commands.js
+node scripts/deploy-slash-commands.js
 ```
 
 ### 7. Start the Bot
@@ -198,7 +199,7 @@ If you'd like to contribute to **PaperPulseBot**, follow these steps:
 2. Clone your fork:
 
     ```bash
-    git clone https://github.com/Jienniers/paperpulsebot.git
+    git clone https://github.com/[USERNAME]/paperpulsebot.git
     cd paperpulsebot
     ```
 
@@ -217,8 +218,8 @@ git checkout -b feature/your-feature-name
 - Run linter and formatter:
 
     ```bash
-    npm run lint
     npm run format
+    npm run lint
     ```
 
 ### ✅ Commit
