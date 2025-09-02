@@ -12,18 +12,25 @@ const {
     updatePaperChannelsInDB,
     getPaperChannels,
 } = require('../../database/services/paperChannelsService');
-const { upsertCandidateSessionMap, loadCandidateSessionMap } =
-    require('../../database/services/candidateSessionMapService');
+const {
+    upsertCandidateSessionMap,
+    loadCandidateSessionMap,
+} = require('../../database/services/candidateSessionMapService');
 
-const { upsertExaminerMap, loadExaminerMap } =
-    require('../../database/services/examinerMapService');
+const {
+    upsertExaminerMap,
+    loadExaminerMap,
+} = require('../../database/services/examinerMapService');
 
-const { upsertPaperRunningMap, loadPaperRunningMap } =
-    require('../../database/services/paperRunningMapService');
+const {
+    upsertPaperRunningMap,
+    loadPaperRunningMap,
+} = require('../../database/services/paperRunningMapService');
 
-const { upsertPaperTimeMins, loadPaperTimeMins } =
-    require('../../database/services/paperTimeMinsService');
-
+const {
+    upsertPaperTimeMins,
+    loadPaperTimeMins,
+} = require('../../database/services/paperTimeMinsService');
 
 /**
  * Sync a Map from DB into memory.

@@ -25,7 +25,7 @@ function createMapService(Model, serviceName) {
         }
     }
 
-    const serviceKey = serviceName.replace(/Service$/, "");
+    const serviceKey = serviceName.replace(/Service$/, '');
     return {
         [`upsert${serviceKey}`]: upsert,
         [`load${serviceKey}`]: load,
