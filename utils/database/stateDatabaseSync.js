@@ -12,22 +12,18 @@ const {
     updatePaperChannelsInDB,
     getPaperChannels,
 } = require('../../database/services/paperChannelsService');
-const {
-    upsertPaperMins,
-    loadPaperTimeMins,
-} = require('../../database/services/paperTimeMinsService');
-const {
-    upsertExaminerMap,
-    loadExaminerMap,
-} = require('../../database/services/examinerMapService');
-const {
-    upsertPaperRunningMap,
-    loadPaperRunningMap,
-} = require('../../database/services/paperRunningMapService');
-const {
-    upsertCandidateSessionMap,
-    loadCandidateSessionMap,
-} = require('../../database/services/candidateSessionMapService');
+const { upsertCandidateSessionMap, loadCandidateSessionMap } =
+    require('../../database/services/candidateSessionMapService');
+
+const { upsertExaminerMap, loadExaminerMap } =
+    require('../../database/services/examinerMapService');
+
+const { upsertPaperRunningMap, loadPaperRunningMap } =
+    require('../../database/services/paperRunningMapService');
+
+const { upsertPaperTimeMins, loadPaperTimeMins } =
+    require('../../database/services/paperTimeMinsService');
+
 
 /**
  * Sync a Map from DB into memory.
@@ -99,7 +95,7 @@ async function initializeState(client) {
  */
 function syncStateToDB() {
     updatePaperChannelsInDB(paperChannels);
-    upsertPaperMins(paperTimeMinsMap);
+    upsertPaperTimeMins(paperTimeMinsMap);
     upsertExaminerMap(examinersMap);
     upsertPaperRunningMap(paperRunningMap);
     upsertCandidateSessionMap(candidateSessionsMap);
@@ -115,7 +111,7 @@ async function updateDatabaseWithServer(client) {
     const serverChannelIDs = guild.channels.cache.map((ch) => ch.id);
 
     syncArrayWithServer(paperChannels, serverChannelIDs, updatePaperChannelsInDB);
-    syncMapWithServer(paperTimeMinsMap, serverChannelIDs, upsertPaperMins);
+    syncMapWithServer(paperTimeMinsMap, serverChannelIDs, upsertPaperTimeMins);
     syncMapWithServer(examinersMap, serverChannelIDs, upsertExaminerMap);
     syncMapWithServer(paperRunningMap, serverChannelIDs, upsertPaperRunningMap);
 }

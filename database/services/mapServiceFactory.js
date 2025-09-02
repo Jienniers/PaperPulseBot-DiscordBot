@@ -17,6 +17,7 @@ function createMapService(Model, serviceName) {
     async function load() {
         try {
             const doc = await Model.findOne({});
+            if (!doc) return new Map();
             return docToMap(doc);
         } catch (err) {
             console.error(`[${serviceName}] load failed:`, err);
@@ -24,7 +25,11 @@ function createMapService(Model, serviceName) {
         }
     }
 
-    return { upsert, load };
+    const serviceKey = serviceName.replace(/Service$/, "");
+    return {
+        [`upsert${serviceKey}`]: upsert,
+        [`load${serviceKey}`]: load,
+    };
 }
 
 module.exports = { createMapService };
