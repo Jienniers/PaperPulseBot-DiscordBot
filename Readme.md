@@ -41,22 +41,59 @@ A **Discord bot** designed to simulate a virtual exam system. Built with **Node.
 
 ## 🚀 Getting Started
 
-> Ensure [Node.js](https://nodejs.org/) is installed before setup.
+> Ensure [Node.js](https://nodejs.org/) and [Docker](https://www.docker.com/get-started) are installed before setup.
 
-### 1. Clone the Repository
+### 1. Run MongoDB in Docker
+
+1. **Pull the MongoDB image:**
+
+```bash
+docker pull mongo
+```
+
+2. **Run MongoDB container:**
+
+```bash
+docker run -d --name paperpulse-mongo -p 27017:27017 -v mongo-data:/data/db mongo
+```
+
+* `-d` runs the container in detached mode.
+* `--name` gives the container a name.
+* `-p` maps local port 27017 to container port 27017.
+* `-v` creates a volume for data persistence.
+
+3. **Check if MongoDB container is running:**
+
+```bash
+docker ps
+```
+
+4. **Stop MongoDB container (if needed):**
+
+```bash
+docker stop paperpulse-mongo
+```
+
+5. **Start MongoDB container again:**
+
+```bash
+docker start paperpulse-mongo
+```
+
+### 2. Clone the Repository
 
 ```bash
 git clone https://github.com/Jienniers/paperpulsebot.git
 cd paperpulsebot
 ```
 
-### 2. Install Dependencies
+### 3. Install Dependencies
 
 ```bash
 npm install
 ```
 
-### 3. Environment Variables
+### 4. Environment Variables
 
 Create a `.env` file in the root directory.
 You can use the example provided in examples/.env:
@@ -71,10 +108,10 @@ Edit the file to include your credentials:
 TOKEN=your_discord_bot_token
 CLIENT_ID=your_application_client_id
 GUILD_ID=your_guild_id
-MONGO_URL=your_mongodb_url
+MONGO_URL=mongodb://localhost:27017/paperpulsebot
 ```
 
-### 4. Configuration File
+### 5. Configuration File
 
 Create `config.json` in the root directory.
 You can also copy from examples/config.json:
@@ -91,22 +128,22 @@ Update it as needed:
 }
 ```
 
-### 5. Clear old Slash Commands (Optional)
+### 6. Clear old Slash Commands (Optional)
 
 ```bash
 node scripts/clear-slash-commands.js
 ```
 
-### 6. Register Slash Commands
+### 7. Register Slash Commands
 
 ```bash
 node scripts/deploy-slash-commands.js
 ```
 
-### 7. Start the Bot
+### 8. Start the Bot
 
 ```bash
-node app.js
+node index.js
 ```
 
 ---
