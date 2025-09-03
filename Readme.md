@@ -13,6 +13,7 @@ A **Discord bot** designed to simulate a virtual exam system. Built with **Node.
 - **CI:** GitHub Actions (ESLint, Prettier)
 - **Code Style:** Prettier
 - **Config:** Local JSON files
+- **Database:** MongoDB
 
 ---
 
