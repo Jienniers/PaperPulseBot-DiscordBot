@@ -1,5 +1,7 @@
 const path = require('path');
-const { formatPaperTime } = require(path.resolve(__dirname, '..', '..', 'utils', 'time.js'));
+const { formatPaperTime } = require(
+    path.resolve(__dirname, '..', '..', 'utils', 'common', 'time.js'),
+);
 
 const {
     paperChannels,
@@ -19,10 +21,9 @@ async function handleAddCommand(message) {
     if (!paperChannels.includes(channelId)) return;
 
     const paperTimeMins = paperTimeMinsMap.get(channelId);
-    const examinerEntry = examinersMap.get(channelId);
-    const examinerId = examinerEntry?.id;
+    const examinerEntryID = examinersMap.get(channelId);
 
-    if (!examinerId) {
+    if (!examinerEntryID) {
         await message.reply('❌ Examiner not found for this session.');
         return;
     }
@@ -45,7 +46,7 @@ async function handleAddCommand(message) {
     let skipped = false;
 
     for (const user of mentionedUsers.values()) {
-        if (user.bot || user.id === examinerId) {
+        if (user.bot || user.id === examinerEntryID) {
             skipped = true;
             continue;
         }

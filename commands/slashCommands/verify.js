@@ -3,7 +3,9 @@ const { examinersMap, paperChannels, doubleKeyMaps, candidateSessionsMap } = req
     path.resolve(__dirname, '..', '..', 'data', 'state.js'),
 );
 
-const { getVerifiedEmbed } = require(path.resolve(__dirname, '..', '..', 'utils', 'embeds.js'));
+const { getVerifiedEmbed } = require(
+    path.resolve(__dirname, '..', '..', 'utils', 'discord', 'embeds.js'),
+);
 
 async function handleVerify(interaction) {
     const channel = interaction.channel;
@@ -33,10 +35,10 @@ async function handleVerify(interaction) {
         });
     }
 
-    const assignedExaminer = examinersMap.get(channelId);
+    const assignedExaminerID = examinersMap.get(channelId);
     const userId = userOption.id;
 
-    if (!assignedExaminer || assignedExaminer.id !== examiner.id) {
+    if (!assignedExaminerID || assignedExaminerID !== examiner.id) {
         return interaction.reply({
             content: '❌ You are not authorized to verify candidates in this paper session.',
             flags: 64,

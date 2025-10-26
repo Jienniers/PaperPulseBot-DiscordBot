@@ -2,7 +2,7 @@ require('dotenv').config();
 
 const { Client, GatewayIntentBits, Events } = require('discord.js');
 
-const { buttonHandlers } = require('./utils/buttonHandlers');
+const { buttonHandlers } = require('./utils/discord/buttonHandlers');
 
 //commands
 const { handleAddCommand } = require('./commands/messageCommands/add');
@@ -13,6 +13,10 @@ const { handleAward } = require('./commands/slashCommands/award');
 const { handleProfile } = require('./commands/slashCommands/profile');
 const { handleLeaderboard } = require('./commands/slashCommands/leaderboard');
 
+//database
+const connectToMongoDB = require('./utils/database/mongoConnection');
+const { initializeState } = require('./utils/database/stateDatabaseSync');
+
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
@@ -21,9 +25,17 @@ const client = new Client({
     ],
 });
 
-client.once(Events.ClientReady, () => {
-    console.log(`Logged in as ${client.user.tag}!`);
-});
+async function startBot() {
+    await connectToMongoDB();
+
+    client.once(Events.ClientReady, async () => {
+        console.log(`Logged in as ${client.user.tag}!`);
+
+        await initializeState(client);
+    });
+
+    await client.login(process.env.TOKEN);
+}
 
 client.on(Events.MessageCreate, async (message) => {
     if (message.author.bot) return;
@@ -55,7 +67,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
     // ───── 🏆 AWARD PAPER COMMAND ─────
     if (interaction.commandName === 'award') {
-        await handleAward(interaction);
+        await handleAward(interaction, client);
     }
 
     // ───── 👤 PROFILE COMMAND ─────
@@ -83,4 +95,4 @@ client.on(Events.InteractionCreate, async (interaction) => {
     }
 });
 
-client.login(process.env.TOKEN);
+startBot();

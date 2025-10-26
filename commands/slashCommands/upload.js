@@ -3,7 +3,7 @@ const { examinersMap, paperChannels } = require(
     path.resolve(__dirname, '..', '..', 'data', 'state.js'),
 );
 const { sendExaminerSubmissionEmbed } = require(
-    path.resolve(__dirname, '..', '..', 'utils', 'embeds.js'),
+    path.resolve(__dirname, '..', '..', 'utils', 'discord', 'embeds.js'),
 );
 
 async function handleUpload(interaction) {
@@ -63,7 +63,7 @@ async function handleUpload(interaction) {
                 files: [attachment],
             });
         } catch (err) {
-            console.warn(`❗ Failed to send DM to examiner ${examiner.id}:`, err.message);
+            console.warn(`❗ Failed to send DM to examiner ${examiner}:`, err.message);
 
             await interaction.followUp({
                 content: '⚠️ Examiner could not receive your file (DMs might be disabled).',

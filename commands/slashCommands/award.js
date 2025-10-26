@@ -2,9 +2,11 @@ const path = require('path');
 const { examinersMap, paperChannels, doubleKeyMaps, candidateSessionsMap } = require(
     path.resolve(__dirname, '..', '..', 'data', 'state.js'),
 );
-const { getAwardEmbed } = require(path.resolve(__dirname, '..', '..', 'utils', 'embeds.js'));
+const { getAwardEmbed } = require(
+    path.resolve(__dirname, '..', '..', 'utils', 'discord', 'embeds.js'),
+);
 
-async function handleAward(interaction) {
+async function handleAward(interaction, client) {
     const channelID = interaction.channel.id;
     const userOption = interaction.options.getUser('user');
     const marksOption = interaction.options.getString('marks');
@@ -23,14 +25,14 @@ async function handleAward(interaction) {
         });
     }
 
-    if (interaction.user.id !== examiner?.id) {
+    if (interaction.user.id !== examiner) {
         return await interaction.reply({
             content: '❌ You are not authorized to award marks to candidates.',
             flags: 64,
         });
     }
 
-    if (examiner?.id === userOption.id) {
+    if (examiner === userOption.id) {
         return await interaction.reply({
             content: '❌ You cannot award marks to an examiner.',
         });
@@ -58,9 +60,11 @@ async function handleAward(interaction) {
         content: `${userOption} has been awarded ${marksOption} marks.`,
     });
 
+    const examinerUser = client.users.cache.get(examiner);
+
     const embed = getAwardEmbed({
         candidate: userOption,
-        examiner: examiner,
+        examiner: examinerUser,
         marks: marksOption,
         guildId: interaction.guild.id,
         channelId: channelID,

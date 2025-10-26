@@ -2,7 +2,7 @@
 // This file stores globally shared runtime variables (e.g., maps and arrays)
 // used across different modules in the bot to maintain session states and data consistency.
 const examinersMap = new Map();
-const paperChannels = [];
+let paperChannels = [];
 const paperTimeMinsMap = new Map();
 const paperRunningMap = new Map();
 const candidateSessionsMap = new Map();
@@ -19,7 +19,7 @@ function createCandidateSessionEntry(user, message, verified, marks) {
         channelId: message.channel.id,
         verified: verified,
         marks: marks,
-        examinerId: examinersMap.get(message.channel.id)?.id || null,
+        examinerId: examinersMap.get(message.channel.id) || null,
         guildId: message.guild.id,
         createdAt: Date.now(),
     });

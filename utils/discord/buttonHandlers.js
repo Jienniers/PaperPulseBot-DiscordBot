@@ -1,17 +1,21 @@
-const path = require('path');
-
 const {
     examinersMap,
     paperChannels,
     paperTimeMinsMap,
     paperRunningMap,
     candidateSessionsMap,
-} = require(path.resolve(__dirname, '..', 'data', 'state.js'));
+} = require('../../data/state.js');
 
-const { generateAllSessionsEmbed } = require(path.resolve(__dirname, 'embeds.js'));
+const { generateAllSessionsEmbed } = require('./embeds');
 
 async function handleDoneButton(interaction, channelID) {
-    if (interaction.user.id === examinersMap.get(channelID)?.id) return;
+    if (interaction.user.id === examinersMap.get(channelID)) {
+        await interaction.reply({
+            content: "You are the examiner; you can't submit a paper!",
+            flags: 64,
+        });
+        return;
+    }
 
     await interaction.reply({
         content: 'Please stop writing and put your pen down.',
@@ -21,36 +25,23 @@ async function handleDoneButton(interaction, channelID) {
 }
 
 async function handleCloseButton(interaction, channelID) {
-    if (interaction.user.id !== examinersMap.get(channelID)?.id) {
-        await interaction.reply({
-            content: '❌ You are not authorized to close this paper session.',
-            flags: 64,
-        });
+    if (interaction.user.id !== examinersMap.get(channelID)) {
+        await interaction.reply({ content: '❌ Not authorized.', flags: 64 });
         return;
     }
 
-    //clearing up all the maps and array after you delete the channel in this button function
-
+    // remove all in-memory state for this channel
     const index = paperChannels.indexOf(channelID);
     if (index > -1) paperChannels.splice(index, 1);
-
     paperTimeMinsMap.delete(channelID);
     paperRunningMap.delete(channelID);
     examinersMap.delete(channelID);
-    for (const key of candidateSessionsMap.keys()) {
-        if (key.includes(channelID)) {
-            candidateSessionsMap.delete(key);
-        }
-    }
 
     try {
         await interaction.channel.delete();
     } catch (err) {
         console.error('Failed to delete channel:', err);
-        await interaction.reply({
-            content: '❌ Failed to delete the channel. Please check bot permissions.',
-            flags: 64,
-        });
+        await interaction.reply({ content: '❌ Failed to delete channel.', flags: 64 });
     }
 }
 
