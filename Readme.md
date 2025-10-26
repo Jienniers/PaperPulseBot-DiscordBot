@@ -58,10 +58,10 @@ docker pull mongo
 docker run -d --name paperpulse-mongo -p 27017:27017 -v mongo-data:/data/db mongo
 ```
 
-* `-d` runs the container in detached mode.
-* `--name` gives the container a name.
-* `-p` maps local port 27017 to container port 27017.
-* `-v` creates a volume for data persistence.
+- `-d` runs the container in detached mode.
+- `--name` gives the container a name.
+- `-p` maps local port 27017 to container port 27017.
+- `-v` creates a volume for data persistence.
 
 3. **Check if MongoDB container is running:**
 
