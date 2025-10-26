@@ -1,8 +1,10 @@
 function createMapService(Model, serviceName) {
     function docToMap(doc) {
         if (!doc) return new Map();
-        const { _id, __v, ...rest } = doc.toObject();
-        return new Map(Object.entries(rest));
+        const data = doc.toObject();
+        delete data._id;
+        delete data.__v;
+        return new Map(Object.entries(data));
     }
 
     async function upsert(mapData) {
