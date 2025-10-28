@@ -3,7 +3,9 @@ import globals from 'globals';
 import prettier from 'eslint-config-prettier';
 import eslintPluginPrettier from 'eslint-plugin-prettier';
 import { defineConfig } from 'eslint/config';
-import prettierConfig from './.prettierrc' assert { type: 'json' }; // ✅ import Prettier rules
+import fs from 'fs';
+
+const prettierConfig = JSON.parse(fs.readFileSync('./.prettierrc', 'utf-8')); // ✅ Safe load
 
 export default defineConfig([
     {
@@ -18,7 +20,7 @@ export default defineConfig([
         plugins: { prettier: eslintPluginPrettier },
         extends: [js.configs.recommended, prettier],
         rules: {
-            'prettier/prettier': ['error', prettierConfig], // ✅ use your Prettier config here
+            'prettier/prettier': ['error', prettierConfig], // ✅ apply Prettier rules
         },
     },
     {
