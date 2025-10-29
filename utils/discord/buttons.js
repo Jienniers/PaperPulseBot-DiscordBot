@@ -8,7 +8,6 @@ function makeButton(customId, label, style) {
 // Returns the action buttons shown in the paper channel when /startpaper is used
 function createPaperButtons() {
     return new ActionRowBuilder().addComponents(
-        makeButton('done', 'Done!', ButtonStyle.Primary),
         makeButton('close', 'Stop/Close', ButtonStyle.Danger),
     );
 }

@@ -8,22 +8,6 @@ const {
 
 const { generateAllSessionsEmbed } = require('./embeds');
 
-async function handleDoneButton(interaction, channelID) {
-    if (interaction.user.id === examinersMap.get(channelID)) {
-        await interaction.reply({
-            content: "You are the examiner; you can't submit a paper!",
-            flags: 64,
-        });
-        return;
-    }
-
-    await interaction.reply({
-        content: 'Please stop writing and put your pen down.',
-        flags: 64,
-    });
-    await interaction.channel.send(`${interaction.user} completed the paper!`);
-}
-
 async function handleCloseButton(interaction, channelID) {
     if (interaction.user.id !== examinersMap.get(channelID)) {
         await interaction.reply({ content: '❌ Not authorized.', flags: 64 });
@@ -64,7 +48,6 @@ async function handleViewAllSessions(interaction, channelID) {
 
 // 🔧 Maps button IDs to their corresponding handler functions
 const buttonHandlers = {
-    done: handleDoneButton,
     close: handleCloseButton,
     view_sessions: handleViewAllSessions,
     // Add more handlers as needed
