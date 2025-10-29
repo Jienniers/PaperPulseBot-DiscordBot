@@ -1,7 +1,11 @@
 import js from '@eslint/js';
 import globals from 'globals';
 import prettier from 'eslint-config-prettier';
+import eslintPluginPrettier from 'eslint-plugin-prettier';
 import { defineConfig } from 'eslint/config';
+import fs from 'fs';
+
+const prettierConfig = JSON.parse(fs.readFileSync('./.prettierrc', 'utf-8')); // ✅ Safe load
 
 export default defineConfig([
     {
@@ -13,9 +17,11 @@ export default defineConfig([
                 ...globals.es2021,
             },
         },
-        plugins: { js },
-        // ✅ Use the imported object directly here
+        plugins: { prettier: eslintPluginPrettier },
         extends: [js.configs.recommended, prettier],
+        rules: {
+            'prettier/prettier': ['error', prettierConfig], // ✅ apply Prettier rules
+        },
     },
     {
         ignores: ['node_modules', '.env', 'eslint.config.mjs'],

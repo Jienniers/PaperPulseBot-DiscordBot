@@ -1,14 +1,16 @@
-name: Lint Code
+name: 🧹 Lint & Format Check
 
 on:
     push:
-        branches: [main]
+        branches: [main, '**']
     pull_request:
-        branches: [main]
+        branches: [main, '**']
 
 jobs:
     lint:
+        name: Run ESLint + Prettier
         runs-on: ubuntu-latest
+
         steps:
             - name: ⬇️ Checkout repository
               uses: actions/checkout@v4
@@ -21,6 +23,6 @@ jobs:
             - name: 📦 Install dependencies
               run: npm ci
 
-            - name: 🧪 Run ESLint
+            - name: 🧪 Run ESLint (with Prettier integration)
               run: |
                   npx eslint . --max-warnings=0
