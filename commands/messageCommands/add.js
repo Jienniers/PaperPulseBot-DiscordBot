@@ -1,18 +1,15 @@
-const path = require('path');
-const { formatPaperTime } = require(
-    path.resolve(__dirname, '..', '..', 'utils', 'common', 'time.js'),
-);
+import { formatPaperTime } from '../../utils/common/time.js';
 
-const {
-    paperChannels,
-    paperTimeMinsMap,
-    paperRunningMap,
-    createCandidateSessionEntry,
-    examinersMap,
-} = require(path.resolve(__dirname, '..', '..', 'data', 'state.js'));
+import {
+  paperChannels,
+  paperTimeMinsMap,
+  paperRunningMap,
+  createCandidateSessionEntry,
+  examinersMap,
+} from '../../data/state.js';
 
 // Handles the !add command: adds mentioned users as candidates for the current paper session
-async function handleAddCommand(message) {
+export async function handleAddCommand(message) {
     if (!message.content.startsWith('!add')) return;
 
     const channel = message.channel;
@@ -109,8 +106,3 @@ async function startPaperTimer(channel, paperMinutes) {
         );
     }, 60_000);
 }
-
-module.exports = {
-    handleAddCommand,
-    paperRunningMap,
-};
