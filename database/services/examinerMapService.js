@@ -1,4 +1,5 @@
-const { ExaminersMap } = require('../models');
-const { createMapService } = require('./mapServiceFactory');
+import { ExaminersMap } from '../models.js';
+import { createMapService } from './mapServiceFactory.js';
 
-module.exports = createMapService(ExaminersMap, 'ExaminerMapService');
+
+export default createMapService(ExaminersMap, 'ExaminerMapService');
