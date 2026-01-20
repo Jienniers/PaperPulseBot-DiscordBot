@@ -1,13 +1,14 @@
-const path = require('path');
-const { examinersMap, paperChannels, doubleKeyMaps, candidateSessionsMap } = require(
-    path.resolve(__dirname, '..', '..', 'data', 'state.js'),
-);
+import {
+  examinersMap,
+  paperChannels,
+  doubleKeyMaps,
+  candidateSessionsMap,
+} from '../../data/state.js';
 
-const { getVerifiedEmbed } = require(
-    path.resolve(__dirname, '..', '..', 'utils', 'discord', 'embeds.js'),
-);
+import { getVerifiedEmbed } from '../../utils/discord/embeds.js';
 
-async function handleVerify(interaction) {
+
+export async function handleVerify(interaction) {
     const channel = interaction.channel;
     const guild = interaction.guild;
     const examiner = interaction.user;
@@ -94,7 +95,3 @@ async function handleVerify(interaction) {
         });
     }
 }
-
-module.exports = {
-    handleVerify,
-};
