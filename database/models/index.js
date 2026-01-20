@@ -1,5 +1,6 @@
-const createDynamicModel = require('./dynamicModelFactory');
-const mongoose = require('mongoose');
+import createDynamicModel from './dynamicModelFactory.js';
+import mongoose from 'mongoose';
+
 
 // Dynamic models
 const CandidateSessionMap = createDynamicModel('CandidateSessionMap');
@@ -13,7 +14,7 @@ const paperChannelsSchema = new mongoose.Schema({
 });
 const PaperChannels = mongoose.model('PaperChannels', paperChannelsSchema);
 
-module.exports = {
+export {
     CandidateSessionMap,
     ExaminersMap,
     PaperRunningMap,
