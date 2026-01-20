@@ -1,13 +1,9 @@
-const path = require('path');
-const { generateProfileEmbed } = require(
-    path.resolve(__dirname, '..', '..', 'utils', 'discord', 'embeds.js'),
-);
-const { candidateSessionsMap } = require(path.resolve(__dirname, '..', '..', 'data', 'state.js'));
-const { createProfileCommandButtons } = require(
-    path.resolve(__dirname, '..', '..', 'utils', 'discord', 'buttons.js'),
-);
+import { generateProfileEmbed } from '../../utils/discord/embeds.js';
+import { candidateSessionsMap } from '../../data/state.js';
+import { createProfileCommandButtons } from '../../utils/discord/buttons.js';
 
-async function handleProfile(interaction) {
+
+export async function handleProfile(interaction) {
     const userOption = interaction.options.getUser('user');
     const user = userOption ?? interaction.user;
     const userId = user.id;
@@ -124,7 +120,3 @@ function parseMarkPair(markStr) {
     const total = parseFloat(totalStr);
     return !isNaN(scored) && !isNaN(total) && total > 0 ? { scored, total } : null;
 }
-
-module.exports = {
-    handleProfile,
-};
