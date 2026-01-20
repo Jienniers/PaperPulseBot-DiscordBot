@@ -25,12 +25,12 @@ function createCandidateSessionEntry(user, message, verified, marks) {
     });
 }
 
-module.exports = {
-    examinersMap,
-    paperChannels,
-    paperTimeMinsMap,
-    paperRunningMap,
-    candidateSessionsMap,
-    doubleKeyMaps,
-    createCandidateSessionEntry,
+export {
+  examinersMap,
+  paperChannels,
+  paperTimeMinsMap,
+  paperRunningMap,
+  candidateSessionsMap,
+  doubleKeyMaps,
+  createCandidateSessionEntry,
 };
