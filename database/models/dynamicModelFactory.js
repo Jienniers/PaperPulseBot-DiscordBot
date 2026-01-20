@@ -1,8 +1,6 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
-function createDynamicModel(name) {
+export function createDynamicModel(name) {
     const dynamicSchema = new mongoose.Schema({}, { strict: false });
     return mongoose.model(name, dynamicSchema);
 }
-
-module.exports = createDynamicModel;
