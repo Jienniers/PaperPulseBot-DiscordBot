@@ -1,20 +1,17 @@
-const path = require('path');
-const { getConfig } = require(path.resolve(__dirname, '..', '..', 'utils', 'common', 'config.js'));
-const { formatPaperTime } = require(
-    path.resolve(__dirname, '..', '..', 'utils', 'common', 'time.js'),
-);
-const { createPaperEmbed } = require(
-    path.resolve(__dirname, '..', '..', 'utils', 'discord', 'embeds.js'),
-);
-const { createPaperButtons } = require(
-    path.resolve(__dirname, '..', '..', 'utils', 'discord', 'buttons.js'),
-);
+import { getConfig } from '../../utils/common/config.js';
+import { formatPaperTime } from '../../utils/common/time.js';
 
-const { examinersMap, paperChannels, paperTimeMinsMap } = require(
-    path.resolve(__dirname, '..', '..', 'data', 'state.js'),
-);
+import { createPaperEmbed } from '../../utils/discord/embeds.js';
+import { createPaperButtons } from '../../utils/discord/buttons.js';
 
-async function handleStartPaper(interaction) {
+import {
+  examinersMap,
+  paperChannels,
+  paperTimeMinsMap,
+} from '../../data/state.js';
+
+
+export async function handleStartPaper(interaction) {
     const channelId = interaction.channel.id;
     const guild = interaction.guild;
     const user = interaction.user;
@@ -90,7 +87,3 @@ async function handleStartPaper(interaction) {
         flags: 64,
     });
 }
-
-module.exports = {
-    handleStartPaper,
-};
