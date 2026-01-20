@@ -1,6 +1,7 @@
-const { PaperChannels } = require('../models');
+import PaperChannels from '../models';
 
-async function getPaperChannels() {
+
+export async function getPaperChannels() {
     let doc = await PaperChannels.findOne();
     if (!doc) {
         doc = new PaperChannels();
@@ -9,7 +10,7 @@ async function getPaperChannels() {
     return doc.channels;
 }
 
-async function setPaperChannels(channels) {
+export async function setPaperChannels(channels) {
     let doc = await PaperChannels.findOne();
     if (!doc) {
         doc = new PaperChannels();
@@ -18,7 +19,7 @@ async function setPaperChannels(channels) {
     await doc.save();
 }
 
-async function updatePaperChannelsInDB(paperChannels) {
+export async function updatePaperChannelsInDB(paperChannels) {
     try {
         const doc = await PaperChannels.findOne();
 
@@ -33,9 +34,3 @@ async function updatePaperChannelsInDB(paperChannels) {
         console.error('Failed to update paper channels:', err);
     }
 }
-
-module.exports = {
-    getPaperChannels,
-    setPaperChannels,
-    updatePaperChannelsInDB,
-};
