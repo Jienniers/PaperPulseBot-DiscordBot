@@ -1,10 +1,8 @@
-const path = require('path');
-const { getLeaderboardEmbed } = require(
-    path.resolve(__dirname, '..', '..', 'utils', 'discord', 'embeds.js'),
-);
-const { candidateSessionsMap } = require(path.resolve(__dirname, '..', '..', 'data', 'state.js'));
+import { getLeaderboardEmbed } from '../../utils/discord/embeds.js';
+import { candidateSessionsMap } from '../../data/state.js';
 
-async function handleLeaderboard(interaction) {
+
+export async function handleLeaderboard(interaction) {
     const channelId = interaction.channel.id;
 
     await interaction.deferReply();
@@ -44,7 +42,3 @@ async function handleLeaderboard(interaction) {
 
     await interaction.editReply({ embeds: [embed] });
 }
-
-module.exports = {
-    handleLeaderboard,
-};
