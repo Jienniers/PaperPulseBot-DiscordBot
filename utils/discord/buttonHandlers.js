@@ -1,12 +1,13 @@
-const {
-    examinersMap,
-    paperChannels,
-    paperTimeMinsMap,
-    paperRunningMap,
-    candidateSessionsMap,
-} = require('../../data/state.js');
+import {
+  examinersMap,
+  paperChannels,
+  paperTimeMinsMap,
+  paperRunningMap,
+  candidateSessionsMap
+} from '../../data/state.js';
 
-const { generateAllSessionsEmbed } = require('./embeds');
+import { generateAllSessionsEmbed } from './embeds.js';
+
 
 async function handleCloseButton(interaction, channelID) {
     if (interaction.user.id !== examinersMap.get(channelID)) {
@@ -47,10 +48,8 @@ async function handleViewAllSessions(interaction, channelID) {
 }
 
 // 🔧 Maps button IDs to their corresponding handler functions
-const buttonHandlers = {
+export const buttonHandlers = {
     close: handleCloseButton,
     view_sessions: handleViewAllSessions,
     // Add more handlers as needed
 };
-
-module.exports = { buttonHandlers };
