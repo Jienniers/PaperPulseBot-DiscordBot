@@ -1,9 +1,7 @@
-const fs = require('fs');
-const path = require('path');
+import configFilePath from './config.json' assert { type: 'json' };
 
-const configFilePath = path.join(__dirname, '..', '..', 'config.json');
 
-function getConfig() {
+export function getConfig() {
     if (!fs.existsSync(configFilePath)) {
         console.error(
             '❌ config.json not found. Please copy it from examples/config.json and fill it.',
@@ -13,5 +11,3 @@ function getConfig() {
     const raw = fs.readFileSync(configFilePath, 'utf-8');
     return JSON.parse(raw);
 }
-
-module.exports = { getConfig };
