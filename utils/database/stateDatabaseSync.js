@@ -8,30 +8,20 @@ import {
   candidateSessionsMap,
 } from '../../data/state.js';
 
-import {
-  updatePaperChannelsInDB,
-  getPaperChannels
-} from '../../database/services/paperChannelsService.js';
+import { updatePaperChannelsInDB, getPaperChannels } from '../../database/services/paperChannelsService.js';
 
-import {
-  upsertCandidateSessionMap,
-  loadCandidateSessionMap
-} from '../../database/services/candidateSessionMapService.js';
+// Import default exports from each service file
+import CandidateSessionMapService from '../../database/services/candidateSessionMapService.js';
+import ExaminerMapService from '../../database/services/examinerMapService.js';
+import PaperRunningMapService from '../../database/services/paperRunningMapService.js';
+import PaperTimeMinsService from '../../database/services/paperTimeMinsService.js';
 
-import {
-  upsertExaminerMap,
-  loadExaminerMap
-} from '../../database/services/examinerMapService.js';
+// Destructure functions from each service object
+const { upsertCandidateSessionMap, loadCandidateSessionMap } = CandidateSessionMapService;
+const { upsertExaminerMap, loadExaminerMap } = ExaminerMapService;
+const { upsertPaperRunningMap, loadPaperRunningMap } = PaperRunningMapService;
+const { upsertPaperTimeMins, loadPaperTimeMins } = PaperTimeMinsService;
 
-import {
-  upsertPaperRunningMap,
-  loadPaperRunningMap
-} from '../../database/services/paperRunningMapService.js';
-
-import {
-  upsertPaperTimeMins,
-  loadPaperTimeMins
-} from '../../database/services/paperTimeMinsService.js';
 
 /**
  * Sync a Map from DB into memory.
