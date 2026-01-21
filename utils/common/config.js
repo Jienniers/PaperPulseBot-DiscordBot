@@ -1,4 +1,4 @@
-import configFilePath from './config.json' assert { type: 'json' };
+import configFilePath from '../../config.json' with { type: 'json' };
 
 
 export function getConfig() {
