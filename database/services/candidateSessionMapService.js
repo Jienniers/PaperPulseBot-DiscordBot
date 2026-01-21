@@ -1,4 +1,4 @@
-import { CandidateSessionMap } from '../models.js';
+import { CandidateSessionMap } from '../models/index.js';
 import { createMapService } from './mapServiceFactory.js';
 
 

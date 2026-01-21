@@ -1,4 +1,4 @@
-import { PaperRunningMap } from '../models.js';
+import { PaperRunningMap } from '../models/index.js';
 import { createMapService } from './mapServiceFactory.js';
 
 

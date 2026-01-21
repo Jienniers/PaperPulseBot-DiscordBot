@@ -1,4 +1,4 @@
-import PaperChannels from '../models';
+import PaperChannels from '../models/index.js';
 
 
 export async function getPaperChannels() {

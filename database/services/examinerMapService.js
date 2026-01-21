@@ -1,4 +1,4 @@
-import { ExaminersMap } from '../models.js';
+import { ExaminersMap } from '../models/index.js';
 import { createMapService } from './mapServiceFactory.js';
 
 

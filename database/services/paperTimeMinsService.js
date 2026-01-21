@@ -1,4 +1,4 @@
-import { PaperTimeMins } from '../models.js';
+import { PaperTimeMins } from '../models/index.js';
 import { createMapService } from './mapServiceFactory.js';
 
 
