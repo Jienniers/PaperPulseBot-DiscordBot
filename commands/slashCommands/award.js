@@ -1,12 +1,11 @@
 import {
-  examinersMap,
-  paperChannels,
-  doubleKeyMaps,
-  candidateSessionsMap,
+    examinersMap,
+    paperChannels,
+    doubleKeyMaps,
+    candidateSessionsMap,
 } from '../../data/state.js';
 
 import { getAwardEmbed } from '../../utils/discord/embeds.js';
-
 
 export async function handleAward(interaction, client) {
     const channelID = interaction.channel.id;

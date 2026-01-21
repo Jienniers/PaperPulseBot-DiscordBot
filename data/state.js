@@ -26,11 +26,11 @@ function createCandidateSessionEntry(user, message, verified, marks) {
 }
 
 export {
-  examinersMap,
-  paperChannels,
-  paperTimeMinsMap,
-  paperRunningMap,
-  candidateSessionsMap,
-  doubleKeyMaps,
-  createCandidateSessionEntry,
+    examinersMap,
+    paperChannels,
+    paperTimeMinsMap,
+    paperRunningMap,
+    candidateSessionsMap,
+    doubleKeyMaps,
+    createCandidateSessionEntry,
 };

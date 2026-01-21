@@ -1,6 +1,5 @@
 import { EmbedBuilder } from 'discord.js';
 
-
 // Returns the embed shown in the paper channel when a paper is started with /startpaper
 export function createPaperEmbed(user, paperCode, timeString) {
     return new EmbedBuilder()

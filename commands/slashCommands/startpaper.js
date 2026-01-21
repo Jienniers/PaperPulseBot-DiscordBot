@@ -4,12 +4,7 @@ import { formatPaperTime } from '../../utils/common/time.js';
 import { createPaperEmbed } from '../../utils/discord/embeds.js';
 import { createPaperButtons } from '../../utils/discord/buttons.js';
 
-import {
-  examinersMap,
-  paperChannels,
-  paperTimeMinsMap,
-} from '../../data/state.js';
-
+import { examinersMap, paperChannels, paperTimeMinsMap } from '../../data/state.js';
 
 export async function handleStartPaper(interaction) {
     const channelId = interaction.channel.id;

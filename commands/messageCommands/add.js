@@ -1,11 +1,11 @@
 import { formatPaperTime } from '../../utils/common/time.js';
 
 import {
-  paperChannels,
-  paperTimeMinsMap,
-  paperRunningMap,
-  createCandidateSessionEntry,
-  examinersMap,
+    paperChannels,
+    paperTimeMinsMap,
+    paperRunningMap,
+    createCandidateSessionEntry,
+    examinersMap,
 } from '../../data/state.js';
 
 // Handles the !add command: adds mentioned users as candidates for the current paper session

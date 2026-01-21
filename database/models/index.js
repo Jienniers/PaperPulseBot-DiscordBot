@@ -1,7 +1,6 @@
 import createDynamicModel from './dynamicModelFactory.js';
 import mongoose from 'mongoose';
 
-
 // Dynamic models
 const CandidateSessionMap = createDynamicModel('CandidateSessionMap');
 const ExaminersMap = createDynamicModel('ExaminersMap');
@@ -14,10 +13,4 @@ const paperChannelsSchema = new mongoose.Schema({
 });
 const PaperChannels = mongoose.model('PaperChannels', paperChannelsSchema);
 
-export {
-    CandidateSessionMap,
-    ExaminersMap,
-    PaperRunningMap,
-    PaperTimeMins,
-    PaperChannels,
-};
+export { CandidateSessionMap, ExaminersMap, PaperRunningMap, PaperTimeMins, PaperChannels };

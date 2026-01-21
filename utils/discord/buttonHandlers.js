@@ -1,13 +1,12 @@
 import {
-  examinersMap,
-  paperChannels,
-  paperTimeMinsMap,
-  paperRunningMap,
-  candidateSessionsMap
+    examinersMap,
+    paperChannels,
+    paperTimeMinsMap,
+    paperRunningMap,
+    candidateSessionsMap,
 } from '../../data/state.js';
 
 import { generateAllSessionsEmbed } from './embeds.js';
-
 
 async function handleCloseButton(interaction, channelID) {
     if (interaction.user.id !== examinersMap.get(channelID)) {

@@ -1,7 +1,6 @@
 import { getLeaderboardEmbed } from '../../utils/discord/embeds.js';
 import { candidateSessionsMap } from '../../data/state.js';
 
-
 export async function handleLeaderboard(interaction) {
     const channelId = interaction.channel.id;
 

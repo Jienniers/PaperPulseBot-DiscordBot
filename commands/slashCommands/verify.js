@@ -1,12 +1,11 @@
 import {
-  examinersMap,
-  paperChannels,
-  doubleKeyMaps,
-  candidateSessionsMap,
+    examinersMap,
+    paperChannels,
+    doubleKeyMaps,
+    candidateSessionsMap,
 } from '../../data/state.js';
 
 import { getVerifiedEmbed } from '../../utils/discord/embeds.js';
-
 
 export async function handleVerify(interaction) {
     const channel = interaction.channel;

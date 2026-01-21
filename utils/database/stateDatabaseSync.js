@@ -1,14 +1,17 @@
 import 'dotenv/config';
 
 import {
-  paperChannels,
-  paperTimeMinsMap,
-  examinersMap,
-  paperRunningMap,
-  candidateSessionsMap,
+    paperChannels,
+    paperTimeMinsMap,
+    examinersMap,
+    paperRunningMap,
+    candidateSessionsMap,
 } from '../../data/state.js';
 
-import { updatePaperChannelsInDB, getPaperChannels } from '../../database/services/paperChannelsService.js';
+import {
+    updatePaperChannelsInDB,
+    getPaperChannels,
+} from '../../database/services/paperChannelsService.js';
 
 // Import default exports from each service file
 import CandidateSessionMapService from '../../database/services/candidateSessionMapService.js';
@@ -21,7 +24,6 @@ const { upsertCandidateSessionMap, loadCandidateSessionMap } = CandidateSessionM
 const { upsertExaminerMap, loadExaminerMap } = ExaminerMapService;
 const { upsertPaperRunningMap, loadPaperRunningMap } = PaperRunningMapService;
 const { upsertPaperTimeMins, loadPaperTimeMins } = PaperTimeMinsService;
-
 
 /**
  * Sync a Map from DB into memory.

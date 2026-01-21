@@ -1,6 +1,5 @@
 import { PaperChannels } from '../models/index.js';
 
-
 export async function getPaperChannels() {
     let doc = await PaperChannels.findOne();
     if (!doc) {

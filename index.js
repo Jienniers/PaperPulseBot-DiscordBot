@@ -1,8 +1,8 @@
 import 'dotenv/config';
 
-import {Client, GatewayIntentBits, Events} from "discord.js";
+import { Client, GatewayIntentBits, Events } from 'discord.js';
 
-import { buttonHandlers } from "./utils/discord/buttonHandlers.js";
+import { buttonHandlers } from './utils/discord/buttonHandlers.js';
 
 //commands
 import { handleAddCommand } from './commands/messageCommands/add.js';
@@ -16,7 +16,6 @@ import { handleLeaderboard } from './commands/slashCommands/leaderboard.js';
 //database
 import connectToMongoDB from './utils/database/mongoConnection.js';
 import { initializeState } from './utils/database/stateDatabaseSync.js';
-
 
 const client = new Client({
     intents: [

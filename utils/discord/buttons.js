@@ -1,6 +1,5 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
 
-
 //utility function
 function makeButton(customId, label, style) {
     return new ButtonBuilder().setCustomId(customId).setLabel(label).setStyle(style);
