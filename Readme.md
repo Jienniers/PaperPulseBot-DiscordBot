@@ -157,6 +157,12 @@ node index.js
     npm run lint
     ```
 
+- Run ESLint to fix code:
+
+    ```bash
+    npm run lintfix
+    ```
+
 - Format code automatically with Prettier:
 
     ```bash
@@ -170,7 +176,7 @@ node index.js
 ```
 ├── .env                                     # Environment variables (not committed)
 ├── .gitignore                               # Git ignored files config
-├── .prettierrc                              # Prettier formatting rules
+├── .prettierrc.json                         # Prettier formatting rules
 ├── config.json                              # Local bot configuration
 ├── eslint.config.mjs                        # ESLint config using flat config system
 ├── index.js                                 # Entry point of the bot
