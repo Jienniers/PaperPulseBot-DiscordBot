@@ -1,36 +1,37 @@
-require('dotenv').config();
+import 'dotenv/config';
 
-let {
-    paperChannels,
-    paperTimeMinsMap,
-    examinersMap,
-    paperRunningMap,
-    candidateSessionsMap,
-} = require('../../data/state');
+import {
+  paperChannels,
+  paperTimeMinsMap,
+  examinersMap,
+  paperRunningMap,
+  candidateSessionsMap,
+} from '../../data/state.js';
 
-const {
-    updatePaperChannelsInDB,
-    getPaperChannels,
-} = require('../../database/services/paperChannelsService');
-const {
-    upsertCandidateSessionMap,
-    loadCandidateSessionMap,
-} = require('../../database/services/candidateSessionMapService');
+import {
+  updatePaperChannelsInDB,
+  getPaperChannels
+} from '../../database/services/paperChannelsService.js';
 
-const {
-    upsertExaminerMap,
-    loadExaminerMap,
-} = require('../../database/services/examinerMapService');
+import {
+  upsertCandidateSessionMap,
+  loadCandidateSessionMap
+} from '../../database/services/candidateSessionMapService.js';
 
-const {
-    upsertPaperRunningMap,
-    loadPaperRunningMap,
-} = require('../../database/services/paperRunningMapService');
+import {
+  upsertExaminerMap,
+  loadExaminerMap
+} from '../../database/services/examinerMapService.js';
 
-const {
-    upsertPaperTimeMins,
-    loadPaperTimeMins,
-} = require('../../database/services/paperTimeMinsService');
+import {
+  upsertPaperRunningMap,
+  loadPaperRunningMap
+} from '../../database/services/paperRunningMapService.js';
+
+import {
+  upsertPaperTimeMins,
+  loadPaperTimeMins
+} from '../../database/services/paperTimeMinsService.js';
 
 /**
  * Sync a Map from DB into memory.
@@ -39,7 +40,7 @@ const {
  * @param {Function} transformKey - optional key transformer
  * @param {Function} transformValue - optional value transformer
  */
-async function syncMapFromDB(
+export async function syncMapFromDB(
     loadFn,
     targetMap,
     transformKey = (k) => k,
@@ -58,7 +59,7 @@ async function syncMapFromDB(
  * @param {Function} loadFn - async loader returning an array
  * @param {Array} targetArray - in-memory array
  */
-async function syncArrayFromDB(loadFn, targetArray) {
+export async function syncArrayFromDB(loadFn, targetArray) {
     const dbArray = await loadFn();
     targetArray.length = 0;
     targetArray.push(...dbArray);
@@ -68,7 +69,7 @@ async function syncArrayFromDB(loadFn, targetArray) {
 /**
  * Initialize all in-memory state from DB and update invalid entries based on server.
  */
-async function initializeState(client) {
+export async function initializeState(client) {
     await syncArrayFromDB(getPaperChannels, paperChannels);
     await syncMapFromDB(loadCandidateSessionMap, candidateSessionsMap);
     await syncMapFromDB(
@@ -145,9 +146,3 @@ function syncMapWithServer(map, validIDs, dbUpdateFn) {
     }
     if (map.size !== before) dbUpdateFn(map);
 }
-
-module.exports = {
-    initializeState,
-    syncMapFromDB,
-    syncArrayFromDB,
-};
