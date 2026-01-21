@@ -3,15 +3,14 @@ import globals from 'globals';
 import prettier from 'eslint-config-prettier';
 import eslintPluginPrettier from 'eslint-plugin-prettier';
 import { defineConfig } from 'eslint/config';
-import fs from 'fs';
 
-const prettierConfig = JSON.parse(fs.readFileSync('./.prettierrc', 'utf-8')); // ✅ Safe load
+import prettierConfig from './.prettierrc.json' with { type: 'json' };
 
 export default defineConfig([
     {
-        files: ['**/*.{js,mjs,cjs}'],
+        files: ['**/*.{js,mjs}'],
         languageOptions: {
-            sourceType: 'commonjs',
+            sourceType: 'module',
             globals: {
                 ...globals.node,
                 ...globals.es2021,
