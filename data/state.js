@@ -25,7 +25,7 @@ function createCandidateSessionEntry(user, message, verified, marks) {
     });
 }
 
-module.exports = {
+export {
     examinersMap,
     paperChannels,
     paperTimeMinsMap,

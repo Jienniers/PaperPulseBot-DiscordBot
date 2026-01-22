@@ -1,4 +1,4 @@
-const { CandidateSessionMap } = require('../models');
-const { createMapService } = require('./mapServiceFactory');
+import { CandidateSessionMap } from '../models/index.js';
+import { createMapService } from './mapServiceFactory.js';
 
-module.exports = createMapService(CandidateSessionMap, 'CandidateSessionMapService');
+export default createMapService(CandidateSessionMap, 'CandidateSessionMapService');

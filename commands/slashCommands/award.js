@@ -1,12 +1,13 @@
-const path = require('path');
-const { examinersMap, paperChannels, doubleKeyMaps, candidateSessionsMap } = require(
-    path.resolve(__dirname, '..', '..', 'data', 'state.js'),
-);
-const { getAwardEmbed } = require(
-    path.resolve(__dirname, '..', '..', 'utils', 'discord', 'embeds.js'),
-);
+import {
+    examinersMap,
+    paperChannels,
+    doubleKeyMaps,
+    candidateSessionsMap,
+} from '../../data/state.js';
 
-async function handleAward(interaction, client) {
+import { getAwardEmbed } from '../../utils/discord/embeds.js';
+
+export async function handleAward(interaction, client) {
     const channelID = interaction.channel.id;
     const userOption = interaction.options.getUser('user');
     const marksOption = interaction.options.getString('marks');
@@ -76,7 +77,3 @@ async function handleAward(interaction, client) {
         console.warn(`❗ Failed to send DM to user ${userOption.id}:`, err.message);
     }
 }
-
-module.exports = {
-    handleAward,
-};

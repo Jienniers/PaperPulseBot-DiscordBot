@@ -1,4 +1,4 @@
-const { PaperRunningMap } = require('../models');
-const { createMapService } = require('./mapServiceFactory');
+import { PaperRunningMap } from '../models/index.js';
+import { createMapService } from './mapServiceFactory.js';
 
-module.exports = createMapService(PaperRunningMap, 'PaperRunningMapService');
+export default createMapService(PaperRunningMap, 'PaperRunningMapService');

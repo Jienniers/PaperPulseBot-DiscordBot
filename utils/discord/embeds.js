@@ -1,7 +1,7 @@
-const { EmbedBuilder } = require('discord.js');
+import { EmbedBuilder } from 'discord.js';
 
 // Returns the embed shown in the paper channel when a paper is started with /startpaper
-function createPaperEmbed(user, paperCode, timeString) {
+export function createPaperEmbed(user, paperCode, timeString) {
     return new EmbedBuilder()
         .setColor('#0099FF')
         .setTitle('📝 Paper Started, Good Luck!')
@@ -11,7 +11,7 @@ function createPaperEmbed(user, paperCode, timeString) {
         .setTimestamp();
 }
 
-function sendExaminerSubmissionEmbed(channelId, candidate, attachment, guild) {
+export function sendExaminerSubmissionEmbed(channelId, candidate, attachment, guild) {
     const embed = new EmbedBuilder()
         .setTitle('📄 New Paper Submission')
         .setDescription('A candidate has submitted their solved paper for review.')
@@ -37,7 +37,7 @@ function sendExaminerSubmissionEmbed(channelId, candidate, attachment, guild) {
     return embed;
 }
 
-function getVerifiedEmbed({ examiner, channel, guild }) {
+export function getVerifiedEmbed({ examiner, channel, guild }) {
     return new EmbedBuilder()
         .setColor('#4ADE80') // Green color
         .setTitle('✅ Candidate Verified')
@@ -61,7 +61,7 @@ function getVerifiedEmbed({ examiner, channel, guild }) {
         .setTimestamp();
 }
 
-function getAwardEmbed({ candidate, examiner, marks, guildId, channelId }) {
+export function getAwardEmbed({ candidate, examiner, marks, guildId, channelId }) {
     return new EmbedBuilder()
         .setTitle('🏅 You Have Been Awarded Marks!')
         .setDescription('Your performance has been evaluated.')
@@ -88,7 +88,7 @@ function getAwardEmbed({ candidate, examiner, marks, guildId, channelId }) {
         .setTimestamp();
 }
 
-function generateProfileEmbed(user, member, sessionStats) {
+export function generateProfileEmbed(user, member, sessionStats) {
     const { totalSessions, verifiedSessions, averageMarks, highestMarks, recentSession } =
         sessionStats ?? {};
 
@@ -134,7 +134,7 @@ function generateProfileEmbed(user, member, sessionStats) {
     return embed;
 }
 
-function generateAllSessionsEmbed(sessions, user) {
+export function generateAllSessionsEmbed(sessions, user) {
     const embed = new EmbedBuilder()
         .setTitle(`📚 All Sessions: ${user?.username ?? 'Unknown'}`)
         .setThumbnail(user?.displayAvatarURL?.({ dynamic: true }) ?? null)
@@ -167,7 +167,7 @@ function generateAllSessionsEmbed(sessions, user) {
     return embed;
 }
 
-function getLeaderboardEmbed(leaderboardData) {
+export function getLeaderboardEmbed(leaderboardData) {
     const leaderboardText = leaderboardData?.length
         ? leaderboardData
               .map((entry, index) => {
@@ -184,13 +184,3 @@ function getLeaderboardEmbed(leaderboardData) {
         .setColor('#FACC15') // Tailwind yellow-400
         .setTimestamp();
 }
-
-module.exports = {
-    createPaperEmbed,
-    sendExaminerSubmissionEmbed,
-    getVerifiedEmbed,
-    getAwardEmbed,
-    generateProfileEmbed,
-    generateAllSessionsEmbed,
-    getLeaderboardEmbed,
-};

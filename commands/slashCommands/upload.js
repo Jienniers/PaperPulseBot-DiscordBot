@@ -1,12 +1,7 @@
-const path = require('path');
-const { examinersMap, paperChannels } = require(
-    path.resolve(__dirname, '..', '..', 'data', 'state.js'),
-);
-const { sendExaminerSubmissionEmbed } = require(
-    path.resolve(__dirname, '..', '..', 'utils', 'discord', 'embeds.js'),
-);
+import { examinersMap, paperChannels } from '../../data/state.js';
+import { sendExaminerSubmissionEmbed } from '../../utils/discord/embeds.js';
 
-async function handleUpload(interaction) {
+export async function handleUpload(interaction) {
     const channelId = interaction.channel.id;
     if (!paperChannels.includes(channelId)) {
         return interaction.reply({
@@ -46,7 +41,7 @@ async function handleUpload(interaction) {
         content: `✅ Received your PDF file: **${attachment.name}**`,
     });
 
-    const examiner = examinersMap.get(channelId);
+    const examiner = await interaction.client.users.fetch(examinersMap.get(channelId));
 
     if (examiner) {
         try {
@@ -72,7 +67,3 @@ async function handleUpload(interaction) {
         }
     }
 }
-
-module.exports = {
-    handleUpload,
-};

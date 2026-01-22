@@ -1,17 +1,16 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
-const configFilePath = path.join(__dirname, '..', '..', 'config.json');
-
-function getConfig() {
-    if (!fs.existsSync(configFilePath)) {
-        console.error(
-            '❌ config.json not found. Please copy it from examples/config.json and fill it.',
-        );
-        process.exit(1);
-    }
-    const raw = fs.readFileSync(configFilePath, 'utf-8');
-    return JSON.parse(raw);
+const configPath = path.resolve('./config.json');
+if (!fs.existsSync(configPath)) {
+    console.error(
+        '❌ config.json not found. Please copy it from examples/config.json and fill it.',
+    );
+    process.exit(1);
 }
 
-module.exports = { getConfig };
+import config from '../../config.json' with { type: 'json' };
+
+export function getConfig() {
+    return config;
+}

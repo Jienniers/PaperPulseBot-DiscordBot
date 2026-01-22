@@ -1,4 +1,4 @@
-function createMapService(Model, serviceName) {
+export function createMapService(Model, serviceName) {
     function docToMap(doc) {
         if (!doc) return new Map();
         const data = doc.toObject();
@@ -33,5 +33,3 @@ function createMapService(Model, serviceName) {
         [`load${serviceKey}`]: load,
     };
 }
-
-module.exports = { createMapService };
