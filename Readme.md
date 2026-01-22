@@ -39,11 +39,64 @@ A **Discord bot** designed to simulate a virtual exam system. Built with **Node.
 > ⚠️ `!add` must be used inside a **paper session channel**. It supports **multiple mentions** and starts the exam timer for added users.
 
 ---
-
+  
 ## 🚀 Getting Started
 
 > Ensure [Node.js](https://nodejs.org/) (optional If running with Docker) and [Docker](https://www.docker.com/get-started) are installed before setup.
 
+---
+  
+### 1. Setup Environment Variables (Required for Both Options)
+
+Create a `.env` file in the root directory. You can use the example provided in `examples/.env`:
+
+```bash
+cp examples/.env .env
+```
+
+Edit the file to include your credentials:
+
+```env
+TOKEN=your_discord_bot_token
+CLIENT_ID=your_application_client_id
+GUILD_ID=your_guild_id
+```
+
+Set `MONGO_URL` depending on your setup:
+
+- **If running the bot fully with Docker (Option 1):**
+    
+```env
+MONGO_URL=mongodb://mongo:27017/botData
+```
+- **If running the bot manually (locally) while MongoDB runs in Docker (Option 2):**
+    
+```env
+MONGO_URL=mongodb://localhost:27017/botData
+```
+
+> ⚠️ Do not commit `.env` to GitHub. Keep it private.
+
+
+---
+### 2. Configuration File (Required for Both Options)
+
+Create `config.json` in the root directory.
+
+You can also copy from examples/config.json:
+
+```bash
+cp examples/config.json config.json
+```
+
+Update it as needed:
+
+```json
+{
+    "category_id": "YOUR_CATEGORY_CHANNEL_ID"
+}
+```
+---
 
 ## 🐳 Option 1: Run Bot with Docker
 
@@ -51,26 +104,25 @@ A **Discord bot** designed to simulate a virtual exam system. Built with **Node.
 
 
 1. **Start Bot and MongoDB together:**
-    
 
 ```bash
 docker compose up -d
 ```
 
 - Runs both the bot and MongoDB containers in detached mode.
+
 - `.env` file is used automatically for environment variables.
-    
 
 2. **Rebuild containers after code changes:**
-    
 
 ```bash
 docker compose up -d --build
 ```
 
 - Rebuilds the Docker images to include any changes in code or dependencies.
+
 - Ensures the latest code is running inside the container.
-    
+
 >💡 Tip: For development, after making code changes you can run this command and apply your latest code without touching the manual setup.
 
 
@@ -81,43 +133,50 @@ docker ps
 ```
 
 4. **Stop containers (if needed):**
-    
 
 ```bash
 docker compose down
 ```
-
 > 💡 Tip: Always use `docker compose down -v` if you want to remove MongoDB data and start fresh.
 
 ---
+
 ## ⚙️ Option 2: Manual Setup (Without Docker)
 
+
 1. **Pull the MongoDB image:**
+  
 
 ```bash
 docker pull mongo
 ```
-  
+
 2. **Run MongoDB container:**
-  
+
 ```bash
+
 docker run -d --name paperpulse-mongo -p 27017:27017 -v mongo-data:/data/db mongo
+
 ```
-  
+
 - `-d` runs the container in detached mode.
+
 - `--name` gives the container a name.
+
 - `-p` maps local port 27017 to container port 27017.
+
 - `-v` creates a volume for data persistence.
-  
+
 3. **Check if MongoDB container is running:**
 
-
 ```bash
+
 docker ps
+
 ```
-
+  
 4. **Stop MongoDB container (if needed):**
-
+  
 ```bash
 docker stop paperpulse-mongo
 ```
@@ -141,71 +200,19 @@ cd paperpulsebot
 npm install
 ```
 
-### 4. Environment Variables
-
-Create a `.env` file in the root directory. You can use the example provided in `examples/.env`:
-
-```bash
-cp examples/.env .env
-```
-
-Edit the file to include your credentials:
-
-```env
-TOKEN=your_discord_bot_token
-CLIENT_ID=your_application_client_id
-GUILD_ID=your_guild_id
-```
-
-Set `MONGO_URL` depending on your setup:
-
-* **If running the bot fully with Docker:**
-
-```env
-MONGO_URL=mongodb://mongo:27017/botData
-```
-
-* **If running the bot manually (locally) while MongoDB runs in Docker:**
-
-```env
-MONGO_URL=mongodb://localhost:27017/botData
-```
-
-> ⚠️ Do not commit `.env` to GitHub. Keep it private.
-
-
-### 5. Configuration File
-
-Create `config.json` in the root directory.
-
-You can also copy from examples/config.json:
-
-```bash
-cp examples/config.json config.json
-```
-
-Update it as needed:
-
-```json
-{
-    "category_id": "YOUR_CATEGORY_CHANNEL_ID"
-}
-```
-
-### 6. Clear old Slash Commands (Optional)
+### 4. Clear old Slash Commands (Optional)
 
 ```bash
 node scripts/clear-slash-commands.js
 ```
 
-### 7. Register Slash Commands (optional if already registered)
-
+### 5. Register Slash Commands (optional if already registered)
 
 ```bash
 node scripts/deploy-slash-commands.js
 ```
 
-### 8. Start the Bot
+### 6. Start the Bot
 
 ```bash
 node index.js
