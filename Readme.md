@@ -39,13 +39,13 @@ A **Discord bot** designed to simulate a virtual exam system. Built with **Node.
 > ⚠️ `!add` must be used inside a **paper session channel**. It supports **multiple mentions** and starts the exam timer for added users.
 
 ---
-  
+
 ## 🚀 Getting Started
 
 > Ensure [Node.js](https://nodejs.org/) (optional If running with Docker) and [Docker](https://www.docker.com/get-started) are installed before setup.
 
 ---
-  
+
 ### 1. Setup Environment Variables (Required for Both Options)
 
 Create a `.env` file in the root directory. You can use the example provided in `examples/.env`:
@@ -65,20 +65,21 @@ GUILD_ID=your_guild_id
 Set `MONGO_URL` depending on your setup:
 
 - **If running the bot fully with Docker (Option 1):**
-    
+
 ```env
 MONGO_URL=mongodb://mongo:27017/botData
 ```
+
 - **If running the bot manually (locally) while MongoDB runs in Docker (Option 2):**
-    
+
 ```env
 MONGO_URL=mongodb://localhost:27017/botData
 ```
 
 > ⚠️ Do not commit `.env` to GitHub. Keep it private.
 
-
 ---
+
 ### 2. Configuration File (Required for Both Options)
 
 Create `config.json` in the root directory.
@@ -93,15 +94,15 @@ Update it as needed:
 
 ```json
 {
-    "category_id": "YOUR_CATEGORY_CHANNEL_ID"
+    "category_id": "YOUR_CATEGORY_CHANNEL_ID"
 }
 ```
+
 ---
 
 ## 🐳 Option 1: Run Bot with Docker
 
 > 💡 Tip: Make sure your terminal/command prompt is opened in the project folder (`paperpulsebot`) when running any Docker commands below, e.g., `docker compose up -d`.
-
 
 1. **Start Bot and MongoDB together:**
 
@@ -123,8 +124,7 @@ docker compose up -d --build
 
 - Ensures the latest code is running inside the container.
 
->💡 Tip: For development, after making code changes you can run this command and apply your latest code without touching the manual setup.
-
+> 💡 Tip: For development, after making code changes you can run this command and apply your latest code without touching the manual setup.
 
 3. **Check running containers:**
 
@@ -137,15 +137,14 @@ docker ps
 ```bash
 docker compose down
 ```
+
 > 💡 Tip: Always use `docker compose down -v` if you want to remove MongoDB data and start fresh.
 
 ---
 
 ## ⚙️ Option 2: Manual Setup (Without Docker)
 
-
 1. **Pull the MongoDB image:**
-  
 
 ```bash
 docker pull mongo
@@ -174,9 +173,9 @@ docker run -d --name paperpulse-mongo -p 27017:27017 -v mongo-data:/data/db mong
 docker ps
 
 ```
-  
+
 4. **Stop MongoDB container (if needed):**
-  
+
 ```bash
 docker stop paperpulse-mongo
 ```
