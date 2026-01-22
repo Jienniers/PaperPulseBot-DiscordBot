@@ -142,7 +142,7 @@ docker compose down
 
 ---
 
-## ⚙️ Option 2: Manual Setup (Without Docker)
+## ⚙️ Option 2: Manual Setup
 
 ### 1. Setup MongoDB
 
