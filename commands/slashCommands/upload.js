@@ -41,7 +41,7 @@ export async function handleUpload(interaction) {
         content: `✅ Received your PDF file: **${attachment.name}**`,
     });
 
-    const examiner = examinersMap.get(channelId);
+    const examiner = await interaction.client.users.fetch(examinersMap.get(channelId));
 
     if (examiner) {
         try {
