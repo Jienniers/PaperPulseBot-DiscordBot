@@ -263,7 +263,7 @@ git checkout -b feature/your-feature-name
 
     ```bash
     npm run format
-    npm run lint
+    npm run lintfix
     ```
 
 ### ✅ Commit
