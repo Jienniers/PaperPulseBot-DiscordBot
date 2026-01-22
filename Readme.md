@@ -30,7 +30,7 @@ A **Discord bot** designed to simulate a virtual exam system. Built with **Node.
 
 ---
 
-### 💬 Message Commands
+## 💬 Message Commands
 
 | Command          | Description                                                                                           | Usage                       |
 | ---------------- | ----------------------------------------------------------------------------------------------------- | --------------------------- |
@@ -38,16 +38,14 @@ A **Discord bot** designed to simulate a virtual exam system. Built with **Node.
 
 > ⚠️ `!add` must be used inside a **paper session channel**. It supports **multiple mentions** and starts the exam timer for added users.
 
-
 ---
 
 ## 🚀 Getting Started
 
 > Ensure [Node.js](https://nodejs.org/) (optional If running with Docker) and [Docker](https://www.docker.com/get-started) are installed before setup.
 
----
 
-### 🐳 Option 1: Run Bot with Docker
+## 🐳 Option 1: Run Bot with Docker
 
 > 💡 Tip: Make sure your terminal/command prompt is opened in the project folder (`paperpulsebot`) when running any Docker commands below, e.g., `docker compose up -d`.
 
@@ -60,7 +58,6 @@ docker compose up -d
 ```
 
 - Runs both the bot and MongoDB containers in detached mode.
-    
 - `.env` file is used automatically for environment variables.
     
 
@@ -72,7 +69,6 @@ docker compose up -d --build
 ```
 
 - Rebuilds the Docker images to include any changes in code or dependencies.
-    
 - Ensures the latest code is running inside the container.
     
 >💡 Tip: For development, after making code changes you can run this command and apply your latest code without touching the manual setup.
@@ -94,7 +90,7 @@ docker compose down
 > 💡 Tip: Always use `docker compose down -v` if you want to remove MongoDB data and start fresh.
 
 ---
-### ⚙️ Option 2: Manual Setup (Without Docker)
+## ⚙️ Option 2: Manual Setup (Without Docker)
 
 1. **Pull the MongoDB image:**
 
