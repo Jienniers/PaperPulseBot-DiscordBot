@@ -1,6 +1,7 @@
 services:
   bot:
     build: .
+    image: paperpulsebot:latest
     container_name: paperpulsebot
     restart: unless-stopped
     env_file:
