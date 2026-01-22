@@ -17,7 +17,9 @@ A **Discord bot** designed to simulate a virtual exam system. Built with **Node.
 
 ---
 
-## 📘 Slash Commands Overview
+## 📘 Commands Overview
+
+### Slash Commands
 
 | Command        | Description                                                                                        | Usage                                    |
 | -------------- | -------------------------------------------------------------------------------------------------- | ---------------------------------------- |
@@ -30,13 +32,13 @@ A **Discord bot** designed to simulate a virtual exam system. Built with **Node.
 
 ---
 
-## 💬 Message Commands
+### Message Commands
 
 | Command          | Description                                                                                           | Usage                       |
 | ---------------- | ----------------------------------------------------------------------------------------------------- | --------------------------- |
 | `!add @users...` | Starts the paper timer for the mentioned users in the current paper session _(examiner-only command)_ | `!add @user1 @user2 @user3` |
 
-> ⚠️ `!add` must be used inside a **paper session channel**. It supports **multiple mentions** and starts the exam timer for added users.
+> ⚠️ `!add` **must** be used inside a **paper session channel**. It supports **multiple mentions** and starts the exam timer for added users.
 
 ---
 
@@ -46,7 +48,7 @@ A **Discord bot** designed to simulate a virtual exam system. Built with **Node.
 
 ---
 
-### 1. Setup Environment Variables (Required for Both Options)
+### 1️⃣ Setup Environment Variables (Required)
 
 Create a `.env` file in the root directory. You can use the example provided in `examples/.env`:
 
@@ -80,11 +82,9 @@ MONGO_URL=mongodb://localhost:27017/botData
 
 ---
 
-### 2. Configuration File (Required for Both Options)
+### 2️⃣ Configuration File (Required)
 
-Create `config.json` in the root directory.
-
-You can also copy from examples/config.json:
+Create `config.json` in the root directory (or copy the example):
 
 ```bash
 cp examples/config.json config.json
@@ -143,6 +143,8 @@ docker compose down
 ---
 
 ## ⚙️ Option 2: Manual Setup (Without Docker)
+
+### 1. Setup MongoDB
 
 1. **Pull the MongoDB image:**
 
