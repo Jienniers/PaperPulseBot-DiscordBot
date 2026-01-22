@@ -1,24 +1,24 @@
 services:
-  bot:
-    build: .
-    image: paperpulsebot:latest
-    container_name: paperpulsebot
-    restart: unless-stopped
-    env_file:
-      - .env
-    depends_on:
-      - mongo
-    # Optional: auto-restart if MongoDB takes a few seconds to start
-    command: sh -c "sleep 5 && node index.js"
+    bot:
+        build: .
+        image: paperpulsebot:latest
+        container_name: paperpulsebot
+        restart: unless-stopped
+        env_file:
+            - .env
+        depends_on:
+            - mongo
+        # Optional: auto-restart if MongoDB takes a few seconds to start
+        command: sh -c "sleep 5 && node index.js"
 
-  mongo:
-    image: mongo:8.2
-    container_name: paperpulse-mongo
-    restart: unless-stopped
-    ports:
-      - "27017:27017" # optional: expose to host if needed
-    volumes:
-      - mongo-data:/data/db
+    mongo:
+        image: mongo:8.2
+        container_name: paperpulse-mongo
+        restart: unless-stopped
+        ports:
+            - '27017:27017' # optional: expose to host if needed
+        volumes:
+            - mongo-data:/data/db
 
 volumes:
-  mongo-data:
+    mongo-data:
