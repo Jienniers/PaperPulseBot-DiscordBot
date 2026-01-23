@@ -61,7 +61,7 @@ export async function syncArrayFromDB(loadFn, targetArray) {
 /**
  * Initialize all in-memory state from DB and update invalid entries based on server.
  */
-export async function initializeState(client) {
+export async function initializeAndSyncState(client) {
     await syncArrayFromDB(getPaperChannels, paperChannels);
     await syncMapFromDB(loadCandidateSessionMap, candidateSessionsMap);
     await syncMapFromDB(

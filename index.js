@@ -2,6 +2,7 @@ import 'dotenv/config';
 
 import { Client, GatewayIntentBits, Events } from 'discord.js';
 
+//utils
 import { buttonHandlers } from './utils/discord/buttonHandlers.js';
 
 //commands
@@ -15,7 +16,7 @@ import { handleLeaderboard } from './commands/slashCommands/leaderboard.js';
 
 //database
 import connectToMongoDB from './utils/database/mongoConnection.js';
-import { initializeState } from './utils/database/stateDatabaseSync.js';
+import { initializeAndSyncState } from './utils/database/stateDatabaseSync.js';
 
 const client = new Client({
     intents: [
@@ -31,7 +32,7 @@ async function startBot() {
     client.once(Events.ClientReady, async () => {
         console.log(`Logged in as ${client.user.tag}!`);
 
-        await initializeState(client);
+        await initializeAndSyncState(client);
     });
 
     await client.login(process.env.TOKEN);
