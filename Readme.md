@@ -234,8 +234,7 @@ node index.js
 ├── package-lock.json                        # Lockfile for npm dependencies
 ├── Readme.md                                # Project documentation
 ├── .github/workflows/                       # GitHub Actions for CI
-│   ├── lint.yml                             # Runs ESLint checks
-│   └── prettier.yaml                        # Runs Prettier formatting check
+│   └──lint-and-format.yml                   # Runs ESLint checks and Prettier formatting check
 ├── commands/                                # Command handler modules
 │   ├── messageCommands/                     # Legacy or message-based commands
 │   │   └── add.js                           # Adds candidates to the session and starts the exam timer (examiner-only)
