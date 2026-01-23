@@ -1,4 +1,4 @@
-import { getConfig } from '../../utils/common/config.js';
+import getConfig from '../../utils/common/config.js';
 import { formatPaperTime } from '../../utils/common/time.js';
 
 import { createPaperEmbed } from '../../utils/discord/embeds.js';
