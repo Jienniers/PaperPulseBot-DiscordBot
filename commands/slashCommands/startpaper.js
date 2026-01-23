@@ -1,4 +1,3 @@
-import getConfig from '../../utils/common/config.js';
 import formatPaperTime from '../../utils/common/time.js';
 
 import { createPaperEmbed } from '../../utils/discord/embeds.js';
@@ -21,7 +20,7 @@ export async function handleStartPaper(interaction) {
     const paperCode = interaction.options.getString('paper')?.trim();
     const examiner = interaction.options.getUser('examiner');
     const paperTime = interaction.options.getInteger('time');
-    const config = getConfig();
+    const categoryID = process.env.CATEGORY_ID;
 
     if (!paperCode || !examiner || !paperTime) {
         return interaction.reply({
@@ -53,7 +52,7 @@ export async function handleStartPaper(interaction) {
         paperChannel = await guild.channels.create({
             name: channelName,
             type: 0,
-            parent: config.category_id,
+            parent: categoryID,
         });
     } catch (err) {
         console.error('❗ Failed to create paper channel:', err.message);

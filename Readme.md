@@ -12,7 +12,6 @@ A **Discord bot** designed to simulate a virtual exam system. Built with **Node.
 - **Linter:** ESLint with Prettier integration
 - **CI:** GitHub Actions (ESLint, Prettier)
 - **Code Style:** Prettier
-- **Config:** Local JSON files
 - **Database:** MongoDB
 
 ---
@@ -61,6 +60,7 @@ Edit the file to include your credentials:
 ```env
 TOKEN=your_discord_bot_token
 CLIENT_ID=your_application_client_id
+CATEGORY_ID=your_paper_sessions_category_id
 GUILD_ID=your_guild_id
 ```
 
@@ -79,24 +79,6 @@ MONGO_URL=mongodb://localhost:27017/botData
 ```
 
 > ⚠️ Do not commit `.env` to GitHub. Keep it private.
-
----
-
-### 2️⃣ Configuration File (Required)
-
-Create `config.json` in the root directory (or copy the example):
-
-```bash
-cp examples/config.json config.json
-```
-
-Update it as needed:
-
-```json
-{
-    "category_id": "YOUR_CATEGORY_CHANNEL_ID"
-}
-```
 
 ---
 
@@ -155,9 +137,7 @@ docker pull mongo
 2. **Run MongoDB container:**
 
 ```bash
-
 docker run -d --name paperpulse-mongo -p 27017:27017 -v mongo-data:/data/db mongo
-
 ```
 
 - `-d` runs the container in detached mode.
@@ -171,9 +151,7 @@ docker run -d --name paperpulse-mongo -p 27017:27017 -v mongo-data:/data/db mong
 3. **Check if MongoDB container is running:**
 
 ```bash
-
 docker ps
-
 ```
 
 4. **Stop MongoDB container (if needed):**
@@ -247,10 +225,9 @@ node index.js
 
 ```
 ├── .env                                     # Environment variables (not committed)
-├── .gitignore                               # Git ignored files config
+├── .gitignore                               # Git ignored files
 ├── .prettierrc.json                         # Prettier formatting rules
-├── config.json                              # Local bot configuration
-├── eslint.config.mjs                        # ESLint config using flat config system
+├── eslint.config.mjs                        # ESLint config
 ├── index.js                                 # Entry point of the bot
 ├── LICENSE                                  # License info
 ├── package.json                             # Project metadata and dependencies
@@ -282,15 +259,11 @@ node index.js
 │       ├── paperChannelsService.js          # Service for managing paper channels in Database
 │       ├── paperRunningMapService.js        # Service for tracking running papers in Database
 │       └── paperTimeMinsService.js          # Service for paper channel with time in mins map in Database
-├── examples/                                # Sample config and env files
-│   ├── .env
-│   └── config.json
 ├── scripts/                                 # Utility scripts for managing commands
 │   ├── clear-slash-commands.js              # Clear registered slash commands
 │   └── deploy-slash-commands.js             # Register slash commands with Discord
 └── utils/                                   # Utility and helper modules
     ├── common/
-    │   ├── config.js                        # Shared config helpers
     │   └── time.js                          # Time-related utilities
     ├── database/
     │   ├── mongoConnection.js               # MongoDB connection logic
