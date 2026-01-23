@@ -1,4 +1,4 @@
-import { formatPaperTime } from '../../utils/common/time.js';
+import formatPaperTime from '../../utils/common/time.js';
 
 import {
     paperChannels,
