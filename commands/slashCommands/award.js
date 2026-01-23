@@ -8,9 +8,12 @@ import {
 import { getAwardEmbed } from '../../utils/discord/embeds.js';
 
 export async function handleAward(interaction, client) {
-    const channelID = interaction.channel.id;
-    const userOption = interaction.options.getUser('user');
-    const marksOption = interaction.options.getString('marks');
+    const { channel, user: invokingUser, guild, options } = interaction;
+
+    const channelID = channel.id;
+    const userOption = options.getUser('user');
+    const marksOption = options.getString('marks');
+    
     const examiner = examinersMap.get(channelID);
 
     if (!paperChannels.includes(channelID)) {
@@ -26,7 +29,7 @@ export async function handleAward(interaction, client) {
         });
     }
 
-    if (interaction.user.id !== examiner) {
+    if (invokingUser.id !== examiner) {
         return await interaction.reply({
             content: '❌ You are not authorized to award marks to candidates.',
             flags: 64,
@@ -67,7 +70,7 @@ export async function handleAward(interaction, client) {
         candidate: userOption,
         examiner: examinerUser,
         marks: marksOption,
-        guildId: interaction.guild.id,
+        guildId: guild.id,
         channelId: channelID,
     });
 
