@@ -1,7 +1,7 @@
 import { examinersMap, paperChannels } from '../../data/state.js';
 import { sendExaminerSubmissionEmbed } from '../../utils/discord/embeds.js';
 
-export async function handleUpload(interaction) {
+export default async function handleUpload(interaction) {
     const channelId = interaction.channel.id;
     if (!paperChannels.includes(channelId)) {
         return interaction.reply({

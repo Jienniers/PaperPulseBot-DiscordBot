@@ -48,7 +48,7 @@ function validateAward(interaction) {
  * Calls validation, sends confirmation message in channel,
  * creates an award embed, and sends it to the candidate via DM.
  */
-export async function handleAward(interaction, client) {
+export default async function handleAward(interaction, client) {
     let data;
     try {
         data = validateAward(interaction);

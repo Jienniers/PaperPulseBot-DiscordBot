@@ -7,7 +7,7 @@ import {
 
 import { getVerifiedEmbed } from '../../utils/discord/embeds.js';
 
-export async function handleVerify(interaction) {
+export default async function handleVerify(interaction) {
     const channel = interaction.channel;
     const guild = interaction.guild;
     const examiner = interaction.user;

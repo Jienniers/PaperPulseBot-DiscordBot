@@ -2,7 +2,7 @@ import { generateProfileEmbed } from '../../utils/discord/embeds.js';
 import { candidateSessionsMap } from '../../data/state.js';
 import { createProfileCommandButtons } from '../../utils/discord/buttons.js';
 
-export async function handleProfile(interaction) {
+export default async function handleProfile(interaction) {
     const userOption = interaction.options.getUser('user');
     const user = userOption ?? interaction.user;
     const userId = user.id;

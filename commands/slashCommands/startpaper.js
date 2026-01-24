@@ -5,7 +5,7 @@ import { createPaperButtons } from '../../utils/discord/buttons.js';
 
 import { examinersMap, paperChannels, paperTimeMinsMap } from '../../data/state.js';
 
-export async function handleStartPaper(interaction) {
+export default async function handleStartPaper(interaction) {
     const channelId = interaction.channel.id;
     const guild = interaction.guild;
     const user = interaction.user;

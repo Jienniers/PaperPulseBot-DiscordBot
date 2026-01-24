@@ -8,8 +8,8 @@ import {
     examinersMap,
 } from '../../data/state.js';
 
-// Handles the !add command: adds mentioned users as candidates for the current paper session
-export async function handleAddCommand(message) {
+// Handles the !add command: adds mentioned users as candidates for the current paper session and starts the timer for the paper
+export default async function handleAddCommand(message) {
     if (!message.content.startsWith('!add')) return;
 
     const channel = message.channel;

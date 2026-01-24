@@ -6,13 +6,13 @@ import { Client, GatewayIntentBits, Events } from 'discord.js';
 import { buttonHandlers } from './utils/discord/buttonHandlers.js';
 
 //commands
-import { handleAddCommand } from './commands/messageCommands/add.js';
-import { handleStartPaper } from './commands/slashCommands/startpaper.js';
-import { handleUpload } from './commands/slashCommands/upload.js';
-import { handleVerify } from './commands/slashCommands/verify.js';
-import { handleAward } from './commands/slashCommands/award.js';
-import { handleProfile } from './commands/slashCommands/profile.js';
-import { handleLeaderboard } from './commands/slashCommands/leaderboard.js';
+import handleAddCommand from './commands/messageCommands/add.js';
+import handleStartPaper from './commands/slashCommands/startpaper.js';
+import handleUpload from './commands/slashCommands/upload.js';
+import handleVerify from './commands/slashCommands/verify.js';
+import handleAward from './commands/slashCommands/award.js';
+import handleProfile from './commands/slashCommands/profile.js';
+import handleLeaderboard from './commands/slashCommands/leaderboard.js';
 
 //database
 import connectToMongoDB from './utils/database/mongoConnection.js';
