@@ -47,7 +47,7 @@ async function handleViewAllSessions(interaction, channelID) {
 }
 
 // 🔧 Maps button IDs to their corresponding handler functions
-export const buttonHandlers = {
+export default {
     close: handleCloseButton,
     view_sessions: handleViewAllSessions,
     // Add more handlers as needed

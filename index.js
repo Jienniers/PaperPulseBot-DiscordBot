@@ -3,7 +3,7 @@ import 'dotenv/config';
 import { Client, GatewayIntentBits, Events } from 'discord.js';
 
 //utils
-import { buttonHandlers } from './utils/discord/buttonHandlers.js';
+import buttonHandlers from './utils/discord/buttonHandlers.js';
 
 //commands
 import handleAddCommand from './commands/messageCommands/add.js';
