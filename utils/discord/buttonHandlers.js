@@ -35,8 +35,7 @@ async function handleViewAllSessions(interaction, channelID) {
     const user = interaction.user;
 
     for (const [key, session] of candidateSessionsMap.entries()) {
-        // eslint-disable-next-line no-unused-vars
-        const [candidateId, _sessionId] = key.split('::');
+        const [candidateId] = key.split('::');
         if (candidateId === user.id) {
             sessions.push(session);
         }
