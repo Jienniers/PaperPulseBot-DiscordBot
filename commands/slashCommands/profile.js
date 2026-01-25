@@ -13,10 +13,8 @@ export default async function handleProfile(interaction) {
     const user = userOption ?? invokingUser; // Target user defaults to invoking user if no user given
     const userId = user.id;
 
-    // Defer reply to avoid timeout
     await interaction.deferReply({ flags: 64 });
 
-    // Prevent viewing a bot's profile
     if (userOption && userOption.bot) {
         return await interaction.editReply({
             content: '❌ You cannot view the profile of a bot.',
@@ -41,7 +39,6 @@ export default async function handleProfile(interaction) {
         recentSession: getMostRecentSession(userId),
     };
 
-    // Generate embed for profile
     const embed = generateProfileEmbed(user, member, sessionStats);
     if (!embed) {
         return await interaction.editReply({
@@ -52,16 +49,12 @@ export default async function handleProfile(interaction) {
     // Add button for profile interactions (View All Sessions)
     const buttonsRow = createProfileCommandButtons();
 
-    // Send final profile embed with buttons
     await interaction.editReply({
         embeds: [embed],
         components: [buttonsRow],
     });
 }
 
-/**
- * Counts all sessions for a user.
- */
 function countSessions(userId) {
     let sessionCount = 0;
     for (const key of candidateSessionsMap.keys()) {
@@ -71,9 +64,6 @@ function countSessions(userId) {
     return sessionCount;
 }
 
-/**
- * Counts verified sessions for a user.
- */
 function countVerifiedSessions(userId) {
     let verifiedCount = 0;
     for (const [key, session] of candidateSessionsMap.entries()) {
@@ -118,9 +108,6 @@ function getHighestMarks(userId) {
     return highest;
 }
 
-/**
- * Gets the most recent session for the user.
- */
 function getMostRecentSession(userId) {
     let mostRecentSession = null;
     let latestTimestamp = 0;
