@@ -18,9 +18,6 @@ export async function getPaperChannels() {
     }
 }
 
-/**
- * Sets the paper channels in the database.
- */
 export async function setPaperChannels(channels) {
     await updatePaperChannelsInDB(channels);
 }

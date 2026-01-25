@@ -7,7 +7,6 @@ import {
 
 import { getAwardEmbed } from '../../utils/discord/embeds.js';
 
-// Centralized error messages
 const ERROR_MESSAGES = {
     'invalid-channel': '❌ You cannot use this command here.',
     'cannot-award-bot': '❌ You cannot award marks to a bot.',
@@ -64,12 +63,10 @@ export default async function handleAward(interaction, client) {
     // Update candidate's marks in (candidateSessionsMap) map
     candidateData.marks = marksOption;
 
-    // Send confirmation in the channel
     await interaction.reply({
         content: `${userOption} has been awarded ${marksOption} marks.`,
     });
 
-    // Create the award embed to send to the candidate
     const embed = getAwardEmbed({
         candidate: userOption,
         examiner: client.users.cache.get(examiner),
@@ -78,7 +75,6 @@ export default async function handleAward(interaction, client) {
         channelId: channelID,
     });
 
-    // Attempt to send the DM; catch errors if user has DMs closed
     try {
         await userOption.send({ embeds: [embed] });
     } catch (err) {

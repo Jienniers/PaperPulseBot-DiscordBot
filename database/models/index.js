@@ -1,7 +1,6 @@
 import createDynamicModel from './dynamicModelFactory.js';
 import mongoose from 'mongoose';
 
-// Dynamic models
 const CandidateSessionMap = createDynamicModel('CandidateSessionMap');
 const ExaminersMap = createDynamicModel('ExaminersMap');
 const PaperRunningMap = createDynamicModel('PaperRunningMap');

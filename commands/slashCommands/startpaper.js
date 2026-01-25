@@ -3,7 +3,6 @@ import { createPaperEmbed } from '../../utils/discord/embeds.js';
 import { createPaperButtons } from '../../utils/discord/buttons.js';
 import { examinersMap, paperChannels, paperTimeMinsMap } from '../../data/state.js';
 
-// Centralized error messages
 const ERROR_MESSAGES = {
     invalidChannel: '❌ You cannot use this command here.',
     missingOptions: '❌ Missing required options. Please provide paper code, examiner, and time.',
@@ -81,7 +80,6 @@ export default async function handleStartPaper(interaction) {
         components: [buttonsRow],
     });
 
-    // Confirm to user who ran the command
     await interaction.editReply({
         content: `✅ A new channel has been created for this paper session: <#${paperChannel.id}>`,
         flags: 64,

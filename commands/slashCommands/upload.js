@@ -3,7 +3,6 @@ import { sendExaminerSubmissionEmbed } from '../../utils/discord/embeds.js';
 
 const MAX_PDF_SIZE_MB = 10; // Maximum allowed PDF size in MB
 
-// Centralized error messages
 const ERROR_MESSAGES = {
     invalidChannel: '❌ You cannot use this command here.',
     noFile: '❌ No file was uploaded. Please attach a PDF file.',
@@ -49,12 +48,10 @@ export default async function handleUpload(interaction) {
         return interaction.editReply({ content: message });
     }
 
-    // Confirm to the user
     await interaction.editReply({
         content: `✅ Received your PDF file: **${attachment.name}**`,
     });
 
-    // Notify the examiner
     const examinerId = examinersMap.get(channelId);
     if (!examinerId) return;
 

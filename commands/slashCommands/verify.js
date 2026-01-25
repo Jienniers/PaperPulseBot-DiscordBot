@@ -7,7 +7,6 @@ import {
 
 import { getVerifiedEmbed } from '../../utils/discord/embeds.js';
 
-// Map of all error messages for clarity and maintainability
 const ERROR_MESSAGES = {
     invalidChannel: '❌ You cannot use this command here.',
     noUser: '❌ No user was mentioned for verification.',
