@@ -1,27 +1,37 @@
 import { PaperChannels } from '../models/index.js';
 
+/**
+ * Retrieves the paper channels from the database.
+ * Creates a new document if none exists.
+ */
 export async function getPaperChannels() {
-    let doc = await PaperChannels.findOne();
-    if (!doc) {
-        doc = new PaperChannels();
-        await doc.save();
+    try {
+        let doc = await PaperChannels.findOne();
+        if (!doc) {
+            doc = new PaperChannels();
+            await doc.save();
+        }
+        return doc.channels;
+    } catch (err) {
+        console.error('Failed to get paper channels:', err);
+        return [];
     }
-    return doc.channels;
 }
 
+/**
+ * Sets the paper channels in the database.
+ */
 export async function setPaperChannels(channels) {
-    let doc = await PaperChannels.findOne();
-    if (!doc) {
-        doc = new PaperChannels();
-    }
-    doc.channels = channels;
-    await doc.save();
+    await updatePaperChannelsInDB(channels);
 }
 
+/**
+ * Updates the paper channels document in the database.
+ * Creates a new document if none exists.
+ */
 export async function updatePaperChannelsInDB(paperChannels) {
     try {
         const doc = await PaperChannels.findOne();
-
         if (!doc) {
             const newDoc = new PaperChannels({ channels: paperChannels });
             await newDoc.save();
