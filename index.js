@@ -96,4 +96,4 @@ client.on(Events.InteractionCreate, async (interaction) => {
     }
 });
 
-startBot();
+await startBot();
