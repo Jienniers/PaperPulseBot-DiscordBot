@@ -58,8 +58,9 @@ export default async function handleProfile(interaction) {
 function countSessions(userId) {
     let sessionCount = 0;
     for (const key of candidateSessionsMap.keys()) {
-        // Keys are composite: "userId::channelId" or similar
-        if (key.startsWith(`${userId}`)) sessionCount++;
+        // Keys are composite: "userId::channelId"
+        const [keyUserId] = key.split('::');
+        if (keyUserId === userId) sessionCount++;
     }
     return sessionCount;
 }
@@ -67,7 +68,8 @@ function countSessions(userId) {
 function countVerifiedSessions(userId) {
     let verifiedCount = 0;
     for (const [key, session] of candidateSessionsMap.entries()) {
-        if (key.startsWith(`${userId}::`) && session.verified) verifiedCount++;
+        const [keyUserId] = key.split('::');
+        if (keyUserId === userId && session.verified) verifiedCount++;
     }
     return verifiedCount;
 }
@@ -80,7 +82,8 @@ function calculateAveragePercentage(userId) {
     let totalMax = 0;
 
     for (const [key, session] of candidateSessionsMap.entries()) {
-        if (key.startsWith(`${userId}::`) && typeof session.marks === 'string') {
+        const [keyUserId] = key.split('::');
+        if (keyUserId === userId && typeof session.marks === 'string') {
             const parsed = parseMarkPair(session.marks);
             if (parsed) {
                 totalEarned += parsed.scored;
@@ -100,7 +103,8 @@ function calculateAveragePercentage(userId) {
 function getHighestMarks(userId) {
     let highest = 0;
     for (const [key, session] of candidateSessionsMap.entries()) {
-        if (key.startsWith(`${userId}::`) && typeof session.marks === 'string') {
+        const [keyUserId] = key.split('::');
+        if (keyUserId === userId && typeof session.marks === 'string') {
             const parsed = parseMarkPair(session.marks);
             if (parsed && parsed.scored > highest) highest = parsed.scored;
         }
@@ -113,7 +117,8 @@ function getMostRecentSession(userId) {
     let latestTimestamp = 0;
 
     for (const [key, session] of candidateSessionsMap.entries()) {
-        if (key.startsWith(`${userId}::`) && session.createdAt > latestTimestamp) {
+        const [keyUserId] = key.split('::');
+        if (keyUserId === userId && session.createdAt > latestTimestamp) {
             latestTimestamp = session.createdAt;
             mostRecentSession = session;
         }
