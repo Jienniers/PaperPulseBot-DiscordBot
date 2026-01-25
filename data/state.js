@@ -14,8 +14,8 @@ const candidateSessionsMap = new Map(); // compositeKey -> candidate session dat
  * @param {string} secondKey - Typically the channelId
  * @returns {string} composite key in format "firstKey::secondKey"
  */
-function generateCompositeKey(firstKey, SecondKey) {
-    const key = `${firstKey}::${SecondKey}`;
+function generateCompositeKey(firstKey, secondKey) {
+    const key = `${firstKey}::${secondKey}`;
     return key;
 }
 
