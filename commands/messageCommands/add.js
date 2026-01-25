@@ -1,5 +1,4 @@
 import formatPaperTime from '../../utils/common/time.js';
-
 import {
     paperChannels,
     paperTimeMinsMap,
@@ -8,73 +7,87 @@ import {
     examinersMap,
 } from '../../data/state.js';
 
-// Handles the !add command: adds mentioned users as candidates for the current paper session and starts the timer for the paper
-export default async function handleAddCommand(message) {
-    if (!message.content.startsWith('!add')) return;
+// Centralized messages
+const MESSAGES = {
+    noExaminer: '❌ Examiner not found for this session.',
+    sessionRunning:
+        '✅ The paper session in this channel is already complete or is running. No more users can be added.',
+    noUsersMentioned: '❌ No users mentioned.',
+    noValidUsers: '❌ No valid users to add. All mentioned users were either bots or the examiner.',
+    skippedUsers:
+        '⚠️ Some mentioned users were skipped because they were either bots or the examiner.',
+};
 
-    const channel = message.channel;
-    const channelId = channel.id;
+/**
+ * Validates the !add command input and returns candidates to add
+ */
+function validateAddCommand(message) {
+    const channelId = message.channel.id;
 
-    if (!paperChannels.includes(channelId)) return;
+    if (!paperChannels.includes(channelId)) return null;
 
     const paperTimeMins = paperTimeMinsMap.get(channelId);
-    const examinerEntryID = examinersMap.get(channelId);
+    const examinerId = examinersMap.get(channelId);
 
-    if (!examinerEntryID) {
-        await message.reply('❌ Examiner not found for this session.');
-        return;
-    }
-
-    if (paperRunningMap.has(channelId)) {
-        await message.reply(
-            '✅ The paper session in this channel is already complete or is running. No more users can be added.',
-        );
-        return;
-    }
+    if (!examinerId) throw { key: 'noExaminer' };
+    if (paperRunningMap.has(channelId)) throw { key: 'sessionRunning' };
 
     const mentionedUsers = message.mentions.users;
+    if (mentionedUsers.size === 0) throw { key: 'noUsersMentioned' };
 
-    if (mentionedUsers.size === 0) {
-        await message.reply('❌ No users mentioned.');
-        return;
-    }
-
-    const sessionCandidates = [];
+    const validCandidates = [];
     let skipped = false;
 
     for (const user of mentionedUsers.values()) {
-        if (user.bot || user.id === examinerEntryID) {
+        if (user.bot || user.id === examinerId) {
             skipped = true;
             continue;
         }
+        validCandidates.push(user); // only collect valid users
+    }
 
-        sessionCandidates.push(user);
+    if (validCandidates.length === 0) throw { key: 'noValidUsers' };
+
+    return { validCandidates, skipped, paperTimeMins, channelId, examinerId };
+}
+
+/**
+ * Handles the !add command: adds candidates and starts the paper timer
+ */
+export default async function handleAddCommand(message) {
+    if (!message.content.startsWith('!add')) return;
+
+    let data;
+    try {
+        data = validateAddCommand(message);
+        if (!data) return;
+    } catch (err) {
+        const content = MESSAGES[err.key] ?? '❌ An unknown error occurred.';
+        return await message.reply(content);
+    }
+
+    const { validCandidates, skipped, paperTimeMins, channelId } = data;
+    const channel = message.channel;
+
+    // Actually create candidate sessions here
+    for (const user of validCandidates) {
         createCandidateSessionEntry(user, message, false, null);
     }
 
-    if (sessionCandidates.length === 0) {
-        await message.reply(
-            '❌ No valid users to add. All mentioned users were either bots or the examiner.',
-        );
-        return;
-    }
+    if (skipped) await message.reply(MESSAGES.skippedUsers);
 
-    if (skipped) {
-        await message.reply(
-            '⚠️ Some mentioned users were skipped because they were either bots or the examiner.',
-        );
-    }
-
-    const candidateMentions = sessionCandidates.map((user) => user.toString()).join(' ');
+    const candidateMentions = validCandidates.map((u) => u.toString()).join(' ');
     await channel.send(`📝 Following candidates have been added: ${candidateMentions}`);
 
     paperRunningMap.set(channelId, true);
     await startPaperTimer(channel, paperTimeMins);
 }
 
+/**
+ * Starts the paper timer and sends updates
+ */
 async function startPaperTimer(channel, paperMinutes) {
-    const totalMinutes = Number(paperMinutes);
-    let remaining = isNaN(totalMinutes) ? 0 : totalMinutes;
+    let remaining = isNaN(Number(paperMinutes)) ? 0 : Number(paperMinutes);
 
     const timerMsg = await channel.send(
         `📝 Candidates, please begin your paper.\n⏱️ Time remaining: **${formatPaperTime(remaining)}**`,
@@ -93,10 +106,8 @@ async function startPaperTimer(channel, paperMinutes) {
 
         if (remaining <= 0) {
             clearInterval(interval);
-
             await timerMsg.edit(`⏰ **Time's up!** Please stop writing and put your pen down.`);
             await channel.send(`⏰ **Time's up!** Please stop writing and put your pen down.`);
-
             paperRunningMap.set(channel.id, false);
             return;
         }
