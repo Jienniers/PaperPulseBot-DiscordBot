@@ -1,7 +1,7 @@
 import {
     examinersMap,
     paperChannels,
-    doubleKeyMaps,
+    generateCompositeKey,
     candidateSessionsMap,
 } from '../../data/state.js';
 
@@ -37,7 +37,7 @@ function validateVerification(interaction) {
 
     if (userOption.id === examiner.id) throw { key: 'selfVerify' };
 
-    const key = doubleKeyMaps(userOption.id, channelId);
+    const key = generateCompositeKey(userOption.id, channelId);
     const candidateData = candidateSessionsMap.get(key);
     if (!candidateData) throw { key: 'noCandidate' };
     if (candidateData.verified) throw { key: 'alreadyVerified' };

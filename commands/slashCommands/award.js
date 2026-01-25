@@ -1,7 +1,7 @@
 import {
     examinersMap,
     paperChannels,
-    doubleKeyMaps,
+    generateCompositeKey,
     candidateSessionsMap,
 } from '../../data/state.js';
 
@@ -33,7 +33,7 @@ function validateAward(interaction) {
     const marksOption = options.getString('marks'); // marks string like "70/100"
     const examiner = examinersMap.get(channelID);
 
-    const key = doubleKeyMaps(userOption.id, channelID);
+    const key = generateCompositeKey(userOption.id, channelID);
     const candidateData = candidateSessionsMap.get(key);
 
     if (!paperChannels.includes(channelID)) throw { key: 'invalid-channel' };
