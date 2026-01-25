@@ -9,6 +9,7 @@ export default async function handleUpload(interaction) {
             flags: 64,
         });
     }
+
     await interaction.deferReply({ flags: 64 });
 
     const attachment = interaction.options.getAttachment('file');
