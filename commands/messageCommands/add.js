@@ -18,6 +18,9 @@ const MESSAGES = {
         '⚠️ Some mentioned users were skipped because they were either bots or the examiner.',
 };
 
+// store intervals for cleanup
+const paperTimerIntervals = new Map();
+
 /**
  * Validates the !add command input and returns candidates to add
  */
@@ -106,6 +109,7 @@ async function startPaperTimer(channel, paperMinutes) {
 
         if (remaining <= 0) {
             clearInterval(interval);
+            paperTimerIntervals.delete(channel.id);
             await timerMsg.edit(`⏰ **Time's up!** Please stop writing and put your pen down.`);
             await channel.send(`⏰ **Time's up!** Please stop writing and put your pen down.`);
             paperRunningMap.set(channel.id, false);
@@ -116,4 +120,18 @@ async function startPaperTimer(channel, paperMinutes) {
             `📝 Candidates, keep working.\n⏱️ Time remaining: **${formatPaperTime(remaining)}**`,
         );
     }, 60_000);
+
+    // store interval ID for cleanup later
+    paperTimerIntervals.set(channel.id, interval);
 }
+
+// cleanup on shutdown
+process.on('SIGINT', () => {
+    for (const interval of paperTimerIntervals.values()) clearInterval(interval);
+    process.exit(0);
+});
+
+process.on('SIGTERM', () => {
+    for (const interval of paperTimerIntervals.values()) clearInterval(interval);
+    process.exit(0);
+});
