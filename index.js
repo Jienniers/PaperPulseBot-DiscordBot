@@ -18,6 +18,25 @@ import handleLeaderboard from './commands/slashCommands/leaderboard.js';
 import connectToMongoDB from './utils/database/mongoConnection.js';
 import { initializeAndSyncState } from './utils/database/stateDatabaseSync.js';
 
+/**
+ * Validates that all required environment variables are set
+ */
+function validateEnvironmentVariables() {
+    const requiredVars = ['TOKEN', 'MONGO_URL', 'GUILD_ID', 'CATEGORY_ID'];
+    const missing = requiredVars.filter((varName) => !process.env[varName]);
+
+    if (missing.length > 0) {
+        console.error(
+            `❌ Missing required environment variables: ${missing.join(', ')}\n` +
+                `Please set these in your .env file and try again.`,
+        );
+        process.exit(1);
+    }
+}
+
+// Validate environment variables before starting the bot
+validateEnvironmentVariables();
+
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
