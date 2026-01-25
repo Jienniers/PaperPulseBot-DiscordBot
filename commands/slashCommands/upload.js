@@ -2,6 +2,7 @@ import { examinersMap, paperChannels } from '../../data/state.js';
 import { sendExaminerSubmissionEmbed } from '../../utils/discord/embeds.js';
 
 const MAX_PDF_SIZE_MB = 10; // Maximum allowed PDF size in MB
+const DM_TIMEOUT_MS = 10000; // 10 second timeout for DM sends
 
 const ERROR_MESSAGES = {
     invalidChannel: '❌ You cannot use this command here.',
@@ -17,7 +18,7 @@ const ERROR_MESSAGES = {
 function validateUpload(interaction) {
     const channelId = interaction.channel.id;
     const uploadedFile = interaction.options.getAttachment('file');
-
+p
     if (!paperChannels.includes(channelId)) throw { key: 'invalidChannel' };
     if (!uploadedFile) throw { key: 'noFile' };
 
@@ -59,18 +60,23 @@ export default async function handleUpload(interaction) {
 
     if (examinerUser) {
         try {
-            await examinerUser.send({
-                content: '📩 A new paper submission has been received.',
-                embeds: [
-                    sendExaminerSubmissionEmbed(
-                        channelId,
-                        interaction.user,
-                        attachment,
-                        interaction.guild,
-                    ),
-                ],
-                files: [attachment],
-            });
+            await Promise.race([
+                examinerUser.send({
+                    content: '📩 A new paper submission has been received.',
+                    embeds: [
+                        sendExaminerSubmissionEmbed(
+                            channelId,
+                            interaction.user,
+                            attachment,
+                            interaction.guild,
+                        ),
+                    ],
+                    files: [attachment],
+                }),
+                new Promise((_, reject) =>
+                    setTimeout(() => reject(new Error('DM send timeout')), DM_TIMEOUT_MS),
+                ),
+            ]);
         } catch (err) {
             console.warn(`❗ Failed to send DM to examiner ${examinerUser.id}:`, err.message);
 
