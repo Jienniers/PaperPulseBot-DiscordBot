@@ -7,6 +7,16 @@ import {
 
 import { getAwardEmbed } from '../../utils/discord/embeds.js';
 
+// Centralized error messages
+const ERROR_MESSAGES = {
+    'invalid-channel': '❌ You cannot use this command here.',
+    'cannot-award-bot': '❌ You cannot award marks to a bot.',
+    'not-authorized': '❌ You are not authorized to award marks to candidates.',
+    'cannot-award-examiner': '❌ You cannot award marks to an examiner.',
+    'invalid-format': '❌ Please provide marks in the format `score/total`, like `70/100`.',
+    'no-users-added': '❌ There were no users added in this session nor the paper was started.',
+};
+
 /**
  * Validates the award interaction.
  * Performs all checks to ensure:
@@ -15,58 +25,44 @@ import { getAwardEmbed } from '../../utils/discord/embeds.js';
  *  - The user issuing the command is authorized
  *  - Marks are in correct `score/total` format
  *  - The paper is actually conducted in the session
- * Updates the candidate's marks in the session.
- * */
+ */
 function validateAward(interaction) {
     const { channel, user: invokingUser, options } = interaction;
     const channelID = channel.id;
     const userOption = options.getUser('user'); // candidate receiving the marks
     const marksOption = options.getString('marks'); // marks string like "70/100"
-
     const examiner = examinersMap.get(channelID);
 
-    // Retrieve candidate session data using a composite key
     const key = doubleKeyMaps(userOption.id, channelID);
     const candidateData = candidateSessionsMap.get(key);
 
-    // Validation checks
-    if (!paperChannels.includes(channelID)) throw new Error('invalid-channel');
-    if (userOption.bot) throw new Error('cannot-award-bot');
-    if (invokingUser.id !== examiner) throw new Error('not-authorized');
-    if (examiner === userOption.id) throw new Error('cannot-award-examiner');
-    if (!/^\d{1,3}\/\d{1,3}$/.test(marksOption)) throw new Error('invalid-format');
-    if (!candidateData) throw new Error('no-users-added');
+    if (!paperChannels.includes(channelID)) throw { key: 'invalid-channel' };
+    if (userOption.bot) throw { key: 'cannot-award-bot' };
+    if (invokingUser.id !== examiner) throw { key: 'not-authorized' };
+    if (examiner === userOption.id) throw { key: 'cannot-award-examiner' };
+    if (!/^\d{1,3}\/\d{1,3}$/.test(marksOption)) throw { key: 'invalid-format' };
+    if (!candidateData) throw { key: 'no-users-added' };
 
-    // Update candidate's marks in candidateSessionsMap map
-    candidateData.marks = marksOption;
-
-    return { channelID, userOption, marksOption, examiner };
+    return { channelID, userOption, marksOption, examiner, candidateData };
 }
 
 /**
  * Handles the award command.
- * Calls validation, sends confirmation message in channel,
- * creates an award embed, and sends it to the candidate via DM.
+ * Flow: validate → update marks → send confirmation → create embed → send DM
  */
 export default async function handleAward(interaction, client) {
     let data;
     try {
         data = validateAward(interaction);
     } catch (err) {
-        // Map error keys from validation to friendly messages
-        const messages = {
-            'invalid-channel': '❌ You cannot use this command here.',
-            'cannot-award-bot': '❌ You cannot award marks to a bot.',
-            'not-authorized': '❌ You are not authorized to award marks to candidates.',
-            'cannot-award-examiner': '❌ You cannot award marks to an examiner.',
-            'invalid-format': '❌ Please provide marks in the format `score/total`, like `70/100`.',
-            'no-users-added':
-                '❌ There were no users added in this session nor the paper was started.',
-        };
-        return await interaction.reply({ content: messages[err.message], flags: 64 });
+        const message = ERROR_MESSAGES[err.key] ?? '❌ An unknown error occurred.';
+        return await interaction.reply({ content: message, flags: 64 });
     }
 
-    const { channelID, userOption, marksOption, examiner } = data;
+    const { channelID, userOption, marksOption, examiner, candidateData } = data;
+
+    // Update candidate's marks in (candidateSessionsMap) map
+    candidateData.marks = marksOption;
 
     // Send confirmation in the channel
     await interaction.reply({
