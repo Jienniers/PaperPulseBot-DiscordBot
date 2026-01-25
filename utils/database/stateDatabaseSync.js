@@ -23,13 +23,6 @@ const { upsertExaminerMap, loadExaminerMap } = ExaminerMapService;
 const { upsertPaperRunningMap, loadPaperRunningMap } = PaperRunningMapService;
 const { upsertPaperTimeMins, loadPaperTimeMins } = PaperTimeMinsService;
 
-/**
- * Sync a Map from DB into memory.
- * @param {Function} loadFn - async loader returning a Map
- * @param {Map} targetMap - in-memory Map
- * @param {Function} transformKey - optional key transformer
- * @param {Function} transformValue - optional value transformer
- */
 export async function syncMapFromDB(
     loadFn,
     targetMap,
@@ -44,11 +37,6 @@ export async function syncMapFromDB(
     return targetMap;
 }
 
-/**
- * Sync an array from DB into memory.
- * @param {Function} loadFn - async loader returning an array
- * @param {Array} targetArray - in-memory array
- */
 export async function syncArrayFromDB(loadFn, targetArray) {
     const dbArray = await loadFn();
     targetArray.length = 0;
@@ -56,9 +44,6 @@ export async function syncArrayFromDB(loadFn, targetArray) {
     return targetArray;
 }
 
-/**
- * Initialize all in-memory state from DB and update invalid entries based on server.
- */
 export async function initializeAndSyncState(client) {
     await syncArrayFromDB(getPaperChannels, paperChannels);
     await syncMapFromDB(loadCandidateSessionMap, candidateSessionsMap);
@@ -71,9 +56,9 @@ export async function initializeAndSyncState(client) {
     await syncMapFromDB(loadPaperRunningMap, paperRunningMap);
     await syncMapFromDB(loadPaperTimeMins, paperTimeMinsMap);
 
-    await updateDatabaseWithServer(client);
+    await memoryCleanup().updateDatabaseWithServer(client);
 
-    const syncInterval = setInterval(syncStateToDB, 3000); // Periodic DB sync
+    const syncInterval = setInterval(syncStateToDB, 3000);
 
     process.on('SIGINT', () => {
         clearInterval(syncInterval);
@@ -88,9 +73,6 @@ export async function initializeAndSyncState(client) {
     });
 }
 
-/**
- * Sync in-memory state back to DB.
- */
 function syncStateToDB() {
     updatePaperChannelsInDB(paperChannels);
     upsertPaperTimeMins(paperTimeMinsMap);
@@ -99,40 +81,43 @@ function syncStateToDB() {
     upsertCandidateSessionMap(candidateSessionsMap);
 }
 
-/**
- * Remove any entries from memory that no longer exist on the server, and update DB.
- */
-async function updateDatabaseWithServer(client) {
-    const guild = client.guilds.cache.get(process.env.GUILD_ID);
-    if (!guild) return console.log('Guild not found!');
+function memoryCleanup() {
+    /**
+     * Remove any entries from memory that no longer exist on the server, and update DB.
+     */
+    async function updateDatabaseWithServer(client) {
+        const guild = client.guilds.cache.get(process.env.GUILD_ID);
+        if (!guild) return console.log('Guild not found!');
 
-    const serverChannelIDs = guild.channels.cache.map((ch) => ch.id);
+        const serverChannelIDs = guild.channels.cache.map((ch) => ch.id);
 
-    syncArrayWithServer(paperChannels, serverChannelIDs, updatePaperChannelsInDB);
-    syncMapWithServer(paperTimeMinsMap, serverChannelIDs, upsertPaperTimeMins);
-    syncMapWithServer(examinersMap, serverChannelIDs, upsertExaminerMap);
-    syncMapWithServer(paperRunningMap, serverChannelIDs, upsertPaperRunningMap);
-}
-
-/**
- * Helper: Remove invalid array entries and optionally update DB.
- */
-function syncArrayWithServer(array, validIDs, dbUpdateFn) {
-    const filtered = array.filter((id) => validIDs.includes(id));
-    array.length = 0;
-    array.push(...filtered);
-    if (filtered.length !== array.length) {
-        dbUpdateFn(array);
+        syncArrayWithServer(paperChannels, serverChannelIDs, updatePaperChannelsInDB);
+        syncMapWithServer(paperTimeMinsMap, serverChannelIDs, upsertPaperTimeMins);
+        syncMapWithServer(examinersMap, serverChannelIDs, upsertExaminerMap);
+        syncMapWithServer(paperRunningMap, serverChannelIDs, upsertPaperRunningMap);
     }
-}
 
-/**
- * Helper: Remove invalid Map entries and optionally update DB.
- */
-function syncMapWithServer(map, validIDs, dbUpdateFn) {
-    const before = map.size;
-    for (const key of [...map.keys()]) {
-        if (!validIDs.includes(key)) map.delete(key);
+    /**
+     * Helper: Remove invalid array entries and optionally update DB.
+     */
+    function syncArrayWithServer(array, validIDs, dbUpdateFn) {
+        const oldLength = array.length;
+        const filtered = array.filter((id) => validIDs.includes(id));
+        array.length = 0;
+        array.push(...filtered);
+        if (filtered.length !== oldLength) dbUpdateFn(array);
     }
-    if (map.size !== before) dbUpdateFn(map);
+
+    /**
+     * Helper: Remove invalid Map entries and optionally update DB.
+     */
+    function syncMapWithServer(map, validIDs, dbUpdateFn) {
+        const oldSize = map.size;
+        for (const key of [...map.keys()]) {
+            if (!validIDs.includes(key)) map.delete(key);
+        }
+        if (map.size !== oldSize) dbUpdateFn(map);
+    }
+
+    return { updateDatabaseWithServer };
 }
