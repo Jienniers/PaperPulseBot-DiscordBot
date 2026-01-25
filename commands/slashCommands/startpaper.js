@@ -8,6 +8,7 @@ const ERROR_MESSAGES = {
     missingOptions: '❌ Missing required options. Please provide paper code, examiner, and time.',
     invalidPaperCode: '❌ Please provide paper code in the format `code/variant`, like `0580/12`.',
     examinerBot: '❌ You cannot make examiner a bot.',
+    invalidPaperTime: '❌ Paper time must be between 1 and 480 minutes (1 minute to 8 hours).',
     channelCreationFailed:
         '❌ Failed to create paper channel. Check permissions or try again later.',
 };
@@ -27,6 +28,7 @@ function validateStartPaper(interaction) {
     if (!paperCode || !examiner || !paperTime) throw { key: 'missingOptions' };
     if (!/^\d{4}\/\d{1,2}$/.test(paperCode)) throw { key: 'invalidPaperCode' };
     if (examiner.bot) throw { key: 'examinerBot' };
+    if (paperTime < 1 || paperTime > 480) throw { key: 'invalidPaperTime' };
 
     return { paperCode, examiner, paperTime };
 }
