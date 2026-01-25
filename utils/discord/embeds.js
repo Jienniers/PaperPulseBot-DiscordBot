@@ -168,19 +168,21 @@ export function generateAllSessionsEmbed(sessions, user) {
 }
 
 export function getLeaderboardEmbed(leaderboardData) {
-    const leaderboardText = leaderboardData?.length
+    const leaderboardText = leaderboardData.length
         ? leaderboardData
               .map((entry, index) => {
                   const percentage =
-                      entry?.total > 0 ? ((entry.scored / entry.total) * 100).toFixed(1) : '0';
-                  return `**#${index + 1}** ${entry?.username ?? 'Unknown'} — **${entry?.scored ?? 0}/${entry?.total ?? 0} marks** (${percentage}%)`;
+                      entry.total > 0 ? ((entry.scored / entry.total) * 100).toFixed(1) : '0';
+                  return `**#${index + 1}** ${entry.username} — **${entry.scored}/${entry.total} marks** (${percentage}%)`;
               })
               .join('\n')
         : '_No verified candidate marks found yet._';
 
-    return new EmbedBuilder()
+    const embed = new EmbedBuilder()
         .setTitle('🏆 Leaderboard')
         .setDescription(`Top candidates ranked by total marks\n\n${leaderboardText}`)
         .setColor('#FACC15') // Tailwind yellow-400
         .setTimestamp();
+
+    return embed;
 }
