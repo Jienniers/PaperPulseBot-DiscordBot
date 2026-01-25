@@ -1,27 +1,27 @@
 name: 🎨 Prettier Format Check
 
 on:
-  push:
-    branches: ["**"]
-  pull_request:
-    branches: ["**"]
+    push:
+        branches: ['**']
+    pull_request:
+        branches: ['**']
 
 jobs:
-  prettier:
-    runs-on: ubuntu-latest
+    prettier:
+        runs-on: ubuntu-latest
 
-    steps:
-      - name: ⬇️ Checkout repo
-        uses: actions/checkout@v4
+        steps:
+            - name: ⬇️ Checkout repo
+              uses: actions/checkout@v4
 
-      - name: 🔧 Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: "lts"
-          cache: npm
+            - name: 🔧 Setup Node
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 'lts'
+                  cache: npm
 
-      - name: 📦 Install dependencies
-        run: npm ci
+            - name: 📦 Install dependencies
+              run: npm ci
 
-      - name: 🎨 Check formatting
-        run: npm run format:check
+            - name: 🎨 Check formatting
+              run: npm run format:check

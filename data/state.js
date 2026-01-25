@@ -19,7 +19,6 @@ function generateCompositeKey(firstKey, SecondKey) {
     return key;
 }
 
-
 function createCandidateSessionEntry(user, message, verified = false, marks = null) {
     const key = generateCompositeKey(user.id, message.channel.id);
     candidateSessionsMap.set(key, {
