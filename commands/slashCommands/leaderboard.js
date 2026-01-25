@@ -11,7 +11,6 @@ export default async function handleLeaderboard(interaction) {
     const { channel, client } = interaction;
     const channelId = channel.id;
 
-    // Defer reply in case processing takes a moment
     await interaction.deferReply();
 
     // Get all candidate sessions
@@ -20,10 +19,10 @@ export default async function handleLeaderboard(interaction) {
     // Filter entries that are valid for this channel and have proper marks
     const validEntries = allEntries.filter((entry) => {
         return (
-            entry.verified && // Candidate session is verified
-            typeof entry.marks === 'string' && // Marks exist as a string
+            entry.verified &&
+            typeof entry.marks === 'string' &&
             /^\d+\/\d+$/.test(entry.marks) && // Matches "score/total" format
-            entry.channelId === channelId // Only consider current channel
+            entry.channelId === channelId
         );
     });
 
@@ -31,17 +30,14 @@ export default async function handleLeaderboard(interaction) {
     const totals = new Map();
 
     for (const entry of validEntries) {
-        // Split marks into scored and total and convert it to Number
         const [scored, total] = entry.marks.split('/').map(Number);
-        if (isNaN(scored) || isNaN(total)) continue; // Skip invalid marks
+        if (isNaN(scored) || isNaN(total)) continue;
 
-        // Fetch user from Discord
         const user = await client.users.fetch(entry.userId);
 
         // Get previous totals or initialize
         const prev = totals.get(user.id) || { username: user.username, scored: 0, total: 0 };
 
-        // Update totals
         totals.set(user.id, {
             username: user.username,
             scored: prev.scored + scored,
@@ -54,9 +50,7 @@ export default async function handleLeaderboard(interaction) {
         (a, b) => b.scored / b.total - a.scored / a.total,
     );
 
-    // Generate leaderboard embed
     const embed = getLeaderboardEmbed(leaderboardData);
 
-    // Send the leaderboard as a reply
     await interaction.editReply({ embeds: [embed] });
 }
