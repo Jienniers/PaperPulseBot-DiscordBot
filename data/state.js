@@ -43,4 +43,5 @@ export {
     candidateSessionsMap,
     generateCompositeKey,
     createCandidateSessionEntry,
+    COMPOSITE_KEY_SEPARATOR
 };
