@@ -2,7 +2,7 @@ import { examinersMap, paperChannels } from '../../data/state.js';
 import { sendExaminerSubmissionEmbed } from '../../utils/discord/embeds.js';
 
 const MAX_PDF_SIZE_MB = 10; // Maximum allowed PDF size in MB
-const DM_TIMEOUT_MS = 10000; // 10 second timeout for DM sends
+const DM_TIMEOUT_MS = 10000; // 10s: balance between user experience and false timeouts
 
 const ERROR_MESSAGES = {
     invalidChannel: '❌ You cannot use this command here.',
