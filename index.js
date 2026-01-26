@@ -70,35 +70,17 @@ client.on(Events.MessageCreate, async (message) => {
 client.on(Events.InteractionCreate, async (interaction) => {
     if (!interaction.isChatInputCommand()) return;
 
-    // ───── 🧾 START PAPER COMMAND ─────
-    if (interaction.commandName === 'startpaper') {
-        await handleStartPaper(interaction);
-    }
+    const commandHandlers = {
+        startpaper: handleStartPaper,
+        upload: handleUpload,
+        verify: handleVerify,
+        award: (i) => handleAward(i, client),
+        profile: handleProfile,
+        leaderboard: handleLeaderboard,
+    };
 
-    // ───── 📤 UPLOAD PAPER COMMAND ─────
-    if (interaction.commandName === 'upload') {
-        await handleUpload(interaction);
-    }
-
-    // ───── ✔️ VERIFY PAPER COMMAND ─────
-    if (interaction.commandName === 'verify') {
-        await handleVerify(interaction);
-    }
-
-    // ───── 🏆 AWARD PAPER COMMAND ─────
-    if (interaction.commandName === 'award') {
-        await handleAward(interaction, client);
-    }
-
-    // ───── 👤 PROFILE COMMAND ─────
-    if (interaction.commandName === 'profile') {
-        await handleProfile(interaction);
-    }
-
-    // ───── 📊 LEADERBOARD COMMAND ─────
-    if (interaction.commandName === 'leaderboard') {
-        await handleLeaderboard(interaction);
-    }
+    const handler = commandHandlers[interaction.commandName];
+    if (handler) await handler(interaction);
 });
 
 // Listen for all button interactions
