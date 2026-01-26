@@ -15,11 +15,7 @@ export async function getPaperChannels() {
 
 export async function updatePaperChannelsInDB(channels) {
     try {
-        await PaperChannels.updateOne(
-            {},
-            { $set: { channels } },
-            { upsert: true },
-        );
+        await PaperChannels.updateOne({}, { $set: { channels } }, { upsert: true });
     } catch (err) {
         console.error('Failed to update paper channels:', err);
     }
