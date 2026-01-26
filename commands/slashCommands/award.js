@@ -1,19 +1,19 @@
 import {
     examinersMap,
     paperChannels,
-    generateCompositeKey,
     candidateSessionsMap,
+    COMPOSITE_KEY_SEPARATOR,
 } from '../../data/state.js';
 
 import { getAwardEmbed } from '../../utils/discord/embeds.js';
 
 const ERROR_MESSAGES = {
-    'invalid-channel': '❌ You cannot use this command here.',
-    'cannot-award-bot': '❌ You cannot award marks to a bot.',
-    'not-authorized': '❌ You are not authorized to award marks to candidates.',
-    'cannot-award-examiner': '❌ You cannot award marks to an examiner.',
-    'invalid-format': '❌ Please provide marks in the format `score/total`, like `70/100`.',
-    'no-users-added': '❌ There were no users added in this session nor the paper was started.',
+    invalidChannel: '❌ You cannot use this command here.',
+    cannotAwardBot: '❌ You cannot award marks to a bot.',
+    notAuthorized: '❌ You are not authorized to award marks to candidates.',
+    cannotAwardExaminer: '❌ You cannot award marks to an examiner.',
+    invalidFormat: '❌ Please provide marks in the format `score/total`, like `70/100`.',
+    noUsersAdded: '❌ There were no users added in this session nor the paper was started.',
 };
 
 /**
@@ -32,15 +32,15 @@ function validateAward(interaction) {
     const marksOption = options.getString('marks'); // marks string like "70/100"
     const examiner = examinersMap.get(channelID);
 
-    const key = generateCompositeKey(userOption.id, channelID);
+    const key = `${userOption.id}${COMPOSITE_KEY_SEPARATOR}${channelID}`;
     const candidateData = candidateSessionsMap.get(key);
 
-    if (!paperChannels.includes(channelID)) throw { key: 'invalid-channel' };
-    if (userOption.bot) throw { key: 'cannot-award-bot' };
-    if (invokingUser.id !== examiner) throw { key: 'not-authorized' };
-    if (examiner === userOption.id) throw { key: 'cannot-award-examiner' };
-    if (!/^\d{1,3}\/\d{1,3}$/.test(marksOption)) throw { key: 'invalid-format' };
-    if (!candidateData) throw { key: 'no-users-added' };
+    if (!paperChannels.includes(channelID)) throw { key: 'invalidChannel' };
+    if (userOption.bot) throw { key: 'cannotAwardBot' };
+    if (invokingUser.id !== examiner) throw { key: 'notAuthorized' };
+    if (examiner === userOption.id) throw { key: 'cannotAwardExaminer' };
+    if (!/^\d{1,3}\/\d{1,3}$/.test(marksOption)) throw { key: 'invalidFormat' };
+    if (!candidateData) throw { key: 'noUsersAdded' };
 
     return { channelID, userOption, marksOption, examiner, candidateData };
 }
