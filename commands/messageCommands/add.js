@@ -60,16 +60,16 @@ function validateAddCommand(message) {
 export default async function handleAddCommand(message) {
     if (!message.content.startsWith('!add')) return;
 
-    let data;
+    let validationResult;
     try {
-        data = validateAddCommand(message);
-        if (!data) return;
+        validationResult = validateAddCommand(message);
+        if (!validationResult) return;
     } catch (err) {
         const content = MESSAGES[err.key] ?? '❌ An unknown error occurred.';
         return await message.reply(content);
     }
 
-    const { validCandidates, skipped, paperTimeMins, channelId } = data;
+    const { validCandidates, skipped, paperTimeMins, channelId } = validationResult;
     const channel = message.channel;
 
     // Actually create candidate sessions here
