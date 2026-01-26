@@ -2,9 +2,15 @@ import { generateProfileEmbed } from '../../utils/discord/embeds.js';
 import { candidateSessionsMap } from '../../data/state.js';
 import { createProfileCommandButtons } from '../../utils/discord/buttons.js';
 
-export async function handleProfile(interaction) {
-    const userOption = interaction.options.getUser('user');
-    const user = userOption ?? interaction.user;
+/**
+ * Handles the profile command.
+ * Fetches user or target user data, calculates session statistics,
+ * generates a profile embed, and sends it along with command buttons.
+ */
+export default async function handleProfile(interaction) {
+    const { options, user: invokingUser, guild } = interaction;
+    const userOption = options.getUser('user');
+    const user = userOption ?? invokingUser; // Target user defaults to invoking user if no user given
     const userId = user.id;
 
     await interaction.deferReply({ flags: 64 });
@@ -15,14 +21,16 @@ export async function handleProfile(interaction) {
         });
     }
 
+    // Fetch member object for more detailed info (roles, nickname, etc.)
     let member;
     try {
-        member = await interaction.guild.members.fetch(userId);
+        member = await guild.members.fetch(userId);
     } catch (err) {
         console.error('❗ Failed to fetch member for profile:', err);
         member = null;
     }
 
+    // Calculate session stats for the profile
     const sessionStats = {
         totalSessions: countSessions(userId),
         verifiedSessions: countVerifiedSessions(userId),
@@ -38,6 +46,7 @@ export async function handleProfile(interaction) {
         });
     }
 
+    // Add button for profile interactions (View All Sessions)
     const buttonsRow = createProfileCommandButtons();
 
     await interaction.editReply({
@@ -49,9 +58,9 @@ export async function handleProfile(interaction) {
 function countSessions(userId) {
     let sessionCount = 0;
     for (const key of candidateSessionsMap.keys()) {
-        if (key.startsWith(`${userId}`)) {
-            sessionCount++;
-        }
+        // Keys are composite: "userId::channelId"
+        const [keyUserId] = key.split('::');
+        if (keyUserId === userId) sessionCount++;
     }
     return sessionCount;
 }
@@ -59,19 +68,22 @@ function countSessions(userId) {
 function countVerifiedSessions(userId) {
     let verifiedCount = 0;
     for (const [key, session] of candidateSessionsMap.entries()) {
-        if (key.startsWith(`${userId}::`) && session.verified) {
-            verifiedCount++;
-        }
+        const [keyUserId] = key.split('::');
+        if (keyUserId === userId && session.verified) verifiedCount++;
     }
     return verifiedCount;
 }
 
+/**
+ * Calculates the average marks percentage across verified sessions.
+ */
 function calculateAveragePercentage(userId) {
     let totalEarned = 0;
     let totalMax = 0;
 
     for (const [key, session] of candidateSessionsMap.entries()) {
-        if (key.startsWith(`${userId}::`) && typeof session.marks === 'string') {
+        const [keyUserId] = key.split('::');
+        if (keyUserId === userId && typeof session.marks === 'string') {
             const parsed = parseMarkPair(session.marks);
             if (parsed) {
                 totalEarned += parsed.scored;
@@ -85,14 +97,16 @@ function calculateAveragePercentage(userId) {
     return ((totalEarned / totalMax) * 100).toFixed(2);
 }
 
+/**
+ * Finds the highest marks scored by the user in any session.
+ */
 function getHighestMarks(userId) {
     let highest = 0;
     for (const [key, session] of candidateSessionsMap.entries()) {
-        if (key.startsWith(`${userId}::`) && typeof session.marks === 'string') {
+        const [keyUserId] = key.split('::');
+        if (keyUserId === userId && typeof session.marks === 'string') {
             const parsed = parseMarkPair(session.marks);
-            if (parsed && parsed.scored > highest) {
-                highest = parsed.scored;
-            }
+            if (parsed && parsed.scored > highest) highest = parsed.scored;
         }
     }
     return highest;
@@ -103,7 +117,8 @@ function getMostRecentSession(userId) {
     let latestTimestamp = 0;
 
     for (const [key, session] of candidateSessionsMap.entries()) {
-        if (key.startsWith(`${userId}::`) && session.createdAt > latestTimestamp) {
+        const [keyUserId] = key.split('::');
+        if (keyUserId === userId && session.createdAt > latestTimestamp) {
             latestTimestamp = session.createdAt;
             mostRecentSession = session;
         }
@@ -112,10 +127,16 @@ function getMostRecentSession(userId) {
     return mostRecentSession;
 }
 
+/**
+ * Parses a marks string like "70/100" into numeric scored and total.
+ * Returns null if invalid.
+ */
 function parseMarkPair(markStr) {
     if (typeof markStr !== 'string' || !markStr.includes('/')) return null;
+
     const [scoredStr, totalStr] = markStr.split('/');
     const scored = parseFloat(scoredStr);
     const total = parseFloat(totalStr);
+
     return !isNaN(scored) && !isNaN(total) && total > 0 ? { scored, total } : null;
 }

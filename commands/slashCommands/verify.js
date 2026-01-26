@@ -1,75 +1,64 @@
 import {
     examinersMap,
     paperChannels,
-    doubleKeyMaps,
+    generateCompositeKey,
     candidateSessionsMap,
 } from '../../data/state.js';
 
 import { getVerifiedEmbed } from '../../utils/discord/embeds.js';
 
-export async function handleVerify(interaction) {
-    const channel = interaction.channel;
-    const guild = interaction.guild;
-    const examiner = interaction.user;
+const ERROR_MESSAGES = {
+    invalidChannel: '❌ You cannot use this command here.',
+    noUser: '❌ No user was mentioned for verification.',
+    botUser: '❌ You cannot verify a bot.',
+    notAuthorized: '❌ You are not authorized to verify candidates in this paper session.',
+    selfVerify: '❌ You cannot verify yourself.',
+    noCandidate:
+        '❌ This user was not added as a candidate, or the paper session hasn’t started yet.',
+    alreadyVerified: '❌ This candidate is already verified for this session.',
+};
+
+/**
+ * Validates the verification attempt.
+ * Throws an error object with a key from ERROR_MESSAGES if any check fails.
+ */
+function validateVerification(interaction) {
+    const { channel, user: examiner, options } = interaction;
     const channelId = channel.id;
-    const userOption = interaction.options.getUser('user');
+    const userOption = options.getUser('user');
 
-    if (!paperChannels.includes(channelId)) {
-        return interaction.reply({
-            content: '❌ You cannot use this command here.',
-            flags: 64,
-        });
-    }
-
-    if (!userOption) {
-        return interaction.reply({
-            content: '❌ No user was mentioned for verification.',
-            flags: 64,
-        });
-    }
-
-    if (userOption.bot) {
-        return interaction.reply({
-            content: '❌ You cannot verify a bot.',
-            flags: 64,
-        });
-    }
+    if (!paperChannels.includes(channelId)) throw { key: 'invalidChannel' };
+    if (!userOption) throw { key: 'noUser' };
+    if (userOption.bot) throw { key: 'botUser' };
 
     const assignedExaminerID = examinersMap.get(channelId);
-    const userId = userOption.id;
+    if (!assignedExaminerID || assignedExaminerID !== examiner.id) throw { key: 'notAuthorized' };
 
-    if (!assignedExaminerID || assignedExaminerID !== examiner.id) {
-        return interaction.reply({
-            content: '❌ You are not authorized to verify candidates in this paper session.',
-            flags: 64,
-        });
-    }
+    if (userOption.id === examiner.id) throw { key: 'selfVerify' };
 
-    if (userId === examiner.id) {
-        return interaction.reply({
-            content: '❌ You cannot verify yourself.',
-            flags: 64,
-        });
-    }
-
-    const key = doubleKeyMaps(userId, channelId);
+    const key = generateCompositeKey(userOption.id, channelId);
     const candidateData = candidateSessionsMap.get(key);
+    if (!candidateData) throw { key: 'noCandidate' };
+    if (candidateData.verified) throw { key: 'alreadyVerified' };
 
-    if (!candidateData) {
-        return interaction.reply({
-            content:
-                '❌ This user was not added as a candidate, or the paper session hasn’t started yet.',
-            flags: 64,
-        });
+    return { userOption, candidateData };
+}
+
+/**
+ * Handles the verify command.
+ * Focused on flow: call validation, mark verified, send messages.
+ */
+export default async function handleVerify(interaction) {
+    let userOption, candidateData;
+
+    try {
+        ({ userOption, candidateData } = validateVerification(interaction));
+    } catch (err) {
+        const message = ERROR_MESSAGES[err.key] ?? '❌ An unknown error occurred.';
+        return interaction.reply({ content: message, flags: 64 });
     }
 
-    if (candidateData.verified) {
-        return interaction.reply({
-            content: '❌ This candidate is already verified for this session.',
-            flags: 64,
-        });
-    }
-
+    // Mark candidate as verified
     candidateData.verified = true;
 
     await interaction.reply({
@@ -78,16 +67,21 @@ export async function handleVerify(interaction) {
     });
 
     const embed = getVerifiedEmbed({
-        examiner: examiner,
-        channel: channel,
-        guild: guild,
+        examiner: interaction.user,
+        channel: interaction.channel,
+        guild: interaction.guild,
     });
 
     try {
         await userOption.send({ embeds: [embed] });
     } catch (err) {
-        console.warn(`❗ Could not DM candidate ${userId}: ${err.message}`);
-
+        console.error('[verify] Failed to send verification DM', {
+            userId: userOption.id,
+            channelId: interaction.channel.id,
+            errorCode: err.code,
+            errorMessage: err.message,
+            timestamp: new Date().toISOString(),
+        });
         await interaction.followUp({
             content: '⚠️ Candidate could not be notified via DM (possibly disabled).',
             ephemeral: true,

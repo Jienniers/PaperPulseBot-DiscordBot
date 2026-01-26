@@ -12,7 +12,6 @@ A **Discord bot** designed to simulate a virtual exam system. Built with **Node.
 - **Linter:** ESLint with Prettier integration
 - **CI:** GitHub Actions (ESLint, Prettier)
 - **Code Style:** Prettier
-- **Config:** Local JSON files
 - **Database:** MongoDB
 
 ---
@@ -61,6 +60,7 @@ Edit the file to include your credentials:
 ```env
 TOKEN=your_discord_bot_token
 CLIENT_ID=your_application_client_id
+CATEGORY_ID=your_paper_sessions_category_id
 GUILD_ID=your_guild_id
 ```
 
@@ -80,23 +80,7 @@ MONGO_URL=mongodb://localhost:27017/botData
 
 > ⚠️ Do not commit `.env` to GitHub. Keep it private.
 
----
-
-### 2️⃣ Configuration File (Required)
-
-Create `config.json` in the root directory (or copy the example):
-
-```bash
-cp examples/config.json config.json
-```
-
-Update it as needed:
-
-```json
-{
-    "category_id": "YOUR_CATEGORY_CHANNEL_ID"
-}
-```
+> 💡 **Important:** When you add new environment variables to `.env`, remember to also add the variable name to the `requiredVars` array in the `validateEnvironmentVariables()` function in `index.js`. This ensures the bot validates that all required environment variables are set when it starts.
 
 ---
 
@@ -155,9 +139,7 @@ docker pull mongo
 2. **Run MongoDB container:**
 
 ```bash
-
 docker run -d --name paperpulse-mongo -p 27017:27017 -v mongo-data:/data/db mongo
-
 ```
 
 - `-d` runs the container in detached mode.
@@ -171,9 +153,7 @@ docker run -d --name paperpulse-mongo -p 27017:27017 -v mongo-data:/data/db mong
 3. **Check if MongoDB container is running:**
 
 ```bash
-
 docker ps
-
 ```
 
 4. **Stop MongoDB container (if needed):**
@@ -221,7 +201,67 @@ node index.js
 
 ---
 
-## 🧹 Code Quality
+## 🏗️ Architecture Overview
+
+### State Management
+
+PaperPulseBot uses a **two-tier state system** combining in-memory state with MongoDB persistence:
+
+#### In-Memory State (`data/state.js`)
+
+The bot maintains several in-memory maps to track active sessions:
+
+- **`examinersMap`**: Maps `channelId → examinerId` (tracks which examiner is running which session)
+- **`paperChannels`**: Array of active paper session channel IDs
+- **`paperTimeMinsMap`**: Maps `channelId → duration` (exam duration in minutes)
+- **`paperRunningMap`**: Maps `channelId → boolean` (whether the timer is currently running)
+- **`candidateSessionsMap`**: Maps composite keys to candidate session data
+
+#### Composite Key Format
+
+Candidate sessions use a **composite key pattern**: `userId::channelId`
+
+- Example: `"123456789::987654321"` (user 123456789 in channel 987654321)
+- This allows tracking multiple sessions for the same user across different channels
+- Keys are split with `COMPOSITE_KEY_SEPARATOR` constant (`::`)
+
+### State Synchronization
+
+The bot syncs state between memory and MongoDB every **5 seconds** with **debouncing**:
+
+1. **Initialization** (`initializeAndSyncState`):
+    - Load all persistent state from MongoDB into memory
+    - Clean up orphaned entries from deleted Discord channels
+    - Start periodic sync interval
+
+2. **Periodic Sync** (every 5 seconds):
+    - Only syncs if at least 1 second has passed since last sync (debounce)
+    - Sends all in-memory state to MongoDB
+    - Prevents database hammering
+
+3. **Graceful Shutdown**:
+    - On `SIGINT` or `SIGTERM`, performs final sync before exiting
+    - Ensures no state is lost on unexpected shutdowns
+
+### Data Flow
+
+```
+Discord Events
+    ↓
+Command Handlers
+    ↓
+Modify In-Memory State (examinersMap, candidateSessionsMap, etc.)
+    ↓
+Every 5 seconds (with debounce)
+    ↓
+Sync to MongoDB
+    ↓
+Periodic Load from MongoDB (on startup)
+```
+
+---
+
+## 📋 Code Quality
 
 - Run ESLint to check code:
 
@@ -240,66 +280,6 @@ node index.js
     ```bash
     npm run format
     ```
-
----
-
-## 📁 Project Structure
-
-```
-├── .env                                     # Environment variables (not committed)
-├── .gitignore                               # Git ignored files config
-├── .prettierrc.json                         # Prettier formatting rules
-├── config.json                              # Local bot configuration
-├── eslint.config.mjs                        # ESLint config using flat config system
-├── index.js                                 # Entry point of the bot
-├── LICENSE                                  # License info
-├── package.json                             # Project metadata and dependencies
-├── package-lock.json                        # Lockfile for npm dependencies
-├── Readme.md                                # Project documentation
-├── .github/workflows/                       # GitHub Actions for CI
-│   ├── lint.yml                             # Runs ESLint checks
-│   └── prettier.yaml                        # Runs Prettier formatting check
-├── commands/                                # Command handler modules
-│   ├── messageCommands/                     # Legacy or message-based commands
-│   │   └── add.js                           # Adds candidates to the session and starts the exam timer (examiner-only)
-│   └── slashCommands/                       # Slash (/) commands for Discord
-│       ├── award.js                         # Awards marks to candidate (examiner-only)
-│       ├── leaderboard.js                   # Shows top candidates by marks
-│       ├── profile.js                       # Displays a candidate's profile summary
-│       ├── startpaper.js                    # Starts an exam session by creating a paper channel
-│       ├── upload.js                        # Handles paper PDF upload to the examiner
-│       └── verify.js                        # Verifies candidate fairness (examiner-only)
-├── data/
-│   └── state.js                             # Temporary Discord bot state
-├── database/                                # Database models and services
-│   ├── models/
-│   │   ├── dynamicModelFactory.js           # Creates dynamic Mongoose models
-│   │   └── index.js                         # Central export for all models
-│   └── services/
-│       ├── candidateSessionMapService.js    # Service for candidate-session mapping
-│       ├── examinerMapService.js            # Service for examiner map in Database
-│       ├── mapServiceFactory.js             # Factory for creating map services
-│       ├── paperChannelsService.js          # Service for managing paper channels in Database
-│       ├── paperRunningMapService.js        # Service for tracking running papers in Database
-│       └── paperTimeMinsService.js          # Service for paper channel with time in mins map in Database
-├── examples/                                # Sample config and env files
-│   ├── .env
-│   └── config.json
-├── scripts/                                 # Utility scripts for managing commands
-│   ├── clear-slash-commands.js              # Clear registered slash commands
-│   └── deploy-slash-commands.js             # Register slash commands with Discord
-└── utils/                                   # Utility and helper modules
-    ├── common/
-    │   ├── config.js                        # Shared config helpers
-    │   └── time.js                          # Time-related utilities
-    ├── database/
-    │   ├── mongoConnection.js               # MongoDB connection logic
-    │   └── stateDatabaseSync.js             # Syncs bot state with database
-    └── discord/
-        ├── buttonHandlers.js                # Handles button interactions
-        ├── buttons.js                       # Button component definitions
-        └── embeds.js                        # Embed template definitions
-```
 
 ---
 
