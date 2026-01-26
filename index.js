@@ -18,9 +18,6 @@ import handleLeaderboard from './commands/slashCommands/leaderboard.js';
 import connectToMongoDB from './utils/database/mongoConnection.js';
 import { initializeAndSyncState } from './utils/database/stateDatabaseSync.js';
 
-/**
- * Validates that all required environment variables are set
- */
 function validateEnvironmentVariables() {
     const requiredVars = ['TOKEN', 'MONGO_URL', 'GUILD_ID', 'CATEGORY_ID'];
     const missing = requiredVars.filter((varName) => !process.env[varName]);
@@ -34,7 +31,6 @@ function validateEnvironmentVariables() {
     }
 }
 
-// Validate environment variables before starting the bot
 validateEnvironmentVariables();
 
 const client = new Client({
@@ -83,14 +79,12 @@ client.on(Events.InteractionCreate, async (interaction) => {
     if (handler) await handler(interaction);
 });
 
-// Listen for all button interactions
 client.on(Events.InteractionCreate, async (interaction) => {
     if (!interaction.isButton()) return;
 
     const buttonID = interaction.customId;
     const channelID = interaction.channel.id;
 
-    // Look up the handler for this button by custom ID
     const handler = buttonHandlers[buttonID];
     if (handler) {
         await handler(interaction, channelID);
