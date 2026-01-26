@@ -1,3 +1,13 @@
+/**
+ * State Database Synchronization Module
+ * 
+ * Manages bidirectional sync between in-memory state and MongoDB.
+ * - Loads state from DB on startup
+ * - Periodically syncs memory → DB every 3 seconds
+ * - Cleans up orphaned entries when channels are deleted
+ * - Handles graceful shutdown
+ */
+
 // =====================
 // Configuration
 // =====================
