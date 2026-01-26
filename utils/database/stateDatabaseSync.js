@@ -58,16 +58,11 @@ async function loadArrayFromDB(loadFn, targetArray) {
 /**
  * Load a database map into a target map
  */
-async function loadMapFromDB(
-    loadFn,
-    targetMap,
-    transformKey = (k) => k,
-    transformValue = (v) => v,
-) {
+async function loadMapFromDB(loadFn, targetMap) {
     const dbMap = await loadFn();
     targetMap.clear();
     for (const [key, value] of dbMap) {
-        targetMap.set(transformKey(key), transformValue(value));
+        targetMap.set(key, value);
     }
 }
 
@@ -137,12 +132,7 @@ export async function initializeAndSyncState(client) {
     // Load all state from database into memory
     await loadArrayFromDB(getPaperChannels, paperChannels);
     await loadMapFromDB(loadCandidateSessionMap, candidateSessionsMap);
-    await loadMapFromDB(
-        loadExaminerMap,
-        examinersMap,
-        (k) => String(k),
-        (v) => String(v),
-    );
+    await loadMapFromDB(loadExaminerMap, examinersMap);
     await loadMapFromDB(loadPaperRunningMap, paperRunningMap);
     await loadMapFromDB(loadPaperTimeMins, paperTimeMinsMap);
 
