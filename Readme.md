@@ -199,7 +199,147 @@ node index.js
 
 ---
 
-## 🧹 Code Quality
+## 🏗️ Architecture Overview
+
+### State Management
+
+PaperPulseBot uses a **two-tier state system** combining in-memory state with MongoDB persistence:
+
+#### In-Memory State (`data/state.js`)
+
+The bot maintains several in-memory maps to track active sessions:
+
+- **`examinersMap`**: Maps `channelId → examinerId` (tracks which examiner is running which session)
+- **`paperChannels`**: Array of active paper session channel IDs
+- **`paperTimeMinsMap`**: Maps `channelId → duration` (exam duration in minutes)
+- **`paperRunningMap`**: Maps `channelId → boolean` (whether the timer is currently running)
+- **`candidateSessionsMap`**: Maps composite keys to candidate session data
+
+#### Composite Key Format
+
+Candidate sessions use a **composite key pattern**: `userId::channelId`
+
+- Example: `"123456789::987654321"` (user 123456789 in channel 987654321)
+- This allows tracking multiple sessions for the same user across different channels
+- Keys are split with `COMPOSITE_KEY_SEPARATOR` constant (`::`)
+
+### State Synchronization
+
+The bot syncs state between memory and MongoDB every **5 seconds** with **debouncing**:
+
+1. **Initialization** (`initializeAndSyncState`):
+    - Load all persistent state from MongoDB into memory
+    - Clean up orphaned entries from deleted Discord channels
+    - Start periodic sync interval
+
+2. **Periodic Sync** (every 5 seconds):
+    - Only syncs if at least 1 second has passed since last sync (debounce)
+    - Sends all in-memory state to MongoDB
+    - Prevents database hammering
+
+3. **Graceful Shutdown**:
+    - On `SIGINT` or `SIGTERM`, performs final sync before exiting
+    - Ensures no state is lost on unexpected shutdowns
+
+### Data Flow
+
+```
+Discord Events
+    ↓
+Command Handlers
+    ↓
+Modify In-Memory State (examinersMap, candidateSessionsMap, etc.)
+    ↓
+Every 5 seconds (with debounce)
+    ↓
+Sync to MongoDB
+    ↓
+Periodic Load from MongoDB (on startup)
+```
+
+---
+
+## 🛡️ Error Handling Strategy
+
+### Silent vs. Explicit Errors
+
+The bot uses a **stratified error handling approach**:
+
+#### 1. Critical Errors (Bot Initialization)
+
+**Location:** `index.js`, `mongoConnection.js`
+
+- Environment variable validation
+- MongoDB connection failures
+- **Action:** Exit process immediately with clear error message
+
+```javascript
+// Example: Missing env var
+❌ Missing required environment variables: TOKEN, MONGO_URL
+Please set these in your .env file and try again.
+```
+
+#### 2. Command Validation Errors
+
+**Location:** All command files (`startpaper.js`, `award.js`, `verify.js`, etc.)
+
+- Invalid input parameters
+- User permission checks
+- Missing prerequisites (e.g., user not in session)
+- **Action:** Reply to user with user-friendly error message, log to console
+
+```javascript
+// Example: Invalid marks format
+throw { key: 'invalidFormat' };
+// → User sees: "❌ Please provide marks in the format `score/total`, like `70/100`."
+```
+
+#### 3. External Service Failures (Discord DMs)
+
+**Location:** `verify.js`, `upload.js`, `award.js`
+
+- DM send failures (user has DMs disabled, Discord permission issues, timeout)
+- **Action:** Log detailed error with full context, notify user via interaction follow-up
+
+```javascript
+// Detailed error log:
+console.error('[award] Failed to send marks notification DM', {
+    candidateId: '123456789',
+    examinerId: '987654321',
+    channelId: 'channel-id',
+    marks: '85/100',
+    errorCode: 50007, // Discord error code
+    errorMessage: 'Cannot send messages to this user',
+    timestamp: '2026-01-26T10:30:45.123Z',
+});
+
+// User sees: "⚠️ Could not deliver notification (DMs might be disabled)"
+```
+
+### Error Context
+
+All error logs include:
+
+- **Command/Module name** (e.g., `[award]`, `[verify]`)
+- **User IDs** involved (candidate, examiner, etc.)
+- **Channel/Guild IDs** for context
+- **Error code** (Discord error codes when applicable)
+- **Error message** (what went wrong)
+- **Timestamp** (when it happened)
+- **Operation context** (what was being attempted)
+
+### Recovery Strategies
+
+| Error Type              | Recovery                                                 |
+| ----------------------- | -------------------------------------------------------- |
+| DM send failure         | Notify user via command response, log for admin review   |
+| Database sync failure   | Retry on next sync cycle, data still in memory           |
+| Missing Discord channel | Orphaned session data auto-cleaned on next sync          |
+| MongoDB connection lost | Bot continues with in-memory state, retries on reconnect |
+
+---
+
+## 📋 Code Quality
 
 - Run ESLint to check code:
 
