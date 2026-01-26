@@ -80,6 +80,8 @@ MONGO_URL=mongodb://localhost:27017/botData
 
 > ⚠️ Do not commit `.env` to GitHub. Keep it private.
 
+> 💡 **Important:** When you add new environment variables to `.env`, remember to also add the variable name to the `requiredVars` array in the `validateEnvironmentVariables()` function in `index.js`. This ensures the bot validates that all required environment variables are set when it starts.
+
 ---
 
 ## 🐳 Option 1: Run Bot with Docker
