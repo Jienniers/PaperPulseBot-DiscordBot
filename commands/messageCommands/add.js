@@ -93,7 +93,7 @@ async function startPaperTimer(channel, paperMinutes) {
     let remaining = isNaN(Number(paperMinutes)) ? 0 : Number(paperMinutes);
 
     const timerMsg = await channel.send(
-        `📝 Candidates, please begin your paper.\n⏱️ Time remaining: **${formatPaperTime(remaining)}**`,
+        `📝 Candidates, please begin your paper.\n⏱️ Total time: **${formatPaperTime(remaining)}**`,
     );
 
     const warningThresholds = new Set([5, 1]); // Warning at 5 min and 1 min marks
