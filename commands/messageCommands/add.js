@@ -96,7 +96,7 @@ async function startPaperTimer(channel, paperMinutes) {
         `📝 Candidates, please begin your paper.\n⏱️ Time remaining: **${formatPaperTime(remaining)}**`,
     );
 
-    const warningThresholds = new Set([5, 1]);
+    const warningThresholds = new Set([5, 1]); // Warning at 5 min and 1 min marks
 
     const interval = setInterval(async () => {
         remaining -= 1;
