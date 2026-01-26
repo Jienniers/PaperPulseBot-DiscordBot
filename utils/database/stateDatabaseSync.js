@@ -1,4 +1,12 @@
 // =====================
+// Configuration
+// =====================
+
+const SYNC_INTERVAL_MS = 5000; // Sync to DB every 5 seconds
+let lastSyncTime = 0; // Track last sync to avoid hammering DB
+const DEBOUNCE_DELAY_MS = 1000; // Wait 1s after last change before syncing
+
+// =====================
 // Imports
 // =====================
 
@@ -35,10 +43,22 @@ import {
 } from '../../database/services/paperTimeMinsService.js';
 
 // =====================
-// Main functions
+// Helper Functions
 // =====================
 
-export async function syncMapFromDB(
+/**
+ * Load a database array into a target array
+ */
+async function loadArrayFromDB(loadFn, targetArray) {
+    const dbArray = await loadFn();
+    targetArray.length = 0;
+    targetArray.push(...dbArray);
+}
+
+/**
+ * Load a database map into a target map
+ */
+async function loadMapFromDB(
     loadFn,
     targetMap,
     transformKey = (k) => k,
@@ -49,90 +69,103 @@ export async function syncMapFromDB(
     for (const [key, value] of dbMap) {
         targetMap.set(transformKey(key), transformValue(value));
     }
-    return targetMap;
 }
 
-export async function syncArrayFromDB(loadFn, targetArray) {
-    const dbArray = await loadFn();
-    targetArray.length = 0;
-    targetArray.push(...dbArray);
-    return targetArray;
+/**
+ * Remove array entries for channels that no longer exist on the server
+ */
+function cleanArrayWithServer(array, validIDs, dbUpdateFn) {
+    const oldLength = array.length;
+    const filtered = array.filter((id) => validIDs.includes(id));
+    if (filtered.length !== oldLength) {
+        array.length = 0;
+        array.push(...filtered);
+        dbUpdateFn(array);
+    }
 }
 
-export async function initializeAndSyncState(client) {
-    await syncArrayFromDB(getPaperChannels, paperChannels);
-    await syncMapFromDB(loadCandidateSessionMap, candidateSessionsMap);
-    await syncMapFromDB(
-        loadExaminerMap,
-        examinersMap,
-        (k) => String(k),
-        (v) => String(v),
-    );
-    await syncMapFromDB(loadPaperRunningMap, paperRunningMap);
-    await syncMapFromDB(loadPaperTimeMins, paperTimeMinsMap);
-
-    await memoryCleanup().updateDatabaseWithServer(client);
-
-    const syncInterval = setInterval(syncStateToDB, 3000);
-
-    process.on('SIGINT', () => {
-        clearInterval(syncInterval);
-        console.log('Bot shutting down, sync interval cleared.');
-        process.exit(0);
-    });
-
-    process.on('SIGTERM', () => {
-        clearInterval(syncInterval);
-        console.log('Bot shutting down, sync interval cleared.');
-        process.exit(0);
-    });
+/**
+ * Remove map entries for channels that no longer exist on the server
+ */
+function cleanMapWithServer(map, validIDs, dbUpdateFn) {
+    const oldSize = map.size;
+    for (const key of [...map.keys()]) {
+        if (!validIDs.includes(key)) {
+            map.delete(key);
+        }
+    }
+    if (map.size !== oldSize) {
+        dbUpdateFn(map);
+    }
 }
 
+/**
+ * Sync all state changes to the database
+ */
 function syncStateToDB() {
     updatePaperChannelsInDB(paperChannels);
     upsertPaperTimeMins(paperTimeMinsMap);
     upsertExaminerMap(examinersMap);
     upsertPaperRunningMap(paperRunningMap);
     upsertCandidateSessionMap(candidateSessionsMap);
+    lastSyncTime = Date.now();
 }
 
-function memoryCleanup() {
-    /**
-     * Remove any entries from memory that no longer exist on the server, and update DB.
-     */
-    async function updateDatabaseWithServer(client) {
-        const guild = client.guilds.cache.get(process.env.GUILD_ID);
-        if (!guild) return console.log('Guild not found!');
-
-        const serverChannelIDs = guild.channels.cache.map((ch) => ch.id);
-
-        syncArrayWithServer(paperChannels, serverChannelIDs, updatePaperChannelsInDB);
-        syncMapWithServer(paperTimeMinsMap, serverChannelIDs, upsertPaperTimeMins);
-        syncMapWithServer(examinersMap, serverChannelIDs, upsertExaminerMap);
-        syncMapWithServer(paperRunningMap, serverChannelIDs, upsertPaperRunningMap);
+/**
+ * Remove orphaned entries that reference deleted channels
+ */
+async function cleanupOrphanedData(client) {
+    const guild = client.guilds.cache.get(process.env.GUILD_ID);
+    if (!guild) {
+        console.log('Guild not found!');
+        return;
     }
 
-    /**
-     * Helper: Remove invalid array entries and optionally update DB.
-     */
-    function syncArrayWithServer(array, validIDs, dbUpdateFn) {
-        const oldLength = array.length;
-        const filtered = array.filter((id) => validIDs.includes(id));
-        array.length = 0;
-        array.push(...filtered);
-        if (filtered.length !== oldLength) dbUpdateFn(array);
-    }
+    const serverChannelIDs = guild.channels.cache.map((ch) => ch.id);
 
-    /**
-     * Helper: Remove invalid Map entries and optionally update DB.
-     */
-    function syncMapWithServer(map, validIDs, dbUpdateFn) {
-        const oldSize = map.size;
-        for (const key of [...map.keys()]) {
-            if (!validIDs.includes(key)) map.delete(key);
+    cleanArrayWithServer(paperChannels, serverChannelIDs, updatePaperChannelsInDB);
+    cleanMapWithServer(paperTimeMinsMap, serverChannelIDs, upsertPaperTimeMins);
+    cleanMapWithServer(examinersMap, serverChannelIDs, upsertExaminerMap);
+    cleanMapWithServer(paperRunningMap, serverChannelIDs, upsertPaperRunningMap);
+}
+
+// =====================
+// Main Initialization
+// =====================
+
+export async function initializeAndSyncState(client) {
+    // Load all state from database into memory
+    await loadArrayFromDB(getPaperChannels, paperChannels);
+    await loadMapFromDB(loadCandidateSessionMap, candidateSessionsMap);
+    await loadMapFromDB(
+        loadExaminerMap,
+        examinersMap,
+        (k) => String(k),
+        (v) => String(v),
+    );
+    await loadMapFromDB(loadPaperRunningMap, paperRunningMap);
+    await loadMapFromDB(loadPaperTimeMins, paperTimeMinsMap);
+
+    // Clean up any orphaned data from deleted channels
+    await cleanupOrphanedData(client);
+
+    // Set up periodic sync with debouncing
+    const syncInterval = setInterval(() => {
+        const timeSinceLastSync = Date.now() - lastSyncTime;
+        // Only sync if enough time has passed since last sync
+        if (timeSinceLastSync >= DEBOUNCE_DELAY_MS) {
+            syncStateToDB();
         }
-        if (map.size !== oldSize) dbUpdateFn(map);
-    }
+    }, SYNC_INTERVAL_MS);
 
-    return { updateDatabaseWithServer };
+    // Graceful shutdown handlers
+    const shutdown = (signal) => {
+        clearInterval(syncInterval);
+        console.log(`Received ${signal}, syncing final state to DB...`);
+        syncStateToDB();
+        process.exit(0);
+    };
+
+    process.on('SIGINT', () => shutdown('SIGINT'));
+    process.on('SIGTERM', () => shutdown('SIGTERM'));
 }
