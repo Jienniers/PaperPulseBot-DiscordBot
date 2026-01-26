@@ -4,7 +4,7 @@ import { EmbedBuilder } from 'discord.js';
 export function createPaperEmbed(user, paperCode, timeString) {
     return new EmbedBuilder()
         .setColor('#0099FF')
-        .setTitle('📝 Paper Started, Good Luck!')
+        .setTitle('📝 Paper Channel Created!')
         .setDescription(
             `👨‍🏫 Started by: ${user ?? 'Unknown'}\n📄 Paper Code: ${paperCode ?? 'N/A'}\n⏱️ Duration: ${timeString ?? 'N/A'}`,
         )
