@@ -78,6 +78,14 @@ export default async function handleAward(interaction, client) {
     try {
         await userOption.send({ embeds: [embed] });
     } catch (err) {
-        console.warn(`❗ Failed to send DM to user ${userOption.id}:`, err.message);
+        console.error('[award] Failed to send marks notification DM', {
+            candidateId: userOption.id,
+            examinerId: examiner,
+            channelId: channelID,
+            marks: marksOption,
+            errorCode: err.code,
+            errorMessage: err.message,
+            timestamp: new Date().toISOString(),
+        });
     }
 }

@@ -75,7 +75,13 @@ export default async function handleVerify(interaction) {
     try {
         await userOption.send({ embeds: [embed] });
     } catch (err) {
-        console.warn(`❗ Could not DM candidate ${userOption.id}: ${err.message}`);
+        console.error('[verify] Failed to send verification DM', {
+            userId: userOption.id,
+            channelId: interaction.channel.id,
+            errorCode: err.code,
+            errorMessage: err.message,
+            timestamp: new Date().toISOString(),
+        });
         await interaction.followUp({
             content: '⚠️ Candidate could not be notified via DM (possibly disabled).',
             ephemeral: true,

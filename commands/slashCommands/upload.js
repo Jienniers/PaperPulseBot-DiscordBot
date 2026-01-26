@@ -18,7 +18,6 @@ const ERROR_MESSAGES = {
 function validateUpload(interaction) {
     const channelId = interaction.channel.id;
     const uploadedFile = interaction.options.getAttachment('file');
-p
     if (!paperChannels.includes(channelId)) throw { key: 'invalidChannel' };
     if (!uploadedFile) throw { key: 'noFile' };
 
@@ -78,7 +77,14 @@ export default async function handleUpload(interaction) {
                 ),
             ]);
         } catch (err) {
-            console.warn(`❗ Failed to send DM to examiner ${examinerUser.id}:`, err.message);
+            console.error('[upload] Failed to send submission DM to examiner', {
+                examinerId: examinerUser.id,
+                candidateId: interaction.user.id,
+                channelId,
+                errorCode: err.code,
+                errorMessage: err.message,
+                timestamp: new Date().toISOString(),
+            });
 
             await interaction.followUp({
                 content: '⚠️ Examiner could not receive your file (DMs might be disabled).',
