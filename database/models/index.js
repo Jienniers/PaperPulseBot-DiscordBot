@@ -1,15 +1,5 @@
-import createDynamicModel from './dynamicModelFactory.js';
-import mongoose from 'mongoose';
-
-const CandidateSessionMap = createDynamicModel('CandidateSessionMap');
-const ExaminersMap = createDynamicModel('ExaminersMap');
-const PaperRunningMap = createDynamicModel('PaperRunningMap');
-const PaperTimeMins = createDynamicModel('PaperTimeMins');
-
-// Special schema
-const paperChannelsSchema = new mongoose.Schema({
-    channels: { type: [String], default: [] },
-});
-const PaperChannels = mongoose.model('PaperChannels', paperChannelsSchema);
-
-export { CandidateSessionMap, ExaminersMap, PaperRunningMap, PaperTimeMins, PaperChannels };
+export { default as CandidateSessionMap } from './CandidateSessionMap.js';
+export { default as ExaminersMap } from './ExaminersMap.js';
+export { default as PaperRunningMap } from './PaperRunningMap.js';
+export { default as PaperTimeMins } from './PaperTimeMins.js';
+export { default as PaperChannels } from './PaperChannels.js';

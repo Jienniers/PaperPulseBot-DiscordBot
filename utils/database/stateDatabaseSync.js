@@ -1,3 +1,8 @@
+// =====================
+// Imports
+// =====================
+
+// State maps
 import {
     paperChannels,
     paperTimeMinsMap,
@@ -6,22 +11,32 @@ import {
     candidateSessionsMap,
 } from '../../data/state.js';
 
+// Service functions
 import {
     updatePaperChannelsInDB,
     getPaperChannels,
 } from '../../database/services/paperChannelsService.js';
 
-// Import default exports from each service file
-import CandidateSessionMapService from '../../database/services/candidateSessionMapService.js';
-import ExaminerMapService from '../../database/services/examinerMapService.js';
-import PaperRunningMapService from '../../database/services/paperRunningMapService.js';
-import PaperTimeMinsService from '../../database/services/paperTimeMinsService.js';
+import {
+    upsertCandidateSessionMap,
+    loadCandidateSessionMap,
+} from '../../database/services/candidateSessionMapService.js';
 
-// Destructure functions from each service object
-const { upsertCandidateSessionMap, loadCandidateSessionMap } = CandidateSessionMapService;
-const { upsertExaminerMap, loadExaminerMap } = ExaminerMapService;
-const { upsertPaperRunningMap, loadPaperRunningMap } = PaperRunningMapService;
-const { upsertPaperTimeMins, loadPaperTimeMins } = PaperTimeMinsService;
+import { upsertExaminerMap, loadExaminerMap } from '../../database/services/examinerMapService.js';
+
+import {
+    upsertPaperRunningMap,
+    loadPaperRunningMap,
+} from '../../database/services/paperRunningMapService.js';
+
+import {
+    upsertPaperTimeMins,
+    loadPaperTimeMins,
+} from '../../database/services/paperTimeMinsService.js';
+
+// =====================
+// Main functions
+// =====================
 
 export async function syncMapFromDB(
     loadFn,
