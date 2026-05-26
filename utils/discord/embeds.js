@@ -6,7 +6,10 @@ export function createPaperEmbed(user, paperCode, timeString) {
         .setColor('#0099FF')
         .setTitle('📝 Paper Channel Created!')
         .setDescription(
-            `👨‍🏫 Started by: ${user ?? 'Unknown'}\n📄 Paper Code: ${paperCode ?? 'N/A'}\n⏱️ Duration: ${timeString ?? 'N/A'}`,
+            `👨‍🏫 Started by: ${user ?? 'Unknown'}
+            📄 Paper Code: ${paperCode ?? 'N/A'}
+            ⏱️ Duration: ${timeString ?? 'N/A'}
+            📖 How to start: Use \`!add @user1 @user2 ...\``,
         )
         .setTimestamp();
 }
