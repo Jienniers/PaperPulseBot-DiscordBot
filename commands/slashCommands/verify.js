@@ -1,10 +1,9 @@
 import {
-    examinersMap,
-    paperChannels,
-    generateCompositeKey,
     candidateSessionsMap,
+    examinersMap,
+    generateCompositeKey,
+    paperChannels,
 } from '../../data/state.js';
-
 import { getVerifiedEmbed } from '../../utils/discord/embeds.js';
 
 const ERROR_MESSAGES = {

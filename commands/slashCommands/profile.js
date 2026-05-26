@@ -1,6 +1,6 @@
-import { generateProfileEmbed } from '../../utils/discord/embeds.js';
 import { candidateSessionsMap } from '../../data/state.js';
 import { createProfileCommandButtons } from '../../utils/discord/buttons.js';
+import { generateProfileEmbed } from '../../utils/discord/embeds.js';
 
 /**
  * Handles the profile command.

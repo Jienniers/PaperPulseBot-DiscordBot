@@ -1,5 +1,5 @@
-import { getLeaderboardEmbed } from '../../utils/discord/embeds.js';
 import { candidateSessionsMap } from '../../data/state.js';
+import { getLeaderboardEmbed } from '../../utils/discord/embeds.js';
 
 /**
  * Handles the leaderboard command.

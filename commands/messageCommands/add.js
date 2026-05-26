@@ -1,11 +1,11 @@
-import formatPaperTime from '../../utils/common/time.js';
 import {
-    paperChannels,
-    paperTimeMinsMap,
-    paperRunningMap,
     createCandidateSessionEntry,
     examinersMap,
+    paperChannels,
+    paperRunningMap,
+    paperTimeMinsMap,
 } from '../../data/state.js';
+import formatPaperTime from '../../utils/common/time.js';
 
 // Centralized messages
 const MESSAGES = {

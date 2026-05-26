@@ -1,7 +1,7 @@
-import formatPaperTime from '../../utils/common/time.js';
-import { createPaperEmbed } from '../../utils/discord/embeds.js';
-import { createPaperButtons } from '../../utils/discord/buttons.js';
 import { examinersMap, paperChannels, paperTimeMinsMap } from '../../data/state.js';
+import formatPaperTime from '../../utils/common/time.js';
+import { createPaperButtons } from '../../utils/discord/buttons.js';
+import { createPaperEmbed } from '../../utils/discord/embeds.js';
 
 const ERROR_MESSAGES = {
     invalidChannel: '❌ You cannot use this command here.',

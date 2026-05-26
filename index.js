@@ -1,22 +1,20 @@
 import 'dotenv/config';
 
-import { Client, GatewayIntentBits, Events } from 'discord.js';
-
-//utils
-import buttonHandlers from './utils/discord/buttonHandlers.js';
+import { Client, Events, GatewayIntentBits } from 'discord.js';
 
 //commands
 import handleAddCommand from './commands/messageCommands/add.js';
+import handleAward from './commands/slashCommands/award.js';
+import handleLeaderboard from './commands/slashCommands/leaderboard.js';
+import handleProfile from './commands/slashCommands/profile.js';
 import handleStartPaper from './commands/slashCommands/startpaper.js';
 import handleUpload from './commands/slashCommands/upload.js';
 import handleVerify from './commands/slashCommands/verify.js';
-import handleAward from './commands/slashCommands/award.js';
-import handleProfile from './commands/slashCommands/profile.js';
-import handleLeaderboard from './commands/slashCommands/leaderboard.js';
-
 //database
 import connectToMongoDB from './utils/database/mongoConnection.js';
 import { initializeAndSyncState } from './utils/database/stateDatabaseSync.js';
+//utils
+import buttonHandlers from './utils/discord/buttonHandlers.js';
 
 function validateEnvironmentVariables() {
     const requiredVars = ['TOKEN', 'MONGO_URL', 'GUILD_ID', 'CATEGORY_ID'];

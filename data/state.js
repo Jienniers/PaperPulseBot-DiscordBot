@@ -36,12 +36,12 @@ function createCandidateSessionEntry(user, message, verified = false, marks = nu
 }
 
 export {
-    examinersMap,
-    paperChannels,
-    paperTimeMinsMap,
-    paperRunningMap,
     candidateSessionsMap,
-    generateCompositeKey,
-    createCandidateSessionEntry,
     COMPOSITE_KEY_SEPARATOR,
+    createCandidateSessionEntry,
+    examinersMap,
+    generateCompositeKey,
+    paperChannels,
+    paperRunningMap,
+    paperTimeMinsMap,
 };

@@ -1,11 +1,10 @@
 import {
+    candidateSessionsMap,
     examinersMap,
     paperChannels,
-    paperTimeMinsMap,
     paperRunningMap,
-    candidateSessionsMap,
+    paperTimeMinsMap,
 } from '../../data/state.js';
-
 import { generateAllSessionsEmbed } from './embeds.js';
 
 async function handleCloseButton(interaction, channelID) {

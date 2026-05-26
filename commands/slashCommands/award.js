@@ -1,10 +1,9 @@
 import {
-    examinersMap,
-    paperChannels,
     candidateSessionsMap,
     COMPOSITE_KEY_SEPARATOR,
+    examinersMap,
+    paperChannels,
 } from '../../data/state.js';
-
 import { getAwardEmbed } from '../../utils/discord/embeds.js';
 
 const ERROR_MESSAGES = {

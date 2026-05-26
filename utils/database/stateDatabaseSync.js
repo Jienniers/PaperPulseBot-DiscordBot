@@ -22,34 +22,29 @@ const DEBOUNCE_DELAY_MS = 1000; // Wait 1s after last change before syncing
 
 // State maps
 import {
-    paperChannels,
-    paperTimeMinsMap,
-    examinersMap,
-    paperRunningMap,
     candidateSessionsMap,
+    examinersMap,
+    paperChannels,
+    paperRunningMap,
+    paperTimeMinsMap,
 } from '../../data/state.js';
-
+import {
+    loadCandidateSessionMap,
+    upsertCandidateSessionMap,
+} from '../../database/services/candidateSessionMapService.js';
+import { loadExaminerMap, upsertExaminerMap } from '../../database/services/examinerMapService.js';
 // Service functions
 import {
-    updatePaperChannelsInDB,
     getPaperChannels,
+    updatePaperChannelsInDB,
 } from '../../database/services/paperChannelsService.js';
-
 import {
-    upsertCandidateSessionMap,
-    loadCandidateSessionMap,
-} from '../../database/services/candidateSessionMapService.js';
-
-import { upsertExaminerMap, loadExaminerMap } from '../../database/services/examinerMapService.js';
-
-import {
-    upsertPaperRunningMap,
     loadPaperRunningMap,
+    upsertPaperRunningMap,
 } from '../../database/services/paperRunningMapService.js';
-
 import {
-    upsertPaperTimeMins,
     loadPaperTimeMins,
+    upsertPaperTimeMins,
 } from '../../database/services/paperTimeMinsService.js';
 
 // =====================
