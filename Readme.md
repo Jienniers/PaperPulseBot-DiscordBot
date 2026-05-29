@@ -62,6 +62,7 @@ TOKEN=your_discord_bot_token
 CLIENT_ID=your_application_client_id
 CATEGORY_ID=your_paper_sessions_category_id
 GUILD_ID=your_guild_id
+SYNC_INTERVAL=5000 # MongoDB sync interval in milliseconds
 ```
 
 Set `MONGO_URL` depending on your setup:

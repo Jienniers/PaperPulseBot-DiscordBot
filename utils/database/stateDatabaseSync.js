@@ -9,16 +9,10 @@
  */
 
 // =====================
-// Configuration
-// =====================
-
-const SYNC_INTERVAL_MS = 5000; // Sync to DB every 5 seconds
-let lastSyncTime = 0; // Track last sync to avoid hammering DB
-const DEBOUNCE_DELAY_MS = 1000; // Wait 1s after last change before syncing
-
-// =====================
 // Imports
 // =====================
+
+import 'dotenv/config';
 
 // State maps
 import {
@@ -46,6 +40,15 @@ import {
     loadPaperTimeMins,
     upsertPaperTimeMins,
 } from '../../database/services/paperTimeMinsService.js';
+
+// =====================
+// Configuration
+// =====================
+
+const SYNC_INTERVAL_MS = process.env.SYNC_INTERVAL; // Sync to DB. Time defined in .env
+let lastSyncTime = 0; // Track last sync to avoid hammering DB
+const DEBOUNCE_DELAY_MS = 1000; // Wait 1s after last change before syncing
+
 
 // =====================
 // Helper Functions
