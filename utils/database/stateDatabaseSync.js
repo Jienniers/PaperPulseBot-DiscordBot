@@ -49,7 +49,6 @@ const SYNC_INTERVAL_MS = process.env.SYNC_INTERVAL; // Sync to DB. Time defined 
 let lastSyncTime = 0; // Track last sync to avoid hammering DB
 const DEBOUNCE_DELAY_MS = 1000; // Wait 1s after last change before syncing
 
-
 // =====================
 // Helper Functions
 // =====================
