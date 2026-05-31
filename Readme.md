@@ -41,6 +41,20 @@ A **Discord bot** designed to simulate a virtual exam system. Built with **Node.
 
 ---
 
+## 🖼️ Screenshots
+
+### Paper Session Channel Embed
+![PaperChannelEmbed](Screenshots/PaperChannelEmbed.png)
+### Paper Started Message
+![TimerStarted](Screenshots/TimerStarted.png)
+### Paper Results Embed
+![MarksAwarded](Screenshots/MarksAwardedDM.png)
+### Your Profile Embed
+![Profile](Screenshots/Profile.png)
+
+
+---
+
 ## 🚀 Getting Started
 
 > Ensure [Node.js](https://nodejs.org/) (optional If running with Docker) and [Docker](https://www.docker.com/get-started) are installed before setup.
