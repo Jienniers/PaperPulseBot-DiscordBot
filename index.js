@@ -18,7 +18,7 @@ import { initializeAndSyncState, syncGuildState } from './utils/database/stateDa
 import buttonHandlers from './utils/discord/buttonHandlers.js';
 
 function validateEnvironmentVariables() {
-    const requiredVars = ['TOKEN', 'MONGO_URL', 'GUILD_ID', 'CATEGORY_ID'];
+    const requiredVars = ['TOKEN', 'MONGO_URL', 'CATEGORY_ID'];
     const missing = requiredVars.filter((varName) => !process.env[varName]);
 
     if (missing.length > 0) {
