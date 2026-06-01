@@ -13,7 +13,7 @@ import handleUpload from './commands/slashCommands/upload.js';
 import handleVerify from './commands/slashCommands/verify.js';
 //database
 import connectToMongoDB from './utils/database/mongoConnection.js';
-import { initializeAndSyncState } from './utils/database/stateDatabaseSync.js';
+import { initializeAndSyncState, syncGuildState } from './utils/database/stateDatabaseSync.js';
 //utils
 import buttonHandlers from './utils/discord/buttonHandlers.js';
 
@@ -47,7 +47,7 @@ async function startBot() {
 
     await client.login(process.env.TOKEN);
 
-    client.once(Events.ClientReady, async () => {
+    client.once(Events.ClientReady, async (guild) => {
         console.log(`Logged in as ${client.user.tag}!`);
 
         try {
@@ -59,7 +59,7 @@ async function startBot() {
             console.error('Slash command registration failed:', err);
         }
 
-        await initializeAndSyncState(client);
+        await initializeAndSyncState(client, guild);
     });
 }
 

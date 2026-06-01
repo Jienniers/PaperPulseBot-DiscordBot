@@ -69,34 +69,6 @@ async function loadMapFromDB(loadFn, targetMap) {
 }
 
 /**
- * Remove array entries for channels that no longer exist on the server
- */
-function cleanArrayWithServer(array, validIDs, dbUpdateFn) {
-    const oldLength = array.length;
-    const filtered = array.filter((id) => validIDs.includes(id));
-    if (filtered.length !== oldLength) {
-        array.length = 0;
-        array.push(...filtered);
-        dbUpdateFn(array);
-    }
-}
-
-/**
- * Remove map entries for channels that no longer exist on the server
- */
-function cleanMapWithServer(map, validIDs, dbUpdateFn) {
-    const oldSize = map.size;
-    for (const key of [...map.keys()]) {
-        if (!validIDs.includes(key)) {
-            map.delete(key);
-        }
-    }
-    if (map.size !== oldSize) {
-        dbUpdateFn(map);
-    }
-}
-
-/**
  * Sync all state changes to the database
  */
 function syncStateToDB() {
@@ -107,12 +79,35 @@ function syncStateToDB() {
     lastSyncTime = Date.now();
 }
 
+// sync servers to the mongoDB database and keep the database clean and updated with the discord server
+export async function syncGuildState(guild) {
+    const channelIDs = guild.channels.cache.map((ch) => ch.id);
+
+    for (const key of examinersMap.keys()) {
+        if (!channelIDs.includes(key)) examinersMap.delete(key);
+    }
+
+    const filtered = paperChannels.filter((id) => channelIDs.includes(id));
+
+    paperChannels.length = 0;
+    paperChannels.push(...filtered);
+
+    for (const key of paperTimeMinsMap.keys()) {
+        if (!channelIDs.includes(key)) paperTimeMinsMap.delete(key);
+    }
+
+    for (const key of candidateSessionsMap.keys()) {
+        if (!channelIDs.includes(key)) candidateSessionsMap.delete(key);
+    }
+
+    await syncStateToDB();
+}
 
 // =====================
 // Main Initialization
 // =====================
 
-export async function initializeAndSyncState(client) {
+export async function initializeAndSyncState(client, guild) {
     // Load all state from database into memory
     await loadArrayFromDB(getPaperChannels, paperChannels);
     await loadMapFromDB(loadCandidateSessionMap, candidateSessionsMap);
@@ -125,6 +120,7 @@ export async function initializeAndSyncState(client) {
         // Only sync if enough time has passed since last sync
         if (timeSinceLastSync >= DEBOUNCE_DELAY_MS) {
             syncStateToDB();
+            syncGuildState(guild);
         }
     }, SYNC_INTERVAL_MS);
 
