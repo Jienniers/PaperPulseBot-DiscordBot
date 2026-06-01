@@ -13,7 +13,7 @@ import handleUpload from './commands/slashCommands/upload.js';
 import handleVerify from './commands/slashCommands/verify.js';
 //database
 import connectToMongoDB from './utils/database/mongoConnection.js';
-import { initializeAndSyncState, syncGuildState } from './utils/database/stateDatabaseSync.js';
+import { initializeAndSyncState } from './utils/database/stateDatabaseSync.js';
 //utils
 import buttonHandlers from './utils/discord/buttonHandlers.js';
 
