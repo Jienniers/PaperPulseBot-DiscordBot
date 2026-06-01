@@ -1,10 +1,11 @@
 import 'dotenv/config';
 
-import { Client, Events, GatewayIntentBits } from 'discord.js';
+import { Client, Events, GatewayIntentBits, REST, Routes } from 'discord.js';
 
 //commands
 import handleAddCommand from './commands/messageCommands/add.js';
 import handleAward from './commands/slashCommands/award.js';
+import slashCommands from './commands/slashCommands/utils/definitions.js';
 import handleLeaderboard from './commands/slashCommands/leaderboard.js';
 import handleProfile from './commands/slashCommands/profile.js';
 import handleStartPaper from './commands/slashCommands/startpaper.js';
@@ -31,6 +32,8 @@ function validateEnvironmentVariables() {
 
 validateEnvironmentVariables();
 
+const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
+
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
@@ -39,17 +42,37 @@ const client = new Client({
     ],
 });
 
+async function registerSlashCommands(guildId) {
+    try {
+        await rest.put(Routes.applicationGuildCommands(client.user.id, guildId), {
+            body: slashCommands,
+        });
+        console.log(`Slash commands registered for guild ${guildId}.`);
+    } catch (err) {
+        console.error(`Failed to register slash commands for guild ${guildId}:`, err);
+    }
+}
+
+async function registerSlashCommandsForAllGuilds() {
+    await Promise.all(client.guilds.cache.map((guild) => registerSlashCommands(guild.id)));
+}
+
 async function startBot() {
     await connectToMongoDB();
 
     client.once(Events.ClientReady, async () => {
         console.log(`Logged in as ${client.user.tag}!`);
 
+        await registerSlashCommandsForAllGuilds();
         await initializeAndSyncState(client);
     });
 
     await client.login(process.env.TOKEN);
 }
+
+client.on(Events.GuildCreate, async (guild) => {
+    await registerSlashCommands(guild.id);
+});
 
 client.on(Events.MessageCreate, async (message) => {
     if (message.author.bot) return;
