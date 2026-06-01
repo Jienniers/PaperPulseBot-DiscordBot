@@ -20,6 +20,7 @@ import {
     examinersMap,
     paperChannels,
     paperTimeMinsMap,
+    generateCompositeKey,
 } from '../../data/state.js';
 import {
     loadCandidateSessionMap,
@@ -80,7 +81,8 @@ function syncStateToDB() {
 }
 
 // sync servers to the mongoDB database and keep the database clean and updated with the discord server
-export async function syncGuildState(guild) {
+export async function syncGuildState(client) {
+    const guild = client.guilds.cache.get(process.env.GUILD_ID);
     const channelIDs = guild.channels.cache.map((ch) => ch.id);
 
     for (const key of examinersMap.keys()) {
@@ -97,7 +99,11 @@ export async function syncGuildState(guild) {
     }
 
     for (const key of candidateSessionsMap.keys()) {
-        if (!channelIDs.includes(key)) candidateSessionsMap.delete(key);
+        const channelId = generateCompositeKey(key);
+
+        if (!channelIDs.includes(channelId)) {
+            candidateSessionsMap.delete(key);
+        }
     }
 
     await syncStateToDB();
@@ -107,7 +113,7 @@ export async function syncGuildState(guild) {
 // Main Initialization
 // =====================
 
-export async function initializeAndSyncState(client, guild) {
+export async function initializeAndSyncState(client) {
     // Load all state from database into memory
     await loadArrayFromDB(getPaperChannels, paperChannels);
     await loadMapFromDB(loadCandidateSessionMap, candidateSessionsMap);
@@ -120,7 +126,6 @@ export async function initializeAndSyncState(client, guild) {
         // Only sync if enough time has passed since last sync
         if (timeSinceLastSync >= DEBOUNCE_DELAY_MS) {
             syncStateToDB();
-            syncGuildState(guild);
         }
     }, SYNC_INTERVAL_MS);
 

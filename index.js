@@ -47,7 +47,7 @@ async function startBot() {
 
     await client.login(process.env.TOKEN);
 
-    client.once(Events.ClientReady, async (guild) => {
+    client.once(Events.ClientReady, async () => {
         console.log(`Logged in as ${client.user.tag}!`);
 
         try {
@@ -59,7 +59,7 @@ async function startBot() {
             console.error('Slash command registration failed:', err);
         }
 
-        await initializeAndSyncState(client, guild);
+        await initializeAndSyncState(client);
     });
 }
 
