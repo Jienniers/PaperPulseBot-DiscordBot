@@ -119,9 +119,6 @@ export async function initializeAndSyncState(client) {
     await loadMapFromDB(loadExaminerMap, examinersMap);
     await loadMapFromDB(loadPaperTimeMins, paperTimeMinsMap);
 
-    // Clean up any orphaned data from deleted channels
-    await cleanupOrphanedData(client);
-
     // Set up periodic sync with debouncing
     const syncInterval = setInterval(() => {
         const timeSinceLastSync = Date.now() - lastSyncTime;
