@@ -19,7 +19,6 @@ import {
     candidateSessionsMap,
     examinersMap,
     paperChannels,
-    paperRunningMap,
     paperTimeMinsMap,
 } from '../../data/state.js';
 import {
@@ -32,10 +31,6 @@ import {
     getPaperChannels,
     updatePaperChannelsInDB,
 } from '../../database/services/paperChannelsService.js';
-import {
-    loadPaperRunningMap,
-    upsertPaperRunningMap,
-} from '../../database/services/paperRunningMapService.js';
 import {
     loadPaperTimeMins,
     upsertPaperTimeMins,
@@ -108,7 +103,6 @@ function syncStateToDB() {
     updatePaperChannelsInDB(paperChannels);
     upsertPaperTimeMins(paperTimeMinsMap);
     upsertExaminerMap(examinersMap);
-    upsertPaperRunningMap(paperRunningMap);
     upsertCandidateSessionMap(candidateSessionsMap);
     lastSyncTime = Date.now();
 }
@@ -123,7 +117,6 @@ export async function initializeAndSyncState(client) {
     await loadArrayFromDB(getPaperChannels, paperChannels);
     await loadMapFromDB(loadCandidateSessionMap, candidateSessionsMap);
     await loadMapFromDB(loadExaminerMap, examinersMap);
-    await loadMapFromDB(loadPaperRunningMap, paperRunningMap);
     await loadMapFromDB(loadPaperTimeMins, paperTimeMinsMap);
 
     // Clean up any orphaned data from deleted channels

@@ -2,7 +2,6 @@ import {
     candidateSessionsMap,
     examinersMap,
     paperChannels,
-    paperRunningMap,
     paperTimeMinsMap,
 } from '../../data/state.js';
 import { generateAllSessionsEmbed } from './embeds.js';
@@ -17,7 +16,6 @@ async function handleCloseButton(interaction, channelID) {
     const index = paperChannels.indexOf(channelID);
     if (index > -1) paperChannels.splice(index, 1);
     paperTimeMinsMap.delete(channelID);
-    paperRunningMap.delete(channelID);
     examinersMap.delete(channelID);
 
     try {

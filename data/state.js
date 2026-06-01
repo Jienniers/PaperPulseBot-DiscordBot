@@ -7,7 +7,6 @@ const COMPOSITE_KEY_SEPARATOR = '::'; // Separator for composite keys (userId::c
 const examinersMap = new Map(); // channelId -> examinerId
 let paperChannels = []; // list of active paper channel IDs
 const paperTimeMinsMap = new Map(); // channelId -> duration in minutes
-const paperRunningMap = new Map(); // channelId -> boolean, is paper running
 const candidateSessionsMap = new Map(); // compositeKey (userId::channelId) -> candidate session data
 
 /**
@@ -42,6 +41,5 @@ export {
     examinersMap,
     generateCompositeKey,
     paperChannels,
-    paperRunningMap,
     paperTimeMinsMap,
 };
