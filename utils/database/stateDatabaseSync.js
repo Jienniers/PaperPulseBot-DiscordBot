@@ -113,23 +113,6 @@ function syncStateToDB() {
     lastSyncTime = Date.now();
 }
 
-/**
- * Remove orphaned entries that reference deleted channels
- */
-async function cleanupOrphanedData(client) {
-    const guild = client.guilds.cache.get(process.env.GUILD_ID);
-    if (!guild) {
-        console.log('Guild not found!');
-        return;
-    }
-
-    const serverChannelIDs = guild.channels.cache.map((ch) => ch.id);
-
-    cleanArrayWithServer(paperChannels, serverChannelIDs, updatePaperChannelsInDB);
-    cleanMapWithServer(paperTimeMinsMap, serverChannelIDs, upsertPaperTimeMins);
-    cleanMapWithServer(examinersMap, serverChannelIDs, upsertExaminerMap);
-    cleanMapWithServer(paperRunningMap, serverChannelIDs, upsertPaperRunningMap);
-}
 
 // =====================
 // Main Initialization
