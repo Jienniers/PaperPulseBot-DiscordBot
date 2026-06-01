@@ -42,32 +42,25 @@ const client = new Client({
     ],
 });
 
-async function registerSlashCommands(guildId) {
-    try {
-        await rest.put(Routes.applicationGuildCommands(client.user.id, guildId), {
-            body: slashCommands,
-        });
-        console.log(`Slash commands registered for guild ${guildId}.`);
-    } catch (err) {
-        console.error(`Failed to register slash commands for guild ${guildId}:`, err);
-    }
-}
-
-async function registerSlashCommandsForAllGuilds() {
-    await Promise.all(client.guilds.cache.map((guild) => registerSlashCommands(guild.id)));
-}
-
 async function startBot() {
     await connectToMongoDB();
+
+    await client.login(process.env.TOKEN);
 
     client.once(Events.ClientReady, async () => {
         console.log(`Logged in as ${client.user.tag}!`);
 
-        await registerSlashCommandsForAllGuilds();
+        try {
+            await rest.put(Routes.applicationCommands(client.application.id), {
+                body: slashCommands,
+            });
+            console.log('Commands registered successfully');
+        } catch (err) {
+            console.error('Slash command registration failed:', err);
+        }
+
         await initializeAndSyncState(client);
     });
-
-    await client.login(process.env.TOKEN);
 }
 
 client.on(Events.GuildCreate, async (guild) => {
