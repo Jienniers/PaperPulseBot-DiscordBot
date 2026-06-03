@@ -84,7 +84,7 @@ export default async function handleAddCommand(message) {
     // set paper running status to true in state
     state.guilds[message.guild.id].sessions[channelId].status = true;
 
-    await startPaperTimer(channel, paperTimeMins);
+    await startPaperTimer(channel, paperTimeMins, message.guild.id);
 }
 
 /**
