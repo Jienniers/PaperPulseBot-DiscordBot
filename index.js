@@ -47,7 +47,7 @@ async function startBot() {
 
         //MongoDB Database
         await loadStateFromDB();
-        await saveStateToDB();
+        await startsync();
     });
 
     await client.login(process.env.TOKEN);
