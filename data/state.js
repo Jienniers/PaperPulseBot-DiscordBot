@@ -7,7 +7,7 @@
 //   guilds: {
 //     [guildId]: {
 //       sessions: {
-//         [channelId]: {
+//         [channelID]: {
 //           examinerId: string,
 //           categoryId: string,
 //           paperTimeMins: number,
@@ -27,5 +27,5 @@
 // }
 
 export const state = {
-  guilds: {}
+    guilds: {},
 };

@@ -19,12 +19,12 @@ const paperTimerIntervals = new Map();
  * Validates the !add command input and returns candidates to add
  */
 function validateAddCommand(message) {
-    const channelId = message.channel.id;
+    const channelID = message.channel.id;
 
-    const session = state.guilds?.[message.guild.id]?.sessions?.[channelId];
+    const session = state.guilds?.[message.guild.id]?.sessions?.[channelID];
 
     if (!session) {
-        console.log('Session not found', message.guildId, channelId);
+        console.log('Session not found', message.guildId, channelID);
         return null;
     }
 
@@ -32,7 +32,7 @@ function validateAddCommand(message) {
     const examinerId = session.examinerId;
 
     if (!examinerId) throw { key: 'noExaminer' };
-    if (paperTimerIntervals.has(channelId)) throw { key: 'sessionRunning' };
+    if (paperTimerIntervals.has(channelID)) throw { key: 'sessionRunning' };
 
     const mentionedUsers = message.mentions.users;
     if (mentionedUsers.size === 0) throw { key: 'noUsersMentioned' };
@@ -50,7 +50,7 @@ function validateAddCommand(message) {
 
     if (validCandidates.length === 0) throw { key: 'noValidUsers' };
 
-    return { validCandidates, skipped, paperTimeMins, channelId, examinerId };
+    return { validCandidates, skipped, paperTimeMins, channelID, examinerId };
 }
 
 /**
@@ -68,7 +68,7 @@ export default async function handleAddCommand(message) {
         return await message.reply(content);
     }
 
-    const { validCandidates, skipped, paperTimeMins, channelId } = validationResult;
+    const { validCandidates, skipped, paperTimeMins, channelID } = validationResult;
     const channel = message.channel;
 
     // Actually create candidate sessions here
@@ -82,7 +82,7 @@ export default async function handleAddCommand(message) {
     await channel.send(`📝 Following candidates have been added: ${candidateMentions}`);
 
     // set paper running status to true in state
-    state.guilds[message.guild.id].sessions[channelId].status = true;
+    state.guilds[message.guild.id].sessions[channelID].status = true;
 
     await startPaperTimer(channel, paperTimeMins, message.guild.id);
 }
@@ -130,15 +130,15 @@ async function startPaperTimer(channel, paperMinutes, guildID) {
 
 function createCandidateSessionEntry(user, message, verified = false, marks = null) {
     const guildId = message.guild.id;
-    const channelId = message.channel.id;
+    const channelID = message.channel.id;
 
     // ensure structure exists
     if (!state.guilds[guildId]) {
         state.guilds[guildId] = { sessions: {} };
     }
 
-    if (!state.guilds[guildId].sessions[channelId]) {
-        state.guilds[guildId].sessions[channelId] = {
+    if (!state.guilds[guildId].sessions[channelID]) {
+        state.guilds[guildId].sessions[channelID] = {
             examinerId: null,
             categoryId: null,
             paperTimeMins: null,
@@ -147,7 +147,7 @@ function createCandidateSessionEntry(user, message, verified = false, marks = nu
         };
     }
 
-    const session = state.guilds[guildId].sessions[channelId];
+    const session = state.guilds[guildId].sessions[channelID];
 
     // store candidate inside session
     session.candidates[user.id] = {

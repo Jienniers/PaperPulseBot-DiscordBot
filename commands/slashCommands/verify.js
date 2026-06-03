@@ -18,23 +18,23 @@ const ERROR_MESSAGES = {
  */
 function validateVerification(interaction) {
     const { channel, user: examiner, options } = interaction;
-    const channelId = channel.id;
+    const channelID = channel.id;
     const userOption = options.getUser('user');
     const guildId = interaction.guildId;
 
-    const currentChannel = state.guilds?.[guildId]?.sessions?.[channelId];
+    const currentChannel = state.guilds?.[guildId]?.sessions?.[channelID];
 
     if (!currentChannel) throw { key: 'invalidChannel' };
     if (!userOption) throw { key: 'noUser' };
     if (userOption.bot) throw { key: 'botUser' };
 
-    const assignedExaminerID = state.guilds[guildId].sessions[channelId].examinerId;
+    const assignedExaminerID = state.guilds[guildId].sessions[channelID].examinerId;
     if (!assignedExaminerID || assignedExaminerID !== examiner.id) throw { key: 'notAuthorized' };
 
     if (userOption.id === examiner.id) throw { key: 'selfVerify' };
 
     const candidateData =
-        state.guilds?.[guildId]?.sessions?.[channelId]?.candidates?.[userOption.id];
+        state.guilds?.[guildId]?.sessions?.[channelID]?.candidates?.[userOption.id];
     if (!candidateData) throw { key: 'noCandidate' };
     if (candidateData.verified) throw { key: 'alreadyVerified' };
 
@@ -74,7 +74,7 @@ export default async function handleVerify(interaction) {
     } catch (err) {
         console.error('[verify] Failed to send verification DM', {
             userId: userOption.id,
-            channelId: interaction.channel.id,
+            channelID: interaction.channel.id,
             errorCode: err.code,
             errorMessage: err.message,
             timestamp: new Date().toISOString(),

@@ -16,9 +16,9 @@ const ERROR_MESSAGES = {
  * Throws an error object with a key from ERROR_MESSAGES if any check fails.
  */
 function validateUpload(interaction) {
-    const channelId = interaction.channel.id;
+    const channelID = interaction.channel.id;
     const uploadedFile = interaction.options.getAttachment('file');
-    const currentChannel = state.guilds?.[guildId]?.sessions?.[channelId];
+    const currentChannel = state.guilds?.[guildId]?.sessions?.[channelID];
 
     if (!currentChannel) throw { key: 'invalidChannel' };
     if (!uploadedFile) throw { key: 'noFile' };
@@ -38,7 +38,7 @@ function validateUpload(interaction) {
  * Flow: defer → validate → confirm → notify examiner.
  */
 export default async function handleUpload(interaction) {
-    const channelId = interaction.channel.id;
+    const channelID = interaction.channel.id;
 
     await interaction.deferReply({ flags: 64 });
 
@@ -54,7 +54,7 @@ export default async function handleUpload(interaction) {
         content: `✅ Received your PDF file: **${attachment.name}**`,
     });
 
-    const examinerId = state.guilds[message.guildId].sessions[channelId].examinerId;
+    const examinerId = state.guilds[message.guildId].sessions[channelID].examinerId;
     if (!examinerId) return;
 
     const examinerUser = await interaction.client.users.fetch(examinerId);
@@ -66,7 +66,7 @@ export default async function handleUpload(interaction) {
                     content: '📩 A new paper submission has been received.',
                     embeds: [
                         sendExaminerSubmissionEmbed(
-                            channelId,
+                            channelID,
                             interaction.user,
                             attachment,
                             interaction.guild,
@@ -82,7 +82,7 @@ export default async function handleUpload(interaction) {
             console.error('[upload] Failed to send submission DM to examiner', {
                 examinerId: examinerUser.id,
                 candidateId: interaction.user.id,
-                channelId,
+                channelID,
                 errorCode: err.code,
                 errorMessage: err.message,
                 timestamp: new Date().toISOString(),

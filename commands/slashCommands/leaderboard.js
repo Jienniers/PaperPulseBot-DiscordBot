@@ -5,11 +5,11 @@ import { getLeaderboardEmbed } from '../../utils/discord/embeds.js';
  * Handles the leaderboard command.
  */
 export default async function handleLeaderboard(interaction) {
-    const { client, guildId, channelId } = interaction;
+    const { client, guildId, channelID } = interaction;
 
     await interaction.deferReply();
 
-    const session = state.guilds?.[guildId]?.sessions?.[channelId];
+    const session = state.guilds?.[guildId]?.sessions?.[channelID];
 
     if (!session || !session.candidates) {
         return interaction.editReply({

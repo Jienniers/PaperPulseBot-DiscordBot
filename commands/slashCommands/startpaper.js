@@ -18,8 +18,8 @@ const ERROR_MESSAGES = {
  * Throws an error object with a key from ERROR_MESSAGES if any check fails.
  */
 function validateStartPaper(interaction) {
-    const channelId = interaction.channel.id;
-    const currentChannel = state.guilds?.[interaction.guildId]?.sessions?.[channelId];
+    const channelID = interaction.channel.id;
+    const currentChannel = state.guilds?.[interaction.guildId]?.sessions?.[channelID];
     if (currentChannel) throw { key: 'invalidChannel' };
 
     const paperCode = interaction.options.getString('paper')?.trim();

@@ -17,6 +17,7 @@ A **Discord bot** designed to simulate a virtual exam system. Built with **Node.
 ---
 
 ## 🚧 Upcoming Updates & Features
+
 - Preparing the bot for production use with full multi-server support and a single bot invite link.
 
 ## 📘 Commands Overview
@@ -47,14 +48,20 @@ A **Discord bot** designed to simulate a virtual exam system. Built with **Node.
 ## 🖼️ Screenshots
 
 ### Paper Session Channel Embed
-![PaperChannelEmbed](Screenshots/PaperChannelEmbed.png)
-### Paper Started Message
-![TimerStarted](Screenshots/TimerStarted.png)
-### Paper Results Embed
-![MarksAwarded](Screenshots/MarksAwardedDM.png)
-### Your Profile Embed
-![Profile](Screenshots/Profile.png)
 
+![PaperChannelEmbed](Screenshots/PaperChannelEmbed.png)
+
+### Paper Started Message
+
+![TimerStarted](Screenshots/TimerStarted.png)
+
+### Paper Results Embed
+
+![MarksAwarded](Screenshots/MarksAwardedDM.png)
+
+### Your Profile Embed
+
+![Profile](Screenshots/Profile.png)
 
 ---
 
@@ -229,15 +236,15 @@ PaperPulseBot uses a **two-tier state system** combining in-memory state with Mo
 
 The bot maintains several in-memory maps to track active sessions:
 
-- **`examinersMap`**: Maps `channelId → examinerId` (tracks which examiner is running which session)
+- **`examinersMap`**: Maps `channelID → examinerId` (tracks which examiner is running which session)
 - **`paperChannels`**: Array of active paper session channel IDs
-- **`paperTimeMinsMap`**: Maps `channelId → duration` (exam duration in minutes)
-- **`paperRunningMap`**: Maps `channelId → boolean` (whether the timer is currently running)
+- **`paperTimeMinsMap`**: Maps `channelID → duration` (exam duration in minutes)
+- **`paperRunningMap`**: Maps `channelID → boolean` (whether the timer is currently running)
 - **`candidateSessionsMap`**: Maps composite keys to candidate session data
 
 #### Composite Key Format
 
-Candidate sessions use a **composite key pattern**: `userId::channelId`
+Candidate sessions use a **composite key pattern**: `userId::channelID`
 
 - Example: `"123456789::987654321"` (user 123456789 in channel 987654321)
 - This allows tracking multiple sessions for the same user across different channels

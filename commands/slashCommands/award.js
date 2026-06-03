@@ -23,12 +23,12 @@ function validateAward(interaction) {
     const { channel, user: invokingUser, options } = interaction;
 
     const guildId = interaction.guildId;
-    const channelId = channel.id;
+    const channelID = channel.id;
 
     const userOption = options.getUser('user');
     const marksOption = options.getString('marks');
 
-    const session = state.guilds?.[guildId]?.sessions?.[channelId];
+    const session = state.guilds?.[guildId]?.sessions?.[channelID];
 
     if (!session) throw { key: 'invalidChannel' };
     if (!userOption) throw { key: 'noUser' };
@@ -48,7 +48,7 @@ function validateAward(interaction) {
     if (!candidateData) throw { key: 'noUsersAdded' };
 
     return {
-        channelId,
+        channelID,
         userOption,
         marksOption,
         examiner,
@@ -83,7 +83,7 @@ export default async function handleAward(interaction, client) {
         examiner: client.users.cache.get(examiner),
         marks: marksOption,
         guildId: interaction.guild.id,
-        channelId: channelID,
+        channelID: channelID,
     });
 
     try {
@@ -92,7 +92,7 @@ export default async function handleAward(interaction, client) {
         console.error('[award] Failed to send marks notification DM', {
             candidateId: userOption.id,
             examinerId: examiner,
-            channelId: channelID,
+            channelID: channelID,
             marks: marksOption,
             errorCode: err.code,
             errorMessage: err.message,

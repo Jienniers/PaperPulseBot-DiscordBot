@@ -14,18 +14,18 @@ export function createPaperEmbed(user, paperCode, timeString) {
         .setTimestamp();
 }
 
-export function sendExaminerSubmissionEmbed(channelId, candidate, attachment, guild) {
+export function sendExaminerSubmissionEmbed(channelID, candidate, attachment, guild) {
     const embed = new EmbedBuilder()
         .setTitle('📄 New Paper Submission')
         .setDescription('A candidate has submitted their solved paper for review.')
         .addFields(
-            { name: '🆔 Session Channel ID', value: `\`${channelId ?? 'N/A'}\``, inline: true },
+            { name: '🆔 Session Channel ID', value: `\`${channelID ?? 'N/A'}\``, inline: true },
             { name: '🆔 Session Server ID', value: `\`${guild?.id ?? 'N/A'}\``, inline: true },
             {
                 name: '🔗 Session Channel Link',
                 value:
-                    guild?.id && channelId
-                        ? `[Click to view channel](https://discord.com/channels/${guild.id}/${channelId})`
+                    guild?.id && channelID
+                        ? `[Click to view channel](https://discord.com/channels/${guild.id}/${channelID})`
                         : 'Unavailable',
                 inline: false,
             },
@@ -64,7 +64,7 @@ export function getVerifiedEmbed({ examiner, channel, guild }) {
         .setTimestamp();
 }
 
-export function getAwardEmbed({ candidate, examiner, marks, guildId, channelId }) {
+export function getAwardEmbed({ candidate, examiner, marks, guildId, channelID }) {
     return new EmbedBuilder()
         .setTitle('🏅 You Have Been Awarded Marks!')
         .setDescription('Your performance has been evaluated.')
@@ -77,13 +77,13 @@ export function getAwardEmbed({ candidate, examiner, marks, guildId, channelId }
             },
             { name: '🧑‍🏫 Examiner', value: examiner?.tag ?? 'Unknown', inline: true },
             { name: '📊 Marks Awarded', value: `**${marks ?? 'N/A'}**`, inline: true },
-            { name: '🗂️ Session ID', value: `\`${channelId ?? 'N/A'}\`` },
+            { name: '🗂️ Session ID', value: `\`${channelID ?? 'N/A'}\`` },
             { name: '🌐 Server ID', value: `\`${guildId ?? 'N/A'}\`` },
             {
                 name: '🔗 Paper Channel',
                 value:
-                    guildId && channelId
-                        ? `[Jump to session](https://discord.com/channels/${guildId}/${channelId})`
+                    guildId && channelID
+                        ? `[Jump to session](https://discord.com/channels/${guildId}/${channelID})`
                         : 'Unavailable',
             },
         )
@@ -121,7 +121,7 @@ export function generateProfileEmbed(user, member, sessionStats) {
         embed.addFields({
             name: '🕓 Most Recent Session',
             value: [
-                `• **Channel:** ${recentSession.channelId ? `<#${recentSession.channelId}>` : 'N/A'}`,
+                `• **Channel:** ${recentSession.channelID ? `<#${recentSession.channelID}>` : 'N/A'}`,
                 `• **Marks:** ${recentSession.marks ?? 'N/A'}`,
                 `• **Verified:** ${recentSession.verified ? 'Yes' : 'No'}`,
                 `• **Examiner:** ${recentSession.examinerId ? `<@${recentSession.examinerId}>` : 'N/A'}`,
@@ -156,7 +156,7 @@ export function generateAllSessionsEmbed(sessions, user) {
             : 'N/A';
 
         embed.addFields({
-            name: `📝 Session in ${session?.channelId ? `<#${session.channelId}>` : 'Unknown'}`,
+            name: `📝 Session in ${session?.channelID ? `<#${session.channelID}>` : 'Unknown'}`,
             value: [
                 `• **Marks:** ${session?.marks ?? 'N/A'}`,
                 `• **Verified:** ${session?.verified ? '✅ Yes' : '❌ No'}`,
