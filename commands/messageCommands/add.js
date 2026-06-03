@@ -1,10 +1,4 @@
-import {
-    createCandidateSessionEntry,
-    examinersMap,
-    paperChannels,
-    paperRunningMap,
-    paperTimeMinsMap,
-} from '../../data/state.js';
+import { state } from '../../data/state.js';
 import formatPaperTime from '../../utils/common/time.js';
 
 // Centralized messages
@@ -29,8 +23,8 @@ function validateAddCommand(message) {
 
     if (!paperChannels.includes(channelId)) return null;
 
-    const paperTimeMins = paperTimeMinsMap.get(channelId);
-    const examinerId = examinersMap.get(channelId);
+    const paperTimeMins = state.guilds[message.guildId].sessions[channelId];
+    const examinerId = state.guilds[message.guildId].sessions[channelId].examinerId;
 
     if (!examinerId) throw { key: 'noExaminer' };
     if (paperRunningMap.has(channelId)) throw { key: 'sessionRunning' };
@@ -82,7 +76,9 @@ export default async function handleAddCommand(message) {
     const candidateMentions = validCandidates.map((u) => u.toString()).join(' ');
     await channel.send(`📝 Following candidates have been added: ${candidateMentions}`);
 
-    paperRunningMap.set(channelId, true);
+    // paperRunningMap.set(channelId, true);
+    state.guilds[message.guildId].sessions[channelId].status = true;
+
     await startPaperTimer(channel, paperTimeMins);
 }
 
@@ -112,7 +108,8 @@ async function startPaperTimer(channel, paperMinutes) {
             paperTimerIntervals.delete(channel.id);
             await timerMsg.edit(`⏰ **Time's up!** Please stop writing and put your pen down.`);
             await channel.send(`⏰ **Time's up!** Please stop writing and put your pen down.`);
-            paperRunningMap.set(channel.id, false);
+            // paperRunningMap.set(channel.id, false);
+            state.guilds[message.guildId].sessions[channelId].status = false;
             return;
         }
 

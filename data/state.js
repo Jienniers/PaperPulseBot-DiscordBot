@@ -11,6 +11,7 @@
 //           examinerId: string,
 //           categoryId: string,
 //           paperTimeMins: number,
+//           status: false,
 //
 //           candidates: {
 //             [userId]: {
