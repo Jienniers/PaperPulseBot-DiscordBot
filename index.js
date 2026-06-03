@@ -5,11 +5,11 @@ import { Client, Events, GatewayIntentBits, REST, Routes } from 'discord.js';
 //commands
 import handleAddCommand from './commands/messageCommands/add.js';
 import handleAward from './commands/slashCommands/award.js';
-import slashCommands from './commands/slashCommands/utils/definitions.js';
 import handleLeaderboard from './commands/slashCommands/leaderboard.js';
 import handleProfile from './commands/slashCommands/profile.js';
 import handleStartPaper from './commands/slashCommands/startpaper.js';
 import handleUpload from './commands/slashCommands/upload.js';
+import slashCommands from './commands/slashCommands/utils/definitions.js';
 import handleVerify from './commands/slashCommands/verify.js';
 //database
 import connectToMongoDB from './utils/database/mongoConnection.js';
@@ -62,10 +62,6 @@ async function startBot() {
         await initializeAndSyncState(client);
     });
 }
-
-client.on(Events.GuildCreate, async (guild) => {
-    await registerSlashCommands(guild.id);
-});
 
 client.on(Events.MessageCreate, async (message) => {
     if (message.author.bot) return;

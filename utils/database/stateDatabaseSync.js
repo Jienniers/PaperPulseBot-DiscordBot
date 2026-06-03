@@ -6,19 +6,15 @@ import {
     paperChannels,
     paperTimeMinsMap,
 } from '../../data/state.js';
-
 import {
     loadCandidateSessionMap,
     upsertCandidateSessionMap,
 } from '../../database/services/candidateSessionMapService.js';
-
 import { loadExaminerMap, upsertExaminerMap } from '../../database/services/examinerMapService.js';
-
 import {
     getPaperChannels,
     updatePaperChannelsInDB,
 } from '../../database/services/paperChannelsService.js';
-
 import {
     loadPaperTimeMins,
     upsertPaperTimeMins,
