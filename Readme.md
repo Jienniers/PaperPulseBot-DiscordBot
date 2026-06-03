@@ -23,6 +23,7 @@ A **Discord bot** designed to simulate a virtual exam system. Built with **Node.
 ---
 
 ## 🚧 Upcoming Updates & Features
+
 - Preparing the bot for production use with full multi-server support and a single bot invite link.
 
 ## 📘 Commands Overview
@@ -53,14 +54,20 @@ A **Discord bot** designed to simulate a virtual exam system. Built with **Node.
 ## 🖼️ Screenshots
 
 ### Paper Session Channel Embed
-![PaperChannelEmbed](Screenshots/PaperChannelEmbed.png)
-### Paper Started Message
-![TimerStarted](Screenshots/TimerStarted.png)
-### Paper Results Embed
-![MarksAwarded](Screenshots/MarksAwardedDM.png)
-### Your Profile Embed
-![Profile](Screenshots/Profile.png)
 
+![PaperChannelEmbed](Screenshots/PaperChannelEmbed.png)
+
+### Paper Started Message
+
+![TimerStarted](Screenshots/TimerStarted.png)
+
+### Paper Results Embed
+
+![MarksAwarded](Screenshots/MarksAwardedDM.png)
+
+### Your Profile Embed
+
+![Profile](Screenshots/Profile.png)
 
 ---
 
