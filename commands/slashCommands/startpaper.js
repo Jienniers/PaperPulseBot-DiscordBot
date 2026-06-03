@@ -69,9 +69,6 @@ export default async function handleStartPaper(interaction) {
 
     // Store session data
     storeData(interaction, paperChannel, examiner, paperTime);
-    // examinersMap.set(paperChannel.id, examiner.id);
-    // paperTimeMinsMap.set(paperChannel.id, paperTime);
-    // paperChannels.push(paperChannel.id);
 
     // Send embed and buttons to new paper channel
     const timeString = formatPaperTime(paperTime);
