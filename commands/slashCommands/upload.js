@@ -1,4 +1,4 @@
-import { examinersMap, paperChannels } from '../../data/state.js';
+import { state } from '../../data/state.js';
 import { sendExaminerSubmissionEmbed } from '../../utils/discord/embeds.js';
 
 const MAX_PDF_SIZE_MB = 10; // Maximum allowed PDF size in MB
@@ -18,7 +18,9 @@ const ERROR_MESSAGES = {
 function validateUpload(interaction) {
     const channelId = interaction.channel.id;
     const uploadedFile = interaction.options.getAttachment('file');
-    if (!paperChannels.includes(channelId)) throw { key: 'invalidChannel' };
+    const currentChannel = state.guilds?.[guildId]?.sessions?.[channelId];
+
+    if (!currentChannel.includes(channelId)) throw { key: 'invalidChannel' };
     if (!uploadedFile) throw { key: 'noFile' };
 
     const isPDF =
@@ -52,7 +54,7 @@ export default async function handleUpload(interaction) {
         content: `✅ Received your PDF file: **${attachment.name}**`,
     });
 
-    const examinerId = examinersMap.get(channelId);
+    const examinerId = state.guilds[message.guildId].sessions[channelId].examinerId;
     if (!examinerId) return;
 
     const examinerUser = await interaction.client.users.fetch(examinerId);
