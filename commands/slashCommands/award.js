@@ -1,6 +1,4 @@
-import {
-    state
-} from '../../data/state.js';
+import { state } from '../../data/state.js';
 import { getAwardEmbed } from '../../utils/discord/embeds.js';
 
 const ERROR_MESSAGES = {
@@ -23,23 +21,39 @@ const ERROR_MESSAGES = {
  */
 function validateAward(interaction) {
     const { channel, user: invokingUser, options } = interaction;
+
     const guildId = interaction.guildId;
-    const channelID = channel.id;
-    const userOption = options.getUser('user'); // candidate receiving the marks
-    const marksOption = options.getString('marks'); // marks string like "70/100"
-    const examiner = state.guilds[message.guildId].sessions[channelId].examinerId;
+    const channelId = channel.id;
 
-    const candidateData =
-        state.guilds?.[guildId]?.sessions?.[channelID]?.candidates?.[userOption.id];
+    const userOption = options.getUser('user');
+    const marksOption = options.getString('marks');
 
-    if (!state.guilds[guildId]?.sessions?.[channelID]) throw { key: 'invalidChannel' };
+    const session = state.guilds?.[guildId]?.sessions?.[channelId];
+
+    if (!session) throw { key: 'invalidChannel' };
+    if (!userOption) throw { key: 'noUser' };
     if (userOption.bot) throw { key: 'cannotAwardBot' };
+
+    const examiner = session.examinerId;
+
     if (invokingUser.id !== examiner) throw { key: 'notAuthorized' };
     if (examiner === userOption.id) throw { key: 'cannotAwardExaminer' };
-    if (!/^\d{1,3}\/\d{1,3}$/.test(marksOption)) throw { key: 'invalidFormat' };
+
+    if (!marksOption || !/^\d{1,3}\/\d{1,3}$/.test(marksOption)) {
+        throw { key: 'invalidFormat' };
+    }
+
+    const candidateData = session.candidates?.[userOption.id];
+
     if (!candidateData) throw { key: 'noUsersAdded' };
 
-    return { channelID, userOption, marksOption, examiner, candidateData };
+    return {
+        channelId,
+        userOption,
+        marksOption,
+        examiner,
+        candidateData,
+    };
 }
 
 /**
