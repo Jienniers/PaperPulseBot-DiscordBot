@@ -34,7 +34,7 @@ function validateVerification(interaction) {
     if (userOption.id === examiner.id) throw { key: 'selfVerify' };
 
     const candidateData =
-        state.guilds?.[guildId]?.sessions?.[channelID]?.candidates?.[userOption.id];
+        state.guilds?.[guildId]?.sessions?.[channelId]?.candidates?.[userOption.id];
     if (!candidateData) throw { key: 'noCandidate' };
     if (candidateData.verified) throw { key: 'alreadyVerified' };
 
