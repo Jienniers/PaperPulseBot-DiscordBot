@@ -1,4 +1,4 @@
-import { examinersMap, paperChannels, paperTimeMinsMap } from '../../data/state.js';
+import { state } from '../../data/state.js';
 import formatPaperTime from '../../utils/common/time.js';
 import { createPaperButtons } from '../../utils/discord/buttons.js';
 import { createPaperEmbed } from '../../utils/discord/embeds.js';
@@ -67,9 +67,10 @@ export default async function handleStartPaper(interaction) {
     }
 
     // Store session data
-    examinersMap.set(paperChannel.id, examiner.id);
-    paperTimeMinsMap.set(paperChannel.id, paperTime);
-    paperChannels.push(paperChannel.id);
+    storeData(interaction, paperChannel, examiner, paperTime);
+    // examinersMap.set(paperChannel.id, examiner.id);
+    // paperTimeMinsMap.set(paperChannel.id, paperTime);
+    // paperChannels.push(paperChannel.id);
 
     // Send embed and buttons to new paper channel
     const timeString = formatPaperTime(paperTime);
@@ -86,4 +87,15 @@ export default async function handleStartPaper(interaction) {
         content: `✅ A new channel has been created for this paper session: <#${paperChannel.id}>`,
         flags: 64,
     });
+}
+
+function storeData(interaction, paperChannel, examiner, paperTime) {
+    if (!state.guilds[interaction.guildId].sessions[paperChannel]) {
+        state.guilds[interaction.guildId].sessions[paperChannel] = {
+            examinerId: examiner,
+            categoryId: null,
+            paperTimeMins: paperTime,
+            candidates: {},
+        };
+    }
 }
