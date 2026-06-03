@@ -1,51 +1,51 @@
-import { candidateSessionsMap } from '../../data/state.js';
+import { state } from '../../data/state.js';
 import { getLeaderboardEmbed } from '../../utils/discord/embeds.js';
 
 /**
  * Handles the leaderboard command.
- * Collects all candidate session data in the current channel,
- * calculates total scored marks for each user, sorts them by percentage,
- * and sends a leaderboard embed as a reply.
  */
 export default async function handleLeaderboard(interaction) {
-    const { channel, client } = interaction;
-    const channelId = channel.id;
+    const { client, guildId, channelId } = interaction;
 
     await interaction.deferReply();
 
-    // Get all candidate sessions
-    const allEntries = [...candidateSessionsMap.values()];
+    const session = state.guilds?.[guildId]?.sessions?.[channelId];
 
-    // Filter entries that are valid for this channel and have proper marks
-    const validEntries = allEntries.filter((entry) => {
-        return (
-            entry.verified &&
-            typeof entry.marks === 'string' &&
-            /^\d+\/\d+$/.test(entry.marks) && // Matches "score/total" format
-            entry.channelId === channelId
-        );
-    });
+    if (!session || !session.candidates) {
+        return interaction.editReply({
+            content: 'No session data found for this channel.',
+        });
+    }
 
-    // Map to accumulate total scored and total possible marks per user
     const totals = new Map();
 
-    for (const entry of validEntries) {
-        const [scored, total] = entry.marks.split('/').map(Number);
-        if (isNaN(scored) || isNaN(total)) continue;
+    for (const [userId, data] of Object.entries(session.candidates)) {
+        if (!data?.marks || typeof data.marks !== 'string') continue;
+        if (!/^\d+\/\d+$/.test(data.marks)) continue;
 
-        const user = await client.users.fetch(entry.userId);
+        const [scored, total] = data.marks.split('/').map(Number);
+        if (isNaN(scored) || isNaN(total) || total === 0) continue;
 
-        // Get previous totals or initialize
-        const prev = totals.get(user.id) || { username: user.username, scored: 0, total: 0 };
+        let user;
+        try {
+            user = await client.users.fetch(userId);
+        } catch {
+            continue;
+        }
 
-        totals.set(user.id, {
+        const prev = totals.get(userId) || {
+            username: user.username,
+            scored: 0,
+            total: 0,
+        };
+
+        totals.set(userId, {
             username: user.username,
             scored: prev.scored + scored,
             total: prev.total + total,
         });
     }
 
-    // Convert totals map to array (of the map values) and sort by percentage (highest first)
     const leaderboardData = [...totals.values()].sort(
         (a, b) => b.scored / b.total - a.scored / a.total,
     );
