@@ -20,7 +20,7 @@ function validateUpload(interaction) {
     const uploadedFile = interaction.options.getAttachment('file');
     const currentChannel = state.guilds?.[guildId]?.sessions?.[channelId];
 
-    if (!currentChannel.includes(channelId)) throw { key: 'invalidChannel' };
+    if (!currentChannel) throw { key: 'invalidChannel' };
     if (!uploadedFile) throw { key: 'noFile' };
 
     const isPDF =

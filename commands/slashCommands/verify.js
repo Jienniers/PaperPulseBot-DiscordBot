@@ -24,7 +24,7 @@ function validateVerification(interaction) {
 
     const currentChannel = state.guilds?.[guildId]?.sessions?.[channelId];
 
-    if (!currentChannel.includes(channelId)) throw { key: 'invalidChannel' };
+    if (!currentChannel) throw { key: 'invalidChannel' };
     if (!userOption) throw { key: 'noUser' };
     if (userOption.bot) throw { key: 'botUser' };
 

@@ -19,7 +19,8 @@ const ERROR_MESSAGES = {
  */
 function validateStartPaper(interaction) {
     const channelId = interaction.channel.id;
-    if (paperChannels.includes(channelId)) throw { key: 'invalidChannel' };
+    const currentChannel = state.guilds?.[guildId]?.sessions?.[channelId];
+    if (!currentChannel) throw { key: 'invalidChannel' };
 
     const paperCode = interaction.options.getString('paper')?.trim();
     const examiner = interaction.options.getUser('examiner');
