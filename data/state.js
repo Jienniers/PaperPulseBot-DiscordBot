@@ -16,7 +16,8 @@
 //           candidates: {
 //             [userId]: {
 //               marks: number,
-//               submittedAt: Date | null
+//               submittedAt: Date | null,
+//               verified: false
 //             }
 //           }
 //         }

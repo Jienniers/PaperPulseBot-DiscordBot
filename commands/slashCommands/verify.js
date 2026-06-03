@@ -1,9 +1,4 @@
-import {
-    candidateSessionsMap,
-    examinersMap,
-    generateCompositeKey,
-    paperChannels,
-} from '../../data/state.js';
+import { state } from '../../data/state.js';
 import { getVerifiedEmbed } from '../../utils/discord/embeds.js';
 
 const ERROR_MESSAGES = {
@@ -25,18 +20,21 @@ function validateVerification(interaction) {
     const { channel, user: examiner, options } = interaction;
     const channelId = channel.id;
     const userOption = options.getUser('user');
+    const guildId = interaction.guildId;
 
-    if (!paperChannels.includes(channelId)) throw { key: 'invalidChannel' };
+    const currentChannel = state.guilds?.[guildId]?.sessions?.[channelId];
+
+    if (!currentChannel.includes(channelId)) throw { key: 'invalidChannel' };
     if (!userOption) throw { key: 'noUser' };
     if (userOption.bot) throw { key: 'botUser' };
 
-    const assignedExaminerID = examinersMap.get(channelId);
+    const assignedExaminerID = state.guilds[guildId].sessions[channelId].examinerId;
     if (!assignedExaminerID || assignedExaminerID !== examiner.id) throw { key: 'notAuthorized' };
 
     if (userOption.id === examiner.id) throw { key: 'selfVerify' };
 
-    const key = generateCompositeKey(userOption.id, channelId);
-    const candidateData = candidateSessionsMap.get(key);
+    const candidateData =
+        state.guilds?.[guildId]?.sessions?.[channelID]?.candidates?.[userOption.id];
     if (!candidateData) throw { key: 'noCandidate' };
     if (candidateData.verified) throw { key: 'alreadyVerified' };
 
