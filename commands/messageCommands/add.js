@@ -59,9 +59,6 @@ function validateAddCommand(message) {
 export default async function handleAddCommand(message) {
     if (!message.content.startsWith('!add')) return;
 
-    console.log(message.guildId);
-    console.log(message.guild?.id);
-
     let validationResult;
     try {
         validationResult = validateAddCommand(message);
@@ -84,7 +81,7 @@ export default async function handleAddCommand(message) {
     const candidateMentions = validCandidates.map((u) => u.toString()).join(' ');
     await channel.send(`📝 Following candidates have been added: ${candidateMentions}`);
 
-    // paperRunningMap.set(channelId, true);
+    // set paper running status to true in state
     state.guilds[message.guild.id].sessions[channelId].status = true;
 
     await startPaperTimer(channel, paperTimeMins);
@@ -116,7 +113,8 @@ async function startPaperTimer(channel, paperMinutes, guildID) {
             paperTimerIntervals.delete(channel.id);
             await timerMsg.edit(`⏰ **Time's up!** Please stop writing and put your pen down.`);
             await channel.send(`⏰ **Time's up!** Please stop writing and put your pen down.`);
-            // paperRunningMap.set(channel.id, false);
+
+            // set paper running status to false in state
             state.guilds[guildID].sessions[channel.id].status = false;
             return;
         }
@@ -159,14 +157,3 @@ function createCandidateSessionEntry(user, message, verified = false, marks = nu
         submittedAt: Date.now(),
     };
 }
-
-// cleanup on shutdown
-process.on('SIGINT', () => {
-    for (const interval of paperTimerIntervals.values()) clearInterval(interval);
-    process.exit(0);
-});
-
-process.on('SIGTERM', () => {
-    for (const interval of paperTimerIntervals.values()) clearInterval(interval);
-    process.exit(0);
-});
