@@ -12,7 +12,7 @@ import handleUpload from './commands/slashCommands/upload.js';
 import handleVerify from './commands/slashCommands/verify.js';
 //database
 import connectToMongoDB from './utils/database/mongoConnection.js';
-import { initializeAndSyncState } from './utils/database/stateDatabaseSync.js';
+import { startsync, loadStateFromDB } from './utils/database/stateDatabaseSync.js';
 //utils
 import buttonHandlers from './utils/discord/buttonHandlers.js';
 
@@ -45,7 +45,9 @@ async function startBot() {
     client.once(Events.ClientReady, async () => {
         console.log(`Logged in as ${client.user.tag}!`);
 
-        await initializeAndSyncState(client);
+        //MongoDB Database
+        await loadStateFromDB();
+        await saveStateToDB();
     });
 
     await client.login(process.env.TOKEN);
