@@ -122,6 +122,36 @@ async function startPaperTimer(channel, paperMinutes) {
     paperTimerIntervals.set(channel.id, interval);
 }
 
+function createCandidateSessionEntry(user, message, verified = false, marks = null) {
+    const guildId = message.guild.id;
+    const channelId = message.channel.id;
+
+    // ensure structure exists
+    if (!state.guilds[guildId]) {
+        state.guilds[guildId] = { sessions: {} };
+    }
+
+    if (!state.guilds[guildId].sessions[channelId]) {
+        state.guilds[guildId].sessions[channelId] = {
+            examinerId: null,
+            categoryId: null,
+            paperTimeMins: null,
+            createdAt: Date.now(),
+            candidates: {}
+        };
+    }
+
+    const session = state.guilds[guildId].sessions[channelId];
+
+    // store candidate inside session
+    session.candidates[user.id] = {
+        userId: user.id,
+        verified,
+        marks, // "70/100"
+        submittedAt: Date.now()
+    };
+}
+
 // cleanup on shutdown
 process.on('SIGINT', () => {
     for (const interval of paperTimerIntervals.values()) clearInterval(interval);
