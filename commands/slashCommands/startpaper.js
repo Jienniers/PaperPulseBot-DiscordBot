@@ -91,8 +91,16 @@ export default async function handleStartPaper(interaction) {
 }
 
 function storeData(interaction, paperChannel, examiner, paperTime) {
-    if (!state.guilds[interaction.guildId].sessions[paperChannel]) {
-        state.guilds[interaction.guildId].sessions[paperChannel] = {
+    const guildId = interaction.guildId;
+
+    if (!state.guilds[guildId]) {
+        state.guilds[guildId] = {
+            sessions: {},
+        };
+    }
+
+    if (!state.guilds[guildId].sessions[paperChannel]) {
+        state.guilds[guildId].sessions[paperChannel] = {
             examinerId: examiner,
             categoryId: null,
             paperTimeMins: paperTime,
