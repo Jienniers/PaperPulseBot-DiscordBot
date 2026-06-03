@@ -50,7 +50,7 @@ function validateAddCommand(message) {
 
     if (validCandidates.length === 0) throw { key: 'noValidUsers' };
 
-    return { validCandidates, skipped, paperTimeMins, channelID, examinerId };
+    return { validCandidates, skipped, paperTimeMins, examinerId };
 }
 
 /**
@@ -68,7 +68,7 @@ export default async function handleAddCommand(message) {
         return await message.reply(content);
     }
 
-    const { validCandidates, skipped, paperTimeMins, channelID } = validationResult;
+    const { validCandidates, skipped, paperTimeMins } = validationResult;
     const channel = message.channel;
 
     // Actually create candidate sessions here

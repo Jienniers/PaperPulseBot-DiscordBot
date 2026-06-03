@@ -1,6 +1,6 @@
 import 'dotenv/config';
 
-import { Client, Events, GatewayIntentBits } from 'discord.js';
+import { Client, Events, GatewayIntentBits, REST, Routes } from 'discord.js';
 
 //commands
 import handleAddCommand from './commands/messageCommands/add.js';
@@ -9,6 +9,7 @@ import handleLeaderboard from './commands/slashCommands/leaderboard.js';
 import handleProfile from './commands/slashCommands/profile.js';
 import handleStartPaper from './commands/slashCommands/startpaper.js';
 import handleUpload from './commands/slashCommands/upload.js';
+import slashCommands from './commands/slashCommands/utils/definitions.js';
 import handleVerify from './commands/slashCommands/verify.js';
 //database
 import connectToMongoDB from './utils/database/mongoConnection.js';
@@ -17,7 +18,7 @@ import { startsync, loadStateFromDB } from './utils/database/stateDatabaseSync.j
 import buttonHandlers from './utils/discord/buttonHandlers.js';
 
 function validateEnvironmentVariables() {
-    const requiredVars = ['TOKEN', 'MONGO_URL', 'GUILD_ID', 'CATEGORY_ID'];
+    const requiredVars = ['TOKEN', 'MONGO_URL', 'CATEGORY_ID'];
     const missing = requiredVars.filter((varName) => !process.env[varName]);
 
     if (missing.length > 0) {
@@ -31,6 +32,8 @@ function validateEnvironmentVariables() {
 
 validateEnvironmentVariables();
 
+const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
+
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
@@ -42,15 +45,22 @@ const client = new Client({
 async function startBot() {
     await connectToMongoDB();
 
+    await client.login(process.env.TOKEN);
+
     client.once(Events.ClientReady, async () => {
         console.log(`Logged in as ${client.user.tag}!`);
 
-        //MongoDB Database
-        await loadStateFromDB();
-        await startsync();
-    });
+        try {
+            await rest.put(Routes.applicationCommands(client.application.id), {
+                body: slashCommands,
+            });
+            console.log('Commands registered successfully');
+        } catch (err) {
+            console.error('Slash command registration failed:', err);
+        }
 
-    await client.login(process.env.TOKEN);
+        await initializeAndSyncState(client);
+    });
 }
 
 client.on(Events.MessageCreate, async (message) => {

@@ -4,6 +4,12 @@ A **Discord bot** designed to simulate a virtual exam system. Built with **Node.
 
 ---
 
+## 🔗 Invite Bot
+
+[Invite PaperPulseBot to your Discord server](https://discord.com/oauth2/authorize?client_id=1509162813015195699&permissions=19472&integration_type=0&scope=bot+applications.commands)
+
+---
+
 ## 🔧 Tech Stack
 
 - **Language:** JavaScript (Node.js)
