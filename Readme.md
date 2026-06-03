@@ -4,6 +4,12 @@ A **Discord bot** designed to simulate a virtual exam system. Built with **Node.
 
 ---
 
+## 🔗 Invite Bot
+
+[Invite PaperPulseBot to your Discord server](https://discord.com/oauth2/authorize?client_id=1509162813015195699&permissions=19472&integration_type=0&scope=bot+applications.commands)
+
+---
+
 ## 🔧 Tech Stack
 
 - **Language:** JavaScript (Node.js)
@@ -17,6 +23,7 @@ A **Discord bot** designed to simulate a virtual exam system. Built with **Node.
 ---
 
 ## 🚧 Upcoming Updates & Features
+
 - Preparing the bot for production use with full multi-server support and a single bot invite link.
 
 ## 📘 Commands Overview
@@ -47,14 +54,20 @@ A **Discord bot** designed to simulate a virtual exam system. Built with **Node.
 ## 🖼️ Screenshots
 
 ### Paper Session Channel Embed
-![PaperChannelEmbed](Screenshots/PaperChannelEmbed.png)
-### Paper Started Message
-![TimerStarted](Screenshots/TimerStarted.png)
-### Paper Results Embed
-![MarksAwarded](Screenshots/MarksAwardedDM.png)
-### Your Profile Embed
-![Profile](Screenshots/Profile.png)
 
+![PaperChannelEmbed](Screenshots/PaperChannelEmbed.png)
+
+### Paper Started Message
+
+![TimerStarted](Screenshots/TimerStarted.png)
+
+### Paper Results Embed
+
+![MarksAwarded](Screenshots/MarksAwardedDM.png)
+
+### Your Profile Embed
+
+![Profile](Screenshots/Profile.png)
 
 ---
 

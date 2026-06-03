@@ -2,7 +2,6 @@ import {
     createCandidateSessionEntry,
     examinersMap,
     paperChannels,
-    paperRunningMap,
     paperTimeMinsMap,
 } from '../../data/state.js';
 import formatPaperTime from '../../utils/common/time.js';
@@ -33,7 +32,7 @@ function validateAddCommand(message) {
     const examinerId = examinersMap.get(channelId);
 
     if (!examinerId) throw { key: 'noExaminer' };
-    if (paperRunningMap.has(channelId)) throw { key: 'sessionRunning' };
+    if (paperTimerIntervals.has(channelId)) throw { key: 'sessionRunning' };
 
     const mentionedUsers = message.mentions.users;
     if (mentionedUsers.size === 0) throw { key: 'noUsersMentioned' };
@@ -51,7 +50,7 @@ function validateAddCommand(message) {
 
     if (validCandidates.length === 0) throw { key: 'noValidUsers' };
 
-    return { validCandidates, skipped, paperTimeMins, channelId, examinerId };
+    return { validCandidates, skipped, paperTimeMins, examinerId };
 }
 
 /**
@@ -69,7 +68,7 @@ export default async function handleAddCommand(message) {
         return await message.reply(content);
     }
 
-    const { validCandidates, skipped, paperTimeMins, channelId } = validationResult;
+    const { validCandidates, skipped, paperTimeMins } = validationResult;
     const channel = message.channel;
 
     // Actually create candidate sessions here
@@ -82,7 +81,6 @@ export default async function handleAddCommand(message) {
     const candidateMentions = validCandidates.map((u) => u.toString()).join(' ');
     await channel.send(`📝 Following candidates have been added: ${candidateMentions}`);
 
-    paperRunningMap.set(channelId, true);
     await startPaperTimer(channel, paperTimeMins);
 }
 
@@ -112,7 +110,6 @@ async function startPaperTimer(channel, paperMinutes) {
             paperTimerIntervals.delete(channel.id);
             await timerMsg.edit(`⏰ **Time's up!** Please stop writing and put your pen down.`);
             await channel.send(`⏰ **Time's up!** Please stop writing and put your pen down.`);
-            paperRunningMap.set(channel.id, false);
             return;
         }
 
