@@ -100,8 +100,8 @@ function storeData(interaction, paperChannel, examiner, paperTime) {
     }
 
     if (!state.guilds[guildId].sessions[paperChannel]) {
-        state.guilds[guildId].sessions[paperChannel] = {
-            examinerId: examiner,
+        state.guilds[guildId].sessions[paperChannel.id] = {
+            examinerId: examiner.id,
             categoryId: null,
             paperTimeMins: paperTime,
             candidates: {},

@@ -21,13 +21,18 @@ const paperTimerIntervals = new Map();
 function validateAddCommand(message) {
     const channelId = message.channel.id;
 
-    if (!paperChannels.includes(channelId)) return null;
+    const session = state.guilds?.[message.guild.id]?.sessions?.[channelId];
 
-    const paperTimeMins = state.guilds[message.guildId].sessions[channelId];
-    const examinerId = state.guilds[message.guildId].sessions[channelId].examinerId;
+    if (!session) {
+        console.log('Session not found', message.guildId, channelId);
+        return null;
+    }
+
+    const paperTimeMins = session.paperTimeMins;
+    const examinerId = session.examinerId;
 
     if (!examinerId) throw { key: 'noExaminer' };
-    if (paperRunningMap.has(channelId)) throw { key: 'sessionRunning' };
+    if (paperTimerIntervals.has(channelId)) throw { key: 'sessionRunning' };
 
     const mentionedUsers = message.mentions.users;
     if (mentionedUsers.size === 0) throw { key: 'noUsersMentioned' };
@@ -54,6 +59,9 @@ function validateAddCommand(message) {
 export default async function handleAddCommand(message) {
     if (!message.content.startsWith('!add')) return;
 
+    console.log(message.guildId);
+    console.log(message.guild?.id);
+
     let validationResult;
     try {
         validationResult = validateAddCommand(message);
@@ -77,7 +85,7 @@ export default async function handleAddCommand(message) {
     await channel.send(`📝 Following candidates have been added: ${candidateMentions}`);
 
     // paperRunningMap.set(channelId, true);
-    state.guilds[message.guildId].sessions[channelId].status = true;
+    state.guilds[message.guild.id].sessions[channelId].status = true;
 
     await startPaperTimer(channel, paperTimeMins);
 }
@@ -85,7 +93,7 @@ export default async function handleAddCommand(message) {
 /**
  * Starts the paper timer and sends updates
  */
-async function startPaperTimer(channel, paperMinutes) {
+async function startPaperTimer(channel, paperMinutes, guildID) {
     let remaining = isNaN(Number(paperMinutes)) ? 0 : Number(paperMinutes);
 
     const timerMsg = await channel.send(
@@ -109,7 +117,7 @@ async function startPaperTimer(channel, paperMinutes) {
             await timerMsg.edit(`⏰ **Time's up!** Please stop writing and put your pen down.`);
             await channel.send(`⏰ **Time's up!** Please stop writing and put your pen down.`);
             // paperRunningMap.set(channel.id, false);
-            state.guilds[message.guildId].sessions[channelId].status = false;
+            state.guilds[guildID].sessions[channel.id].status = false;
             return;
         }
 
@@ -137,7 +145,7 @@ function createCandidateSessionEntry(user, message, verified = false, marks = nu
             categoryId: null,
             paperTimeMins: null,
             createdAt: Date.now(),
-            candidates: {}
+            candidates: {},
         };
     }
 
@@ -148,7 +156,7 @@ function createCandidateSessionEntry(user, message, verified = false, marks = nu
         userId: user.id,
         verified,
         marks, // "70/100"
-        submittedAt: Date.now()
+        submittedAt: Date.now(),
     };
 }
 
