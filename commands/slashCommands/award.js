@@ -1,8 +1,5 @@
 import {
-    candidateSessionsMap,
-    COMPOSITE_KEY_SEPARATOR,
-    examinersMap,
-    paperChannels,
+    state
 } from '../../data/state.js';
 import { getAwardEmbed } from '../../utils/discord/embeds.js';
 
@@ -26,15 +23,16 @@ const ERROR_MESSAGES = {
  */
 function validateAward(interaction) {
     const { channel, user: invokingUser, options } = interaction;
+    const guildId = interaction.guildId;
     const channelID = channel.id;
     const userOption = options.getUser('user'); // candidate receiving the marks
     const marksOption = options.getString('marks'); // marks string like "70/100"
-    const examiner = examinersMap.get(channelID);
+    const examiner = state.guilds[message.guildId].sessions[channelId].examinerId;
 
-    const key = `${userOption.id}${COMPOSITE_KEY_SEPARATOR}${channelID}`;
-    const candidateData = candidateSessionsMap.get(key);
+    const candidateData =
+        state.guilds?.[guildId]?.sessions?.[channelID]?.candidates?.[userOption.id];
 
-    if (!paperChannels.includes(channelID)) throw { key: 'invalidChannel' };
+    if (!state.guilds[guildId]?.sessions?.[channelID]) throw { key: 'invalidChannel' };
     if (userOption.bot) throw { key: 'cannotAwardBot' };
     if (invokingUser.id !== examiner) throw { key: 'notAuthorized' };
     if (examiner === userOption.id) throw { key: 'cannotAwardExaminer' };
