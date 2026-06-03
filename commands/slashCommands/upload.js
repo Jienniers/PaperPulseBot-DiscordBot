@@ -18,7 +18,7 @@ const ERROR_MESSAGES = {
 function validateUpload(interaction) {
     const channelID = interaction.channel.id;
     const uploadedFile = interaction.options.getAttachment('file');
-    const currentChannel = state.guilds?.[guildId]?.sessions?.[channelID];
+    const currentChannel = state.guilds?.[interaction.guild.id]?.sessions?.[channelID];
 
     if (!currentChannel) throw { key: 'invalidChannel' };
     if (!uploadedFile) throw { key: 'noFile' };
@@ -54,7 +54,7 @@ export default async function handleUpload(interaction) {
         content: `✅ Received your PDF file: **${attachment.name}**`,
     });
 
-    const examinerId = state.guilds[message.guildId].sessions[channelID].examinerId;
+    const examinerId = state.guilds[interaction.guild.id].sessions[channelID].examinerId;
     if (!examinerId) return;
 
     const examinerUser = await interaction.client.users.fetch(examinerId);
