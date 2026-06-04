@@ -7,6 +7,7 @@ import handleAddCommand from './commands/messageCommands/add.js';
 import handleAward from './commands/slashCommands/award.js';
 import handleLeaderboard from './commands/slashCommands/leaderboard.js';
 import handleProfile from './commands/slashCommands/profile.js';
+import handleSet from './commands/slashCommands/set.js';
 import handleStartPaper from './commands/slashCommands/startpaper.js';
 import handleUpload from './commands/slashCommands/upload.js';
 import slashCommands from './commands/slashCommands/utils/definitions.js';
@@ -18,7 +19,7 @@ import { loadStateFromDB, startsync } from './utils/database/stateDatabaseSync.j
 import buttonHandlers from './utils/discord/buttonHandlers.js';
 
 function validateEnvironmentVariables() {
-    const requiredVars = ['TOKEN', 'MONGO_URL', 'CATEGORY_ID'];
+    const requiredVars = ['TOKEN', 'MONGO_URL'];
     const missing = requiredVars.filter((varName) => !process.env[varName]);
 
     if (missing.length > 0) {
@@ -84,6 +85,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
         award: (i) => handleAward(i, client),
         profile: handleProfile,
         leaderboard: handleLeaderboard,
+        set: handleSet,
     };
 
     const handler = commandHandlers[interaction.commandName];
