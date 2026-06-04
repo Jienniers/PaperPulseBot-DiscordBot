@@ -72,6 +72,10 @@ const slashCommands = [
         ),
 
     new SlashCommandBuilder()
+        .setName('leaderboard')
+        .setDescription('View the leaderboard of the current channel'),
+
+    new SlashCommandBuilder()
         .setName('set')
         .setDescription('Configure PaperPulse settings.')
         .addStringOption((option) =>
