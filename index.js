@@ -13,7 +13,7 @@ import slashCommands from './commands/slashCommands/utils/definitions.js';
 import handleVerify from './commands/slashCommands/verify.js';
 //database
 import connectToMongoDB from './utils/database/mongoConnection.js';
-import { startsync, loadStateFromDB } from './utils/database/stateDatabaseSync.js';
+import { loadStateFromDB, startsync } from './utils/database/stateDatabaseSync.js';
 //utils
 import buttonHandlers from './utils/discord/buttonHandlers.js';
 
