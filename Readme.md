@@ -24,7 +24,7 @@ A **Discord bot** designed to simulate a virtual exam system. Built with **Node.
 
 ## 🚧 Upcoming Updates & Features
 
-- Preparing the bot for production use with full multi-server support and a single bot invite link.
+- Readme.md update to reflect the recent feature changes.
 
 ## 📘 Commands Overview
 
