@@ -11,6 +11,7 @@ import handleStartPaper from './commands/slashCommands/startpaper.js';
 import handleUpload from './commands/slashCommands/upload.js';
 import slashCommands from './commands/slashCommands/utils/definitions.js';
 import handleVerify from './commands/slashCommands/verify.js';
+import handleSet from './commands/slashCommands/set.js';
 //database
 import connectToMongoDB from './utils/database/mongoConnection.js';
 import { startsync, loadStateFromDB } from './utils/database/stateDatabaseSync.js';
@@ -48,14 +49,14 @@ async function startBot() {
     client.once(Events.ClientReady, async () => {
         console.log(`Logged in as ${client.user.tag}!`);
 
-        try {
-            await rest.put(Routes.applicationCommands(client.application.id), {
-                body: slashCommands,
-            });
-            console.log('Commands registered successfully');
-        } catch (err) {
-            console.error('Slash command registration failed:', err);
-        }
+        // try {
+        //     await rest.put(Routes.applicationCommands(client.application.id), {
+        //         body: slashCommands,
+        //     });
+        //     console.log('Commands registered successfully');
+        // } catch (err) {
+        //     console.error('Slash command registration failed:', err);
+        // }
 
         await loadStateFromDB();
         await startsync(client);
@@ -84,6 +85,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
         award: (i) => handleAward(i, client),
         profile: handleProfile,
         leaderboard: handleLeaderboard,
+        set: handleSet,
     };
 
     const handler = commandHandlers[interaction.commandName];
