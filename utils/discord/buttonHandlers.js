@@ -1,50 +1,77 @@
-import {
-    candidateSessionsMap,
-    examinersMap,
-    paperChannels,
-    paperTimeMinsMap,
-} from '../../data/state.js';
+import { state } from '../../data/state.js';
 import { generateAllSessionsEmbed } from './embeds.js';
 
 async function handleCloseButton(interaction, channelID) {
-    if (interaction.user.id !== examinersMap.get(channelID)) {
-        await interaction.reply({ content: '❌ Not authorized.', flags: 64 });
-        return;
+    const guildId = interaction.guildId;
+
+    const session = state.guilds?.[guildId]?.sessions?.[channelID];
+
+    if (!session) {
+        return interaction.reply({
+            content: '❌ Session not found.',
+            flags: 64,
+        });
     }
 
-    // remove all in-memory state for this channel
-    const index = paperChannels.indexOf(channelID);
-    if (index > -1) paperChannels.splice(index, 1);
-    paperTimeMinsMap.delete(channelID);
-    examinersMap.delete(channelID);
+    // authorization check
+    if (interaction.user.id !== session.examinerId) {
+        return interaction.reply({
+            content: '❌ Not authorized.',
+            flags: 64,
+        });
+    }
+
+    // remove session from memory
+    delete state.guilds[guildId].sessions[channelID];
 
     try {
         await interaction.channel.delete();
     } catch (err) {
         console.error('Failed to delete channel:', err);
-        await interaction.reply({ content: '❌ Failed to delete channel.', flags: 64 });
+
+        return interaction.reply({
+            content: '❌ Failed to delete channel.',
+            flags: 64,
+        });
     }
 }
 
 // eslint-disable-next-line no-unused-vars
 async function handleViewAllSessions(interaction, channelID) {
-    const sessions = [];
-    const user = interaction.user;
+    const guildId = interaction.guildId;
+    const userId = interaction.user.id;
 
-    for (const [key, session] of candidateSessionsMap.entries()) {
-        const [candidateId] = key.split('::');
-        if (candidateId === user.id) {
-            sessions.push(session);
+    const guild = state.guilds?.[guildId];
+    if (!guild?.sessions) {
+        return interaction.reply({
+            content: 'No sessions found.',
+            flags: 64,
+        });
+    }
+
+    const sessions = [];
+
+    for (const session of Object.values(guild.sessions)) {
+        const candidate = session.candidates?.[userId];
+
+        if (candidate) {
+            sessions.push({
+                ...session,
+                candidateData: candidate,
+            });
         }
     }
 
-    const embed = generateAllSessionsEmbed(sessions, user);
-    await interaction.reply({ embeds: [embed], flags: 64 });
+    const embed = generateAllSessionsEmbed(sessions, interaction.user);
+
+    await interaction.reply({
+        embeds: [embed],
+        flags: 64,
+    });
 }
 
-// 🔧 Maps button IDs to their corresponding handler functions
+// 🔧 Button handlers
 export default {
     close: handleCloseButton,
     view_sessions: handleViewAllSessions,
-    // Add more handlers as needed
 };

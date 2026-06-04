@@ -1,4 +1,4 @@
-import { examinersMap, paperChannels, paperTimeMinsMap } from '../../data/state.js';
+import { state } from '../../data/state.js';
 import formatPaperTime from '../../utils/common/time.js';
 import { createPaperButtons } from '../../utils/discord/buttons.js';
 import { createPaperEmbed } from '../../utils/discord/embeds.js';
@@ -18,8 +18,9 @@ const ERROR_MESSAGES = {
  * Throws an error object with a key from ERROR_MESSAGES if any check fails.
  */
 function validateStartPaper(interaction) {
-    const channelId = interaction.channel.id;
-    if (paperChannels.includes(channelId)) throw { key: 'invalidChannel' };
+    const channelID = interaction.channel.id;
+    const currentChannel = state.guilds?.[interaction.guildId]?.sessions?.[channelID];
+    if (currentChannel) throw { key: 'invalidChannel' };
 
     const paperCode = interaction.options.getString('paper')?.trim();
     const examiner = interaction.options.getUser('examiner');
@@ -67,9 +68,7 @@ export default async function handleStartPaper(interaction) {
     }
 
     // Store session data
-    examinersMap.set(paperChannel.id, examiner.id);
-    paperTimeMinsMap.set(paperChannel.id, paperTime);
-    paperChannels.push(paperChannel.id);
+    storeData(interaction, paperChannel, examiner, paperTime);
 
     // Send embed and buttons to new paper channel
     const timeString = formatPaperTime(paperTime);
@@ -86,4 +85,23 @@ export default async function handleStartPaper(interaction) {
         content: `✅ A new channel has been created for this paper session: <#${paperChannel.id}>`,
         flags: 64,
     });
+}
+
+function storeData(interaction, paperChannel, examiner, paperTime) {
+    const guildId = interaction.guildId;
+
+    if (!state.guilds[guildId]) {
+        state.guilds[guildId] = {
+            sessions: {},
+            categoryId: null,
+        };
+    }
+
+    if (!state.guilds[guildId].sessions[paperChannel]) {
+        state.guilds[guildId].sessions[paperChannel.id] = {
+            examinerId: examiner.id,
+            paperTimeMins: paperTime,
+            candidates: {},
+        };
+    }
 }

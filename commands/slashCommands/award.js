@@ -1,9 +1,4 @@
-import {
-    candidateSessionsMap,
-    COMPOSITE_KEY_SEPARATOR,
-    examinersMap,
-    paperChannels,
-} from '../../data/state.js';
+import { state } from '../../data/state.js';
 import { getAwardEmbed } from '../../utils/discord/embeds.js';
 
 const ERROR_MESSAGES = {
@@ -26,22 +21,39 @@ const ERROR_MESSAGES = {
  */
 function validateAward(interaction) {
     const { channel, user: invokingUser, options } = interaction;
+
+    const guildId = interaction.guildId;
     const channelID = channel.id;
-    const userOption = options.getUser('user'); // candidate receiving the marks
-    const marksOption = options.getString('marks'); // marks string like "70/100"
-    const examiner = examinersMap.get(channelID);
 
-    const key = `${userOption.id}${COMPOSITE_KEY_SEPARATOR}${channelID}`;
-    const candidateData = candidateSessionsMap.get(key);
+    const userOption = options.getUser('user');
+    const marksOption = options.getString('marks');
 
-    if (!paperChannels.includes(channelID)) throw { key: 'invalidChannel' };
+    const session = state.guilds?.[guildId]?.sessions?.[channelID];
+
+    if (!session) throw { key: 'invalidChannel' };
+    if (!userOption) throw { key: 'noUser' };
     if (userOption.bot) throw { key: 'cannotAwardBot' };
+
+    const examiner = session.examinerId;
+
     if (invokingUser.id !== examiner) throw { key: 'notAuthorized' };
     if (examiner === userOption.id) throw { key: 'cannotAwardExaminer' };
-    if (!/^\d{1,3}\/\d{1,3}$/.test(marksOption)) throw { key: 'invalidFormat' };
+
+    if (!marksOption || !/^\d{1,3}\/\d{1,3}$/.test(marksOption)) {
+        throw { key: 'invalidFormat' };
+    }
+
+    const candidateData = session.candidates?.[userOption.id];
+
     if (!candidateData) throw { key: 'noUsersAdded' };
 
-    return { channelID, userOption, marksOption, examiner, candidateData };
+    return {
+        channelID,
+        userOption,
+        marksOption,
+        examiner,
+        candidateData,
+    };
 }
 
 /**
@@ -71,7 +83,7 @@ export default async function handleAward(interaction, client) {
         examiner: client.users.cache.get(examiner),
         marks: marksOption,
         guildId: interaction.guild.id,
-        channelId: channelID,
+        channelID: channelID,
     });
 
     try {
@@ -80,7 +92,7 @@ export default async function handleAward(interaction, client) {
         console.error('[award] Failed to send marks notification DM', {
             candidateId: userOption.id,
             examinerId: examiner,
-            channelId: channelID,
+            channelID: channelID,
             marks: marksOption,
             errorCode: err.code,
             errorMessage: err.message,

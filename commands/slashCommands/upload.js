@@ -1,4 +1,4 @@
-import { examinersMap, paperChannels } from '../../data/state.js';
+import { state } from '../../data/state.js';
 import { sendExaminerSubmissionEmbed } from '../../utils/discord/embeds.js';
 
 const MAX_PDF_SIZE_MB = 10; // Maximum allowed PDF size in MB
@@ -16,9 +16,11 @@ const ERROR_MESSAGES = {
  * Throws an error object with a key from ERROR_MESSAGES if any check fails.
  */
 function validateUpload(interaction) {
-    const channelId = interaction.channel.id;
+    const channelID = interaction.channel.id;
     const uploadedFile = interaction.options.getAttachment('file');
-    if (!paperChannels.includes(channelId)) throw { key: 'invalidChannel' };
+    const currentChannel = state.guilds?.[interaction.guild.id]?.sessions?.[channelID];
+
+    if (!currentChannel) throw { key: 'invalidChannel' };
     if (!uploadedFile) throw { key: 'noFile' };
 
     const isPDF =
@@ -36,7 +38,7 @@ function validateUpload(interaction) {
  * Flow: defer → validate → confirm → notify examiner.
  */
 export default async function handleUpload(interaction) {
-    const channelId = interaction.channel.id;
+    const channelID = interaction.channel.id;
 
     await interaction.deferReply({ flags: 64 });
 
@@ -52,7 +54,7 @@ export default async function handleUpload(interaction) {
         content: `✅ Received your PDF file: **${attachment.name}**`,
     });
 
-    const examinerId = examinersMap.get(channelId);
+    const examinerId = state.guilds[interaction.guild.id].sessions[channelID].examinerId;
     if (!examinerId) return;
 
     const examinerUser = await interaction.client.users.fetch(examinerId);
@@ -64,7 +66,7 @@ export default async function handleUpload(interaction) {
                     content: '📩 A new paper submission has been received.',
                     embeds: [
                         sendExaminerSubmissionEmbed(
-                            channelId,
+                            channelID,
                             interaction.user,
                             attachment,
                             interaction.guild,
@@ -80,7 +82,7 @@ export default async function handleUpload(interaction) {
             console.error('[upload] Failed to send submission DM to examiner', {
                 examinerId: examinerUser.id,
                 candidateId: interaction.user.id,
-                channelId,
+                channelID,
                 errorCode: err.code,
                 errorMessage: err.message,
                 timestamp: new Date().toISOString(),
