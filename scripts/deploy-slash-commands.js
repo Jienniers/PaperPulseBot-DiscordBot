@@ -1,3 +1,8 @@
+/**
+ * Utility script for manual command management.
+ * Not required during normal bot operation.
+ */
+
 import 'dotenv/config';
 
 import { REST, Routes } from 'discord.js';
