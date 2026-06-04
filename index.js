@@ -19,7 +19,7 @@ import { startsync, loadStateFromDB } from './utils/database/stateDatabaseSync.j
 import buttonHandlers from './utils/discord/buttonHandlers.js';
 
 function validateEnvironmentVariables() {
-    const requiredVars = ['TOKEN', 'MONGO_URL', 'CATEGORY_ID'];
+    const requiredVars = ['TOKEN', 'MONGO_URL'];
     const missing = requiredVars.filter((varName) => !process.env[varName]);
 
     if (missing.length > 0) {

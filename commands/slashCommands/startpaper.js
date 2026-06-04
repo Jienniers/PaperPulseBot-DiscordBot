@@ -52,7 +52,7 @@ export default async function handleStartPaper(interaction) {
 
     const guild = interaction.guild;
     const user = interaction.user;
-    const categoryID = process.env.CATEGORY_ID;
+    const categoryID = state.guilds[guild.id].categoryId;
     const channelName = `${paperCode.split('/')[0]} by ${examiner.username}`;
 
     let paperChannel;
