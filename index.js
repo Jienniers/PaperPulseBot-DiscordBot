@@ -48,14 +48,14 @@ async function startBot() {
     client.once(Events.ClientReady, async () => {
         console.log(`Logged in as ${client.user.tag}!`);
 
-        // try {
-        //     await rest.put(Routes.applicationCommands(client.application.id), {
-        //         body: slashCommands,
-        //     });
-        //     console.log('Commands registered successfully');
-        // } catch (err) {
-        //     console.error('Slash command registration failed:', err);
-        // }
+        try {
+            await rest.put(Routes.applicationCommands(client.application.id), {
+                body: slashCommands,
+            });
+            console.log('Commands registered successfully');
+        } catch (err) {
+            console.error('Slash command registration failed:', err);
+        }
 
         await loadStateFromDB();
         await startsync(client);
