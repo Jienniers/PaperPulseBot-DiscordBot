@@ -82,7 +82,7 @@ export default async function handleAddCommand(message) {
     await channel.send(`📝 Following candidates have been added: ${candidateMentions}`);
 
     // set paper running status to true in state
-    state.guilds[message.guild.id].sessions[channelID].status = true;
+    state.guilds[message.guild.id].sessions[message.channel.id].status = true;
 
     await startPaperTimer(channel, paperTimeMins, message.guild.id);
 }
