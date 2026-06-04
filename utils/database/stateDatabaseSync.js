@@ -1,5 +1,5 @@
-import BotState from '../../database/models/BotState.js';
 import { state } from '../../data/state.js';
+import BotState from '../../database/models/BotState.js';
 
 export async function loadStateFromDB() {
     const doc = await BotState.findById('global');
