@@ -86,7 +86,7 @@ const slashCommands = [
                     },
                 ),
         )
-        .addNumberOption((option) =>
+        .addStringOption((option) =>
             option
                 .setName('value')
                 .setDescription('Enter the new value for the selected setting.')
