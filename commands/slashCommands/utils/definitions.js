@@ -79,12 +79,10 @@ const slashCommands = [
                 .setName('setting')
                 .setDescription('Select the setting to configure.')
                 .setRequired(true)
-                .addChoices(
-                    {
-                        name: 'Paper Category',
-                        value: 'category',
-                    },
-                )
+                .addChoices({
+                    name: 'Paper Category',
+                    value: 'category',
+                })
                 .setRequired(true),
         )
         .addStringOption((option) =>
@@ -92,7 +90,7 @@ const slashCommands = [
                 .setName('value')
                 .setDescription('Enter the new value for the selected setting.')
                 .setRequired(true),
-        )
+        ),
 ].map((command) => command.toJSON());
 
 export default slashCommands;

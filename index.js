@@ -11,6 +11,7 @@ import handleStartPaper from './commands/slashCommands/startpaper.js';
 import handleUpload from './commands/slashCommands/upload.js';
 import slashCommands from './commands/slashCommands/utils/definitions.js';
 import handleVerify from './commands/slashCommands/verify.js';
+import handleSet from './commands/slashCommands/set.js';
 //database
 import connectToMongoDB from './utils/database/mongoConnection.js';
 import { loadStateFromDB, startsync } from './utils/database/stateDatabaseSync.js';

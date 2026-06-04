@@ -1,5 +1,6 @@
-import { state } from '../../data/state.js';
 import { PermissionsBitField } from 'discord.js';
+
+import { state } from '../../data/state.js';
 
 /**
  * @param {import('discord.js').ChatInputCommandInteraction} interaction
@@ -9,7 +10,7 @@ export default async function handleSet(interaction) {
 
     // ✅ correct option name from SlashCommandBuilder
     const setting = options.getString('setting');
-    const value = options.getString('value'); 
+    const value = options.getString('value');
 
     await interaction.deferReply({ flags: 64 });
 
