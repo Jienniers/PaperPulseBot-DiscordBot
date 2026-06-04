@@ -72,8 +72,26 @@ const slashCommands = [
         ),
 
     new SlashCommandBuilder()
-        .setName('leaderboard')
-        .setDescription('View the leaderboard of the current channel'),
+        .setName('set')
+        .setDescription('Configure PaperPulse settings.')
+        .addStringOption((option) =>
+            option
+                .setName('setting')
+                .setDescription('Select the setting to configure.')
+                .setRequired(true)
+                .addChoices(
+                    {
+                        name: 'Paper Category',
+                        value: 'category',
+                    },
+                ),
+        )
+        .addStringOption((option) =>
+            option
+                .setName('value')
+                .setDescription('Enter the new value for the selected setting.')
+                .setRequired(true),
+        )
 ].map((command) => command.toJSON());
 
 export default slashCommands;
