@@ -137,13 +137,22 @@ function getMostRecentSession(guildId, userId) {
     let latestSession = null;
     let latestTime = 0;
 
-    for (const session of Object.values(guild.sessions)) {
+    for (const [channelID, session] of Object.entries(guild.sessions)) {
         const candidate = session.candidates?.[userId];
         if (!candidate) continue;
 
-        if ((session.createdAt || 0) > latestTime) {
-            latestTime = session.createdAt;
-            latestSession = session;
+        const timestamp = candidate.submittedAt || session.createdAt || 0;
+
+        if (timestamp > latestTime) {
+            latestTime = timestamp;
+
+            latestSession = {
+                channelID,
+                examinerId: session.examinerId,
+                marks: candidate.marks,
+                verified: candidate.verified,
+                createdAt: session.createdAt ?? candidate.submittedAt,
+            };
         }
     }
 
