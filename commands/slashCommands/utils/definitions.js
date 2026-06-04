@@ -84,7 +84,8 @@ const slashCommands = [
                         name: 'Paper Category',
                         value: 'category',
                     },
-                ),
+                )
+                .setRequired(true),
         )
         .addStringOption((option) =>
             option
