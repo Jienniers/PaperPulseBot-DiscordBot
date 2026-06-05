@@ -141,7 +141,8 @@ function getMostRecentSession(guildId, userId) {
         const candidate = session.candidates?.[userId];
         if (!candidate) continue;
 
-        const timestamp = candidate.submittedAt || session.createdAt || 0;
+        const candidateAddedAt = candidate.addedAt ?? candidate.submittedAt;
+        const timestamp = candidateAddedAt || session.createdAt || 0;
 
         if (timestamp > latestTime) {
             latestTime = timestamp;
@@ -151,7 +152,7 @@ function getMostRecentSession(guildId, userId) {
                 examinerId: session.examinerId,
                 marks: candidate.marks,
                 verified: candidate.verified,
-                createdAt: session.createdAt ?? candidate.submittedAt,
+                createdAt: session.createdAt ?? candidateAddedAt,
             };
         }
     }

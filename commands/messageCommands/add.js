@@ -154,6 +154,6 @@ function createCandidateSessionEntry(user, message, verified = false, marks = nu
         userId: user.id,
         verified,
         marks, // "70/100"
-        submittedAt: Date.now(),
+        addedAt: Date.now(),
     };
 }
