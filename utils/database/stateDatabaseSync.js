@@ -15,5 +15,5 @@ export async function saveStateToDB() {
 export function startsync() {
     setInterval(() => {
         saveStateToDB().catch(console.error);
-    }, 3000);
+    }, 3000); // sync interval to MongoDB
 }
