@@ -16,49 +16,49 @@ PaperPulse stores only the information necessary for its functionality.
 
 For each Discord server using PaperPulse, the bot may store:
 
-* Discord Server ID
-* Configured paper category/channel ID
+- Discord Server ID
+- Configured paper category/channel ID
 
 ### Session Information
 
 For each paper session, the bot may store:
 
-* Session channel ID
-* Examiner Discord User ID
-* Configured paper duration
-* Session status information
+- Session channel ID
+- Examiner Discord User ID
+- Configured paper duration
+- Session status information
 
 ### Candidate Information
 
 For candidates participating in a paper session, the bot may store:
 
-* Discord User ID
-* Awarded marks
-* Candidate added timestamp
-* Verification status
+- Discord User ID
+- Awarded marks
+- Candidate added timestamp
+- Verification status
 
 ## Information We Do Not Store
 
 PaperPulse does not store:
 
-* Discord passwords
-* Email addresses
-* Direct messages
-* Message content unrelated to PaperPulse functionality
-* Payment information
-* IP addresses
-* Personal identifying information beyond Discord IDs required for operation
+- Discord passwords
+- Email addresses
+- Direct messages
+- Message content unrelated to PaperPulse functionality
+- Payment information
+- IP addresses
+- Personal identifying information beyond Discord IDs required for operation
 
 ## How We Use Data
 
 Stored data is used solely to:
 
-* Manage paper sessions
-* Track candidate submissions
-* Record awarded marks
-* Record verification status
-* Generate candidate profiles and statistics
-* Maintain server-specific PaperPulse settings
+- Manage paper sessions
+- Track candidate submissions
+- Record awarded marks
+- Record verification status
+- Generate candidate profiles and statistics
+- Maintain server-specific PaperPulse settings
 
 ## Data Sharing
 
