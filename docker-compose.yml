@@ -1,23 +1,25 @@
 services:
-    bot:
-        build: .
-        image: paperpulsebot:latest
-        container_name: paperpulsebot
-        restart: unless-stopped
-        env_file:
-            - .env
-        depends_on:
-            - mongo
-        command: ['sh', 'start.sh']
-
     mongo:
         image: mongo:8.2
         container_name: paperpulse-mongo
+        mem_limit: 1g
+        memswap_limit: 1g
         restart: unless-stopped
         ports:
-            - '27017:27017' # optional: expose to host if needed
+            - '27017:27017'
         volumes:
             - mongo-data:/data/db
+
+    bot:
+        build: .
+        container_name: paperpulse-bot
+        restart: unless-stopped
+        depends_on:
+            - mongo
+        env_file:
+            - .env
+        environment:
+            - MONGO_URL=mongodb://mongo:27017/botData
 
 volumes:
     mongo-data:

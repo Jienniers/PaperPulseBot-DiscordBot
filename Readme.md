@@ -176,19 +176,69 @@ MONGO_URL=mongodb://mongo:27017/botData
     npm install
     ```
 
-2. Start MongoDB. One Docker option is:
+2. Start MongoDB locally or use the MongoDB-only Docker setup below.
 
-    ```bash
-    docker run -d --name paperpulse-mongo -p 27017:27017 -v mongo-data:/data/db mongo:8.2
+3. Make sure `.env` uses the local MongoDB URL:
+
+    ```env
+    MONGO_URL=mongodb://localhost:27017/botData
     ```
 
-3. Start the bot:
+4. Start the bot:
 
     ```bash
     node index.js
     ```
 
 The bot registers global slash commands on startup.
+
+---
+
+## 🍃 MongoDB Only With Docker
+
+Use this setup when you want to run MongoDB in Docker but run the bot directly on your machine with `node index.js`.
+
+Start a MongoDB container:
+
+```bash
+docker run -d --name paperpulse-mongo -p 27017:27017 -v mongo-data:/data/db mongo:8.2
+```
+
+Use this MongoDB URL in your local `.env` file:
+
+```env
+MONGO_URL=mongodb://localhost:27017/botData
+```
+
+Check if the container is running:
+
+```bash
+docker ps
+```
+
+Stop MongoDB:
+
+```bash
+docker stop paperpulse-mongo
+```
+
+Start it again:
+
+```bash
+docker start paperpulse-mongo
+```
+
+Remove the container:
+
+```bash
+docker rm paperpulse-mongo
+```
+
+Remove the MongoDB data volume if you want a fresh database:
+
+```bash
+docker volume rm mongo-data
+```
 
 ---
 
@@ -214,13 +264,21 @@ These scripts require `TOKEN`, `CLIENT_ID`, and `GUILD_ID` in `.env`.
 
 ## 🐳 Docker
 
-The repository includes a `Dockerfile` and `docker-compose.yml` for running the bot with MongoDB.
+The repository includes a `Dockerfile` and `docker-compose.yml` for running the bot and MongoDB together.
+
+Before starting Docker, make sure your `.env` file includes your bot token:
+
+```env
+TOKEN=your_discord_bot_token
+```
 
 ```bash
 docker compose up -d --build
 ```
 
 MongoDB data is stored in the `mongo-data` Docker volume. To stop the containers:
+
+> 💡 The Compose file reads `.env` for the bot token and sets `MONGO_URL=mongodb://mongo:27017/botData` inside the bot container.
 
 ```bash
 docker compose down

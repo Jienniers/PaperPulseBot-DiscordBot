@@ -1,17 +1,10 @@
-# Use official Node.js LTS image
-FROM node:alpine
+FROM node:20-alpine
 
-# Set working directory inside container
 WORKDIR /app
 
-# Copy package files first (better caching)
 COPY package*.json ./
+RUN npm ci --omit=dev
 
-# Install dependencies
-RUN npm ci --only=production
-
-# Copy the rest of the project
 COPY . .
 
-# Start the bot
 CMD ["node", "index.js"]
