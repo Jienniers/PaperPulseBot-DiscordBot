@@ -135,6 +135,7 @@ A **Discord bot** for running timed paper sessions inside a server. Built with *
 - **npm**
 - **MongoDB**, either local or Docker-hosted
 - **Discord Application + Bot Token**
+- **Message Content Intent** enabled in the Discord Developer Portal, required for the `!add` message command
 
 ### Environment Variables
 
