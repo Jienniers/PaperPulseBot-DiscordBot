@@ -19,7 +19,7 @@ A **Discord bot** for running timed paper sessions inside a server. Built with *
 - Send time warnings near the end of the session.
 - Accept PDF uploads and forward them to the assigned examiner by DM.
 - Let examiners verify candidates and award marks.
-- Generate candidate profiles from stored session history.
+- Generate candidate profiles from stored session data.
 - Show a channel-specific leaderboard.
 - Persist server, session, candidate, mark, and verification data in MongoDB.
 
@@ -42,15 +42,15 @@ A **Discord bot** for running timed paper sessions inside a server. Built with *
 
 ### Slash Commands
 
-| Command        | Description                                                                                                    | Usage                                                  |
-| -------------- | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| `/set`         | Configure PaperPulse settings. Currently supports the paper category ID.                                       | `/set setting:Paper Category value:<category-id>`      |
-| `/startpaper`  | Create a new paper session channel and assign an examiner.                                                     | `/startpaper paper:0580/12 time:60 examiner:@examiner` |
-| `/upload`      | Upload a solved paper PDF for the assigned examiner. The file is forwarded by DM and is not stored in MongoDB. | `/upload file:<paper.pdf>`                             |
-| `/verify`      | Mark a candidate as verified for the current session. Examiner only.                                           | `/verify user:@candidate`                              |
-| `/award`       | Award marks to a candidate in `score/total` format. Examiner only.                                             | `/award user:@candidate marks:70/100`                  |
-| `/profile`     | View a candidate profile. Defaults to the command user when no user is provided.                               | `/profile` or `/profile user:@candidate`               |
-| `/leaderboard` | Show the leaderboard for the current session channel.                                                          | `/leaderboard`                                         |
+| Command        | Description                                                                                                        | Usage                                                  |
+| -------------- | ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------ |
+| `/set`         | Configure PaperPulse settings. Currently supports the paper category ID. Requires Administrator permission.        | `/set setting:Paper Category value:<category-id>`      |
+| `/startpaper`  | Create a new paper session channel and assign an examiner. Paper time must be 1 to 480 minutes.                    | `/startpaper paper:0580/12 time:60 examiner:@examiner` |
+| `/upload`      | Upload a solved PDF, up to 10MB, for the assigned examiner. The file is forwarded by DM and not stored in MongoDB. | `/upload file:<paper.pdf>`                             |
+| `/verify`      | Mark a candidate as verified for the current session. Examiner only.                                               | `/verify user:@candidate`                              |
+| `/award`       | Award marks to a candidate in `score/total` format. Examiner only.                                                 | `/award user:@candidate marks:70/100`                  |
+| `/profile`     | View a candidate profile. Defaults to the command user when no user is provided.                                   | `/profile` or `/profile user:@candidate`               |
+| `/leaderboard` | Show the leaderboard for the current session channel.                                                              | `/leaderboard`                                         |
 
 ---
 
@@ -144,7 +144,7 @@ Create a `.env` file in the project root. You can start from the example file:
 cp examples/.env .env
 ```
 
-Required for normal bot startup:
+Required for running the bot locally:
 
 ```env
 TOKEN=your_discord_bot_token
