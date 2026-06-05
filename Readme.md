@@ -1,6 +1,6 @@
 # 📄 PaperPulseBot
 
-A **Discord bot** designed to simulate a virtual exam system. Built with **Node.js** and **discord.js**, the bot enables candidates to take timed papers under examiner supervision in a fully automated environment on Discord.
+A **Discord bot** for running timed paper sessions inside a server. Built with **Node.js**, **discord.js**, and **MongoDB**, PaperPulseBot creates paper channels, assigns examiners, tracks candidates, forwards PDF submissions, records marks and verification status, and keeps session data persistent.
 
 ---
 
@@ -10,44 +10,100 @@ A **Discord bot** designed to simulate a virtual exam system. Built with **Node.
 
 ---
 
-## 🔧 Tech Stack
+## ✨ Features
 
-- **Language:** JavaScript (Node.js)
-- **Library:** [discord.js](https://discord.js.org/)
-- **Environment Config:** dotenv
-- **Linter:** ESLint with Prettier integration
-- **CI:** GitHub Actions (ESLint, Prettier)
-- **Code Style:** Prettier
-- **Database:** MongoDB
+- Configure a Discord category for paper session channels.
+- Start a paper session with a paper code, duration, and examiner.
+- Create a dedicated text channel for each paper session.
+- Add one or more candidates and start the paper timer.
+- Send time warnings near the end of the session.
+- Accept PDF uploads and forward them to the assigned examiner by DM.
+- Let examiners verify candidates and award marks.
+- Generate candidate profiles from stored session history.
+- Show a channel-specific leaderboard.
+- Persist server, session, candidate, mark, and verification data in MongoDB.
 
 ---
 
-## 🚧 Upcoming Updates & Features
+## 🔧 Tech Stack
 
-- Readme.md update to reflect the recent feature changes.
+- **Language:** JavaScript (Node.js)
+- **Discord Library:** [discord.js v14](https://discord.js.org/)
+- **Database:** MongoDB
+- **ODM:** Mongoose
+- **Environment Config:** dotenv
+- **Code Quality:** ESLint
+- **Code Style:** Prettier
+- **Containerization:** Docker / Docker Compose
+
+---
 
 ## 📘 Commands Overview
 
 ### Slash Commands
 
-| Command        | Description                                                                                        | Usage                                    |
-| -------------- | -------------------------------------------------------------------------------------------------- | ---------------------------------------- |
-| `/startpaper`  | Starts a new paper session for candidates in the server                                            | `/startpaper`                            |
-| `/upload`      | Uploads a paper file for examiner to check _(Requires a PDF file)_                                 | `/upload file:<paper.pdf>`               |
-| `/award`       | Examiner awards marks to a candidate                                                               | `/award user:@candidate marks:50/100`    |
-| `/verify`      | Verifies that a candidate completed the paper fairly _(Examiner-only, within the session channel)_ | `/verify user:@candidate`                |
-| `/profile`     | Displays a candidate's profile summary _(User argument is optional — defaults to command user)_    | `/profile` or `/profile user:@candidate` |
-| `/leaderboard` | Shows the leaderboard ranked by percentage _(Only shows results for the current channel)_          | `/leaderboard`                           |
+| Command        | Description                                                                                                    | Usage                                                  |
+| -------------- | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| `/set`         | Configure PaperPulse settings. Currently supports the paper category ID.                                       | `/set setting:Paper Category value:<category-id>`      |
+| `/startpaper`  | Create a new paper session channel and assign an examiner.                                                     | `/startpaper paper:0580/12 time:60 examiner:@examiner` |
+| `/upload`      | Upload a solved paper PDF for the assigned examiner. The file is forwarded by DM and is not stored in MongoDB. | `/upload file:<paper.pdf>`                             |
+| `/verify`      | Mark a candidate as verified for the current session. Examiner only.                                           | `/verify user:@candidate`                              |
+| `/award`       | Award marks to a candidate in `score/total` format. Examiner only.                                             | `/award user:@candidate marks:70/100`                  |
+| `/profile`     | View a candidate profile. Defaults to the command user when no user is provided.                               | `/profile` or `/profile user:@candidate`               |
+| `/leaderboard` | Show the leaderboard for the current session channel.                                                          | `/leaderboard`                                         |
 
 ---
 
 ### Message Commands
 
-| Command          | Description                                                                                           | Usage                       |
-| ---------------- | ----------------------------------------------------------------------------------------------------- | --------------------------- |
-| `!add @users...` | Starts the paper timer for the mentioned users in the current paper session _(examiner-only command)_ | `!add @user1 @user2 @user3` |
+| Command          | Description                                                      | Usage                |
+| ---------------- | ---------------------------------------------------------------- | -------------------- |
+| `!add @users...` | Add candidates to the current paper session and start the timer. | `!add @user1 @user2` |
 
-> ⚠️ `!add` **must** be used inside a **paper session channel**. It supports **multiple mentions** and starts the exam timer for added users.
+> ⚠️ `!add` **must** be used inside a paper session channel. Bot users and the assigned examiner are skipped.
+
+---
+
+## 🧭 Typical Session Flow
+
+1. An administrator configures the paper category:
+
+    ```bash
+    /set setting:Paper Category value:<category-id>
+    ```
+
+2. A user starts a paper session:
+
+    ```bash
+    /startpaper paper:0580/12 time:60 examiner:@examiner
+    ```
+
+3. The bot creates a paper channel under the configured category.
+4. The examiner or session operator adds candidates in that channel:
+
+    ```bash
+    !add @candidate1 @candidate2
+    ```
+
+5. Candidates upload solved papers as PDFs:
+
+    ```bash
+    /upload file:<paper.pdf>
+    ```
+
+6. The examiner verifies candidates and awards marks:
+
+    ```bash
+    /verify user:@candidate
+    /award user:@candidate marks:70/100
+    ```
+
+7. Users can view profiles and leaderboards:
+
+    ```bash
+    /profile user:@candidate
+    /leaderboard
+    ```
 
 ---
 
@@ -55,262 +111,214 @@ A **Discord bot** designed to simulate a virtual exam system. Built with **Node.
 
 ### Paper Session Channel Embed
 
-![PaperChannelEmbed](Screenshots/PaperChannelEmbed.png)
+![Paper channel embed](Screenshots/PaperChannelEmbed.png)
 
 ### Paper Started Message
 
-![TimerStarted](Screenshots/TimerStarted.png)
+![Timer started](Screenshots/TimerStarted.png)
 
-### Paper Results Embed
+### Marks Awarded DM
 
-![MarksAwarded](Screenshots/MarksAwardedDM.png)
+![Marks awarded DM](Screenshots/MarksAwardedDM.png)
 
-### Your Profile Embed
+### Candidate Profile
 
-![Profile](Screenshots/Profile.png)
+![Candidate profile](Screenshots/Profile.png)
 
 ---
 
 ## 🚀 Getting Started
 
-> Ensure [Node.js](https://nodejs.org/) (optional If running with Docker) and [Docker](https://www.docker.com/get-started) are installed before setup.
+### Prerequisites
 
----
+- **Node.js**
+- **npm**
+- **MongoDB**, either local or Docker-hosted
+- **Discord Application + Bot Token**
 
-### 1️⃣ Setup Environment Variables (Required)
+### Environment Variables
 
-Create a `.env` file in the root directory. You can use the example provided in `examples/.env`:
+Create a `.env` file in the project root. You can start from the example file:
 
 ```bash
 cp examples/.env .env
 ```
 
-Edit the file to include your credentials:
+Required for normal bot startup:
 
 ```env
 TOKEN=your_discord_bot_token
-CLIENT_ID=your_application_client_id
-CATEGORY_ID=your_paper_sessions_category_id
-GUILD_ID=your_guild_id
-SYNC_INTERVAL=5000 # MongoDB sync interval in milliseconds
+MONGO_URL=mongodb://localhost:27017/botData
 ```
 
-Set `MONGO_URL` depending on your setup:
+Required only for the optional slash-command management scripts:
 
-- **If running the bot fully with Docker (Option 1):**
+```env
+CLIENT_ID=your_application_client_id
+GUILD_ID=your_test_guild_id
+```
+
+Use this MongoDB URL when running the bot and MongoDB together through Docker Compose:
 
 ```env
 MONGO_URL=mongodb://mongo:27017/botData
 ```
 
-- **If running the bot manually (locally) while MongoDB runs in Docker (Option 2):**
-
-```env
-MONGO_URL=mongodb://localhost:27017/botData
-```
-
-> ⚠️ Do not commit `.env` to GitHub. Keep it private.
-
-> 💡 **Important:** When you add new environment variables to `.env`, remember to also add the variable name to the `requiredVars` array in the `validateEnvironmentVariables()` function in `index.js`. This ensures the bot validates that all required environment variables are set when it starts.
+> ⚠️ Do not commit `.env`. Keep your bot token private.
 
 ---
 
-## 🐳 Option 1: Run Bot with Docker
+## 💻 Running Locally
 
-> 💡 Tip: Make sure your terminal/command prompt is opened in the project folder (`paperpulsebot`) when running any Docker commands below, e.g., `docker compose up -d`.
+1. Install dependencies:
 
-1. **Start Bot and MongoDB together:**
+    ```bash
+    npm install
+    ```
 
-```bash
-docker compose up -d
-```
+2. Start MongoDB. One Docker option is:
 
-- Runs both the bot and MongoDB containers in detached mode.
+    ```bash
+    docker run -d --name paperpulse-mongo -p 27017:27017 -v mongo-data:/data/db mongo:8.2
+    ```
 
-- `.env` file is used automatically for environment variables.
+3. Start the bot:
 
-2. **Rebuild containers after code changes:**
+    ```bash
+    node index.js
+    ```
 
-```bash
-docker compose up -d --build
-```
-
-- Rebuilds the Docker images to include any changes in code or dependencies.
-
-- Ensures the latest code is running inside the container.
-
-> 💡 Tip: For development, after making code changes you can run this command and apply your latest code without touching the manual setup.
-
-3. **Check running containers:**
-
-```bash
-docker ps
-```
-
-4. **Stop containers (if needed):**
-
-```bash
-docker compose down
-```
-
-> 💡 Tip: Always use `docker compose down -v` if you want to remove MongoDB data and start fresh.
+The bot registers global slash commands on startup.
 
 ---
 
-## ⚙️ Option 2: Manual Setup
+## 🛠️ Slash Command Scripts
 
-### 1. Setup MongoDB
+The bot registers global slash commands when it starts. These scripts are optional helpers for manual command management.
 
-1. **Pull the MongoDB image:**
-
-```bash
-docker pull mongo
-```
-
-2. **Run MongoDB container:**
-
-```bash
-docker run -d --name paperpulse-mongo -p 27017:27017 -v mongo-data:/data/db mongo
-```
-
-- `-d` runs the container in detached mode.
-
-- `--name` gives the container a name.
-
-- `-p` maps local port 27017 to container port 27017.
-
-- `-v` creates a volume for data persistence.
-
-3. **Check if MongoDB container is running:**
-
-```bash
-docker ps
-```
-
-4. **Stop MongoDB container (if needed):**
-
-```bash
-docker stop paperpulse-mongo
-```
-
-5. **Start MongoDB container again:**
-
-```bash
-docker start paperpulse-mongo
-```
-
-### 2. Clone the Repository
-
-```bash
-git clone https://github.com/Jienniers/paperpulsebot.git
-cd paperpulsebot
-```
-
-### 3. Install Dependencies
-
-```bash
-npm install
-```
-
-### 4. Clear old Slash Commands (Optional)
-
-```bash
-node scripts/clear-slash-commands.js
-```
-
-### 5. Register Slash Commands (optional if already registered)
+Register guild slash commands:
 
 ```bash
 node scripts/deploy-slash-commands.js
 ```
 
-### 6. Start the Bot
+Clear global and guild slash commands:
 
 ```bash
-node index.js
+node scripts/clear-slash-commands.js
+```
+
+These scripts require `TOKEN`, `CLIENT_ID`, and `GUILD_ID` in `.env`.
+
+---
+
+## 🐳 Docker
+
+The repository includes a `Dockerfile` and `docker-compose.yml` for running the bot with MongoDB.
+
+```bash
+docker compose up -d --build
+```
+
+MongoDB data is stored in the `mongo-data` Docker volume. To stop the containers:
+
+```bash
+docker compose down
+```
+
+To remove the MongoDB volume as well:
+
+```bash
+docker compose down -v
 ```
 
 ---
 
-## 🏗️ Architecture Overview
+## 🗄️ Data Storage
 
-### State Management
+PaperPulseBot keeps active state in memory and periodically persists it to MongoDB.
 
-PaperPulseBot uses a **two-tier state system** combining in-memory state with MongoDB persistence:
+MongoDB stores a single `BotState` document with a `state.guilds` object. The persisted structure is organized by guild ID, then by session channel ID:
 
-#### In-Memory State (`data/state.js`)
-
-The bot maintains several in-memory maps to track active sessions:
-
-- **`examinersMap`**: Maps `channelID → examinerId` (tracks which examiner is running which session)
-- **`paperChannels`**: Array of active paper session channel IDs
-- **`paperTimeMinsMap`**: Maps `channelID → duration` (exam duration in minutes)
-- **`paperRunningMap`**: Maps `channelID → boolean` (whether the timer is currently running)
-- **`candidateSessionsMap`**: Maps composite keys to candidate session data
-
-#### Composite Key Format
-
-Candidate sessions use a **composite key pattern**: `userId::channelID`
-
-- Example: `"123456789::987654321"` (user 123456789 in channel 987654321)
-- This allows tracking multiple sessions for the same user across different channels
-- Keys are split with `COMPOSITE_KEY_SEPARATOR` constant (`::`)
-
-### State Synchronization
-
-The bot syncs state between memory and MongoDB every **5 seconds** with **debouncing**:
-
-1. **Initialization** (`initializeAndSyncState`):
-    - Load all persistent state from MongoDB into memory
-    - Clean up orphaned entries from deleted Discord channels
-    - Start periodic sync interval
-
-2. **Periodic Sync** (every 5 seconds):
-    - Only syncs if at least 1 second has passed since last sync (debounce)
-    - Sends all in-memory state to MongoDB
-    - Prevents database hammering
-
-3. **Graceful Shutdown**:
-    - On `SIGINT` or `SIGTERM`, performs final sync before exiting
-    - Ensures no state is lost on unexpected shutdowns
-
-### Data Flow
-
+```js
+{
+  guilds: {
+    [guildId]: {
+      categoryId,
+      sessions: {
+        [channelId]: {
+          examinerId,
+          paperTimeMins,
+          status,
+          candidates: {
+            [userId]: {
+              userId,
+              verified,
+              marks,
+              addedAt
+            }
+          }
+        }
+      }
+    }
+  }
+}
 ```
-Discord Events
-    ↓
-Command Handlers
-    ↓
-Modify In-Memory State (examinersMap, candidateSessionsMap, etc.)
-    ↓
-Every 5 seconds (with debounce)
-    ↓
-Sync to MongoDB
-    ↓
-Periodic Load from MongoDB (on startup)
-```
+
+The bot saves state to MongoDB every 3 seconds and loads it again on startup.
+
+---
+
+## 🔒 Privacy
+
+The bot stores only the data needed to operate paper sessions and candidate history, such as Discord IDs, configured category IDs, session channel IDs, marks, verification status, and candidate added timestamps.
+
+Uploaded PDFs are forwarded to the assigned examiner by Discord DM and are not stored in MongoDB by the bot.
+
+See [docs/privacy-policy.md](docs/privacy-policy.md) for the full privacy policy.
 
 ---
 
 ## 📋 Code Quality
 
-- Run ESLint to check code:
+Run ESLint:
 
-    ```bash
-    npm run lint
-    ```
+```bash
+npm run lint
+```
 
-- Run ESLint to fix code:
+Fix lint issues:
 
-    ```bash
-    npm run lintfix
-    ```
+```bash
+npm run lintfix
+```
 
-- Format code automatically with Prettier:
+Format with Prettier:
 
-    ```bash
-    npm run format
-    ```
+```bash
+npm run format
+```
+
+Check formatting:
+
+```bash
+npm run format:check
+```
+
+---
+
+## 🏗️ Project Structure
+
+```text
+commands/
+  messageCommands/      Message command handlers such as !add
+  slashCommands/        Slash command handlers
+data/                   Shared runtime state
+database/models/        Mongoose models
+docs/                   Project documentation and policies
+scripts/                Optional slash command management scripts
+utils/                  Discord, database, and shared helpers
+```
 
 ---
 
