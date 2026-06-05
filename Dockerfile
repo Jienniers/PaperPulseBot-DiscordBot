@@ -13,8 +13,5 @@ RUN npm ci --only=production
 # Copy the rest of the project
 COPY . .
 
-# Make the startup script executable
-RUN chmod +x start.sh
-
 # Start the bot
 CMD ["node", "index.js"]
