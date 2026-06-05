@@ -16,5 +16,5 @@ COPY . .
 # Make the startup script executable
 RUN chmod +x start.sh
 
-# Start the bot using the startup script
-CMD ["sh", "start.sh"]
+# Start the bot
+CMD ["node", "index.js"]
