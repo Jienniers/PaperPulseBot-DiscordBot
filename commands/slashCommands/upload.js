@@ -61,29 +61,23 @@ export default async function handleUpload(interaction) {
 
     if (examinerUser) {
         try {
-            await Promise.race([
-                examinerUser.send({
-                    content: '📩 A new paper submission has been received.',
-                    embeds: [
-                        sendExaminerSubmissionEmbed(
-                            channelID,
-                            interaction.user,
-                            attachment,
-                            interaction.guild,
-                        ),
-                    ],
-                    files: [attachment],
-                }),
-                new Promise((_, reject) =>
-                    setTimeout(() => reject(new Error('DM send timeout')), DM_TIMEOUT_MS),
-                ),
-            ]);
+            await examinerUser.send({
+                content: '📩 A new paper submission has been received.',
+                embeds: [
+                    sendExaminerSubmissionEmbed(
+                        channelID,
+                        interaction.user,
+                        attachment,
+                        interaction.guild,
+                    ),
+                ],
+                files: [attachment],
+            });
         } catch (err) {
             console.error('[upload] Failed to send submission DM to examiner', {
                 examinerId: examinerUser.id,
                 candidateId: interaction.user.id,
                 channelID,
-                errorCode: err.code,
                 errorMessage: err.message,
                 timestamp: new Date().toISOString(),
             });
