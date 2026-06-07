@@ -36,7 +36,6 @@ async function handleCloseButton(interaction, channelID) {
     }
 }
 
-// eslint-disable-next-line no-unused-vars
 async function handleViewAllSessions(interaction, channelID, targetUserId) {
     const guildId = interaction.guildId;
     const userId = targetUserId ?? interaction.user.id;
