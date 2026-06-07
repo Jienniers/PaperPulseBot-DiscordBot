@@ -8,6 +8,7 @@ const ERROR_MESSAGES = {
     noFile: '❌ No file was uploaded. Please attach a PDF file.',
     invalidFormat: '❌ Only PDF files are allowed. Please upload a `.pdf` file.',
     fileTooLarge: `❌ File size exceeds the ${MAX_PDF_SIZE_MB}MB limit.`,
+    examinerNotAllowed: '⚠️ This command is reserved for students only.',
 };
 
 /**
@@ -21,6 +22,10 @@ function validateUpload(interaction) {
 
     if (!currentChannel) throw { key: 'invalidChannel' };
     if (!uploadedFile) throw { key: 'noFile' };
+
+    // Check if the user is an examiner
+    const examinerId = currentChannel.examinerId;
+    if (examinerId === interaction.user.id) throw { key: 'examinerNotAllowed' };
 
     const isPDF =
         uploadedFile?.contentType?.toLowerCase() === 'application/pdf' ||
