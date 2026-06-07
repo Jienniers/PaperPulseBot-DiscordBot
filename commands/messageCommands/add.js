@@ -14,7 +14,7 @@ const MESSAGES = {
 };
 
 // store intervals for cleanup
-const paperTimerIntervals = new Map();
+export const paperTimerIntervals = new Map();
 
 /**
  * Validates the !add command input and returns candidates to add

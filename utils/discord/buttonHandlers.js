@@ -1,3 +1,4 @@
+import { paperTimerIntervals } from '../../commands/messageCommands/add.js';
 import { state } from '../../data/state.js';
 import { generateAllSessionsEmbed } from './embeds.js';
 
@@ -7,6 +8,7 @@ async function handleCloseButton(interaction, channelID) {
     const session = state.guilds?.[guildId]?.sessions?.[channelID];
 
     if (!session) {
+        console.log('Session not found', interaction.guildId, channelID);
         return interaction.reply({
             content: '❌ Session not found.',
             flags: 64,
@@ -33,6 +35,12 @@ async function handleCloseButton(interaction, channelID) {
             content: '❌ Failed to delete channel.',
             flags: 64,
         });
+    }
+
+    // Clear the paper timer interval if it exists
+    if (paperTimerIntervals.has(channelID)) {
+        clearInterval(paperTimerIntervals.get(channelID));
+        paperTimerIntervals.delete(channelID);
     }
 }
 
