@@ -15,6 +15,6 @@ export function createPaperButtons() {
 // Returns the action buttons shown when /profile is used
 export function createProfileCommandButtons(userId) {
     return new ActionRowBuilder().addComponents(
-        makeButton(`view_sessions:${userId}`, 'View All Sessions', ButtonStyle.Primary),
+        makeButton(`view_sessions:${userId}`, '📘 View All Sessions', ButtonStyle.Primary),
     );
 }
