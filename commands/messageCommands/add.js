@@ -10,6 +10,7 @@ const MESSAGES = {
     noValidUsers: '❌ No valid users to add. All mentioned users were either bots or the examiner.',
     skippedUsers:
         '⚠️ Some mentioned users were skipped because they were either bots or the examiner.',
+    onlyExaminerAllowed: 'Only examiners are allowed to run this command.',
 };
 
 // store intervals for cleanup
@@ -31,6 +32,7 @@ function validateAddCommand(message) {
     const paperTimeMins = session.paperTimeMins;
     const examinerId = session.examinerId;
 
+    if (message.author.id !== examinerId) throw { key: 'onlyExaminerAllowed' };
     if (!examinerId) throw { key: 'noExaminer' };
     if (paperTimerIntervals.has(channelID)) throw { key: 'sessionRunning' };
 
