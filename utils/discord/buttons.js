@@ -1,6 +1,6 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
 
-//utility function
+// utility function
 function makeButton(customId, label, style) {
     return new ButtonBuilder().setCustomId(customId).setLabel(label).setStyle(style);
 }
@@ -13,8 +13,8 @@ export function createPaperButtons() {
 }
 
 // Returns the action buttons shown when /profile is used
-export function createProfileCommandButtons() {
+export function createProfileCommandButtons(userId) {
     return new ActionRowBuilder().addComponents(
-        makeButton('view_sessions', '📘 View All Sessions', ButtonStyle.Primary),
+        makeButton(`view_sessions:${userId}`, 'View All Sessions', ButtonStyle.Primary),
     );
 }

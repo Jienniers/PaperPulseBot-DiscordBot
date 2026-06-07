@@ -37,9 +37,9 @@ async function handleCloseButton(interaction, channelID) {
 }
 
 // eslint-disable-next-line no-unused-vars
-async function handleViewAllSessions(interaction, channelID) {
+async function handleViewAllSessions(interaction, channelID, targetUserId) {
     const guildId = interaction.guildId;
-    const userId = interaction.user.id;
+    const userId = targetUserId ?? interaction.user.id;
 
     const guild = state.guilds?.[guildId];
     if (!guild?.sessions) {
@@ -51,18 +51,28 @@ async function handleViewAllSessions(interaction, channelID) {
 
     const sessions = [];
 
-    for (const session of Object.values(guild.sessions)) {
+    for (const [sessionChannelID, session] of Object.entries(guild.sessions)) {
         const candidate = session.candidates?.[userId];
 
         if (candidate) {
             sessions.push({
                 ...session,
+                channelID: sessionChannelID,
                 candidateData: candidate,
             });
         }
     }
 
-    const embed = generateAllSessionsEmbed(sessions, interaction.user);
+    let profileUser = interaction.user;
+    if (userId !== interaction.user.id) {
+        try {
+            profileUser = await interaction.client.users.fetch(userId);
+        } catch {
+            profileUser = { id: userId, username: 'Unknown' };
+        }
+    }
+
+    const embed = generateAllSessionsEmbed(sessions, profileUser);
 
     await interaction.reply({
         embeds: [embed],

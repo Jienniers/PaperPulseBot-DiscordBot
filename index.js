@@ -95,12 +95,12 @@ client.on(Events.InteractionCreate, async (interaction) => {
 client.on(Events.InteractionCreate, async (interaction) => {
     if (!interaction.isButton()) return;
 
-    const buttonID = interaction.customId;
+    const [buttonID, ...buttonArgs] = interaction.customId.split(':');
     const channelID = interaction.channel.id;
 
     const handler = buttonHandlers[buttonID];
     if (handler) {
-        await handler(interaction, channelID);
+        await handler(interaction, channelID, ...buttonArgs);
     }
 });
 

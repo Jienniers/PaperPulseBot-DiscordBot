@@ -151,6 +151,7 @@ export function generateAllSessionsEmbed(sessions, user) {
     }
 
     for (const session of sessions) {
+        const candidate = session?.candidateData ?? {};
         const created = session?.createdAt
             ? `<t:${Math.floor(session.createdAt / 1000)}:R>`
             : 'N/A';
@@ -158,8 +159,8 @@ export function generateAllSessionsEmbed(sessions, user) {
         embed.addFields({
             name: `📝 Session in ${session?.channelID ? `<#${session.channelID}>` : 'Unknown'}`,
             value: [
-                `• **Marks:** ${session?.marks ?? 'N/A'}`,
-                `• **Verified:** ${session?.verified ? '✅ Yes' : '❌ No'}`,
+                `• **Marks:** ${candidate.marks ?? 'N/A'}`,
+                `• **Verified:** ${candidate.verified ? '✅ Yes' : '❌ No'}`,
                 `• **Examiner:** ${session?.examinerId ? `<@${session.examinerId}>` : 'Unknown'}`,
                 `• **Started:** ${created}`,
             ].join('\n'),

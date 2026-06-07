@@ -45,7 +45,7 @@ export default async function handleProfile(interaction) {
         });
     }
 
-    const buttonsRow = createProfileCommandButtons();
+    const buttonsRow = createProfileCommandButtons(userId);
 
     await interaction.editReply({
         embeds: [embed],
