@@ -322,7 +322,7 @@ MongoDB stores one document per Discord guild in the shared `guilds` collection.
 }
 ```
 
-The bot saves state to MongoDB every 3 seconds and loads it again on startup. On startup, the previous global state document is migrated into per-guild documents before the legacy record is removed.
+The bot saves state to MongoDB every 3 seconds and loads it again on startup.
 
 ---
 
