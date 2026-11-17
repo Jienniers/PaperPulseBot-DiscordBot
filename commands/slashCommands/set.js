@@ -1,6 +1,6 @@
 import { PermissionsBitField } from 'discord.js';
 
-import { state } from '../../data/state.js';
+import { ensureGuildState, state } from '../../data/state.js';
 
 /**
  * @param {import('discord.js').ChatInputCommandInteraction} interaction
@@ -21,12 +21,7 @@ export default async function handleSet(interaction) {
         });
     }
 
-    if (!state.guilds[guildId]) {
-        state.guilds[guildId] = {
-            sessions: {},
-            categoryId: null,
-        };
-    }
+    ensureGuildState(guildId);
 
     // ✅ enforce only this choice
     if (setting === 'category') {

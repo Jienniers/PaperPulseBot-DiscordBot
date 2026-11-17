@@ -1,8 +1,12 @@
 import mongoose from 'mongoose';
 
-const BotStateSchema = new mongoose.Schema({
-    _id: { type: String, default: 'global' },
-    state: { type: Object, default: {} },
-});
+// Legacy model retained for the one-time migration from the old global document.
+const BotStateSchema = new mongoose.Schema(
+    {
+        _id: { type: String, default: 'global' },
+        state: { type: mongoose.Schema.Types.Mixed, default: {} },
+    },
+    { collection: 'botstates' },
+);
 
-export default mongoose.model('BotState', BotStateSchema);
+export default mongoose.models.BotState ?? mongoose.model('BotState', BotStateSchema);
