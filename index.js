@@ -14,7 +14,6 @@ import slashCommands from './commands/slashCommands/utils/definitions.js';
 import handleVerify from './commands/slashCommands/verify.js';
 //database
 import connectToMongoDB from './utils/database/mongoConnection.js';
-import { loadStateFromDB, startsync } from './utils/database/stateDatabaseSync.js';
 //utils
 import buttonHandlers from './utils/discord/buttonHandlers.js';
 
@@ -57,9 +56,6 @@ async function startBot() {
         } catch (err) {
             console.error('Slash command registration failed:', err);
         }
-
-        await loadStateFromDB();
-        await startsync(client);
     });
 
     await client.login(process.env.TOKEN);
@@ -72,7 +68,14 @@ client.on(Events.MessageCreate, async (message) => {
         await message.reply('Pong!');
     }
 
-    await handleAddCommand(message);
+    try {
+        await handleAddCommand(message);
+    } catch (error) {
+        console.error('[message] Command failed:', error);
+        await message
+            .reply('❌ The request could not be saved. Please try again later.')
+            .catch(() => {});
+    }
 });
 
 client.on(Events.InteractionCreate, async (interaction) => {
@@ -89,7 +92,20 @@ client.on(Events.InteractionCreate, async (interaction) => {
     };
 
     const handler = commandHandlers[interaction.commandName];
-    if (handler) await handler(interaction);
+    if (handler) {
+        try {
+            await handler(interaction);
+        } catch (error) {
+            console.error(`[interaction] ${interaction.commandName} failed:`, error);
+            const response = {
+                content: '❌ The request could not be completed. Please try again later.',
+                flags: 64,
+            };
+            if (interaction.deferred || interaction.replied)
+                await interaction.followUp(response).catch(() => {});
+            else await interaction.reply(response).catch(() => {});
+        }
+    }
 });
 
 client.on(Events.InteractionCreate, async (interaction) => {
@@ -100,7 +116,18 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
     const handler = buttonHandlers[buttonID];
     if (handler) {
-        await handler(interaction, channelID, ...buttonArgs);
+        try {
+            await handler(interaction, channelID, ...buttonArgs);
+        } catch (error) {
+            console.error(`[interaction] Button ${buttonID} failed:`, error);
+            const response = {
+                content: '❌ The request could not be completed. Please try again later.',
+                flags: 64,
+            };
+            if (interaction.deferred || interaction.replied)
+                await interaction.followUp(response).catch(() => {});
+            else await interaction.reply(response).catch(() => {});
+        }
     }
 });
 

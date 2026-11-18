@@ -1,4 +1,4 @@
-import { state } from '../../data/state.js';
+import { getSession, verifyCandidate } from '../../utils/database/guildData.js';
 import { getVerifiedEmbed } from '../../utils/discord/embeds.js';
 
 const ERROR_MESSAGES = {
@@ -16,25 +16,24 @@ const ERROR_MESSAGES = {
  * Validates the verification attempt.
  * Throws an error object with a key from ERROR_MESSAGES if any check fails.
  */
-function validateVerification(interaction) {
+async function validateVerification(interaction) {
     const { channel, user: examiner, options } = interaction;
     const channelID = channel.id;
     const userOption = options.getUser('user');
     const guildId = interaction.guildId;
 
-    const currentChannel = state.guilds?.[guildId]?.sessions?.[channelID];
+    const currentChannel = await getSession(guildId, channelID);
 
     if (!currentChannel) throw { key: 'invalidChannel' };
     if (!userOption) throw { key: 'noUser' };
     if (userOption.bot) throw { key: 'botUser' };
 
-    const assignedExaminerID = state.guilds[guildId].sessions[channelID].examinerId;
+    const assignedExaminerID = currentChannel.examinerId;
     if (!assignedExaminerID || assignedExaminerID !== examiner.id) throw { key: 'notAuthorized' };
 
     if (userOption.id === examiner.id) throw { key: 'selfVerify' };
 
-    const candidateData =
-        state.guilds?.[guildId]?.sessions?.[channelID]?.candidates?.[userOption.id];
+    const candidateData = currentChannel.candidates?.[userOption.id];
     if (!candidateData) throw { key: 'noCandidate' };
     if (candidateData.verified) throw { key: 'alreadyVerified' };
 
@@ -46,17 +45,24 @@ function validateVerification(interaction) {
  * Focused on flow: call validation, mark verified, send messages.
  */
 export default async function handleVerify(interaction) {
-    let userOption, candidateData;
+    let userOption;
 
     try {
-        ({ userOption, candidateData } = validateVerification(interaction));
+        ({ userOption } = await validateVerification(interaction));
     } catch (err) {
         const message = ERROR_MESSAGES[err.key] ?? '❌ An unknown error occurred.';
         return interaction.reply({ content: message, flags: 64 });
     }
 
     // Mark candidate as verified
-    candidateData.verified = true;
+    const verified = await verifyCandidate(
+        interaction.guildId,
+        interaction.channel.id,
+        userOption.id,
+    );
+    if (!verified) {
+        return interaction.reply({ content: ERROR_MESSAGES.alreadyVerified, flags: 64 });
+    }
 
     await interaction.reply({
         content: `✅ ${userOption} has been verified. No cheating or unfairness was detected.`,

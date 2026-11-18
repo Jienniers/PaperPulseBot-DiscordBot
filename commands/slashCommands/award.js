@@ -1,4 +1,4 @@
-import { state } from '../../data/state.js';
+import { getSession, setCandidateField } from '../../utils/database/guildData.js';
 import { getAwardEmbed } from '../../utils/discord/embeds.js';
 
 const ERROR_MESSAGES = {
@@ -19,7 +19,7 @@ const ERROR_MESSAGES = {
  *  - Marks are in correct `score/total` format
  *  - The paper is actually conducted in the session
  */
-function validateAward(interaction) {
+async function validateAward(interaction) {
     const { channel, user: invokingUser, options } = interaction;
 
     const guildId = interaction.guildId;
@@ -28,7 +28,7 @@ function validateAward(interaction) {
     const userOption = options.getUser('user');
     const marksOption = options.getString('marks');
 
-    const session = state.guilds?.[guildId]?.sessions?.[channelID];
+    const session = await getSession(guildId, channelID);
 
     if (!session) throw { key: 'invalidChannel' };
     if (!userOption) throw { key: 'noUser' };
@@ -63,16 +63,16 @@ function validateAward(interaction) {
 export default async function handleAward(interaction, client) {
     let data;
     try {
-        data = validateAward(interaction);
+        data = await validateAward(interaction);
     } catch (err) {
         const message = ERROR_MESSAGES[err.key] ?? '❌ An unknown error occurred.';
         return await interaction.reply({ content: message, flags: 64 });
     }
 
-    const { channelID, userOption, marksOption, examiner, candidateData } = data;
+    const { channelID, userOption, marksOption, examiner } = data;
 
     // Update candidate's marks in (candidateSessionsMap) map
-    candidateData.marks = marksOption;
+    await setCandidateField(interaction.guildId, channelID, userOption.id, 'marks', marksOption);
 
     await interaction.reply({
         content: `${userOption} has been awarded ${marksOption} marks.`,

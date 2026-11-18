@@ -1,5 +1,5 @@
-import { ensureGuildState, state } from '../../data/state.js';
 import formatPaperTime from '../../utils/common/time.js';
+import { createSession, getGuildData, getSession } from '../../utils/database/guildData.js';
 import { createPaperButtons } from '../../utils/discord/buttons.js';
 import { createPaperEmbed } from '../../utils/discord/embeds.js';
 
@@ -18,9 +18,9 @@ const ERROR_MESSAGES = {
  * Validates the options for starting a paper session.
  * Throws an error object with a key from ERROR_MESSAGES if any check fails.
  */
-function validateStartPaper(interaction) {
+async function validateStartPaper(interaction) {
     const channelID = interaction.channel.id;
-    const currentChannel = state.guilds?.[interaction.guildId]?.sessions?.[channelID];
+    const currentChannel = await getSession(interaction.guildId, channelID);
     if (currentChannel) throw { key: 'invalidChannel' };
 
     const paperCode = interaction.options.getString('paper')?.trim();
@@ -31,13 +31,13 @@ function validateStartPaper(interaction) {
     if (!/^\d{4}\/\d{1,2}$/.test(paperCode)) throw { key: 'invalidPaperCode' };
     if (examiner.bot) throw { key: 'examinerBot' };
     if (paperTime < 1 || paperTime > 480) throw { key: 'invalidPaperTime' };
-    const guildState = state.guilds?.[interaction.guild.id];
+    const guildState = await getGuildData(interaction.guild.id);
 
     if (!guildState?.categoryId) {
         throw { key: 'categoryNotConfigured' };
     }
 
-    return { paperCode, examiner, paperTime };
+    return { paperCode, examiner, paperTime, categoryID: guildState.categoryId };
 }
 
 /**
@@ -45,10 +45,10 @@ function validateStartPaper(interaction) {
  * Flow: validate → create channel → store session data → notify users
  */
 export default async function handleStartPaper(interaction) {
-    let paperCode, examiner, paperTime;
+    let paperCode, examiner, paperTime, categoryID;
 
     try {
-        ({ paperCode, examiner, paperTime } = validateStartPaper(interaction));
+        ({ paperCode, examiner, paperTime, categoryID } = await validateStartPaper(interaction));
     } catch (err) {
         const message = ERROR_MESSAGES[err.key] ?? '❌ An unknown error occurred.';
         return interaction.reply({ content: message, flags: 64 });
@@ -58,7 +58,6 @@ export default async function handleStartPaper(interaction) {
 
     const guild = interaction.guild;
     const user = interaction.user;
-    const categoryID = state.guilds[guild.id].categoryId;
     const channelName = `${paperCode.split('/')[0]} by ${examiner.username}`;
 
     let paperChannel;
@@ -74,7 +73,21 @@ export default async function handleStartPaper(interaction) {
     }
 
     // Store session data
-    storeData(interaction, paperChannel, examiner, paperTime);
+    try {
+        await storeData(interaction, paperChannel, examiner, paperTime);
+    } catch (error) {
+        console.error('[database] Failed to persist new paper session:', error);
+        await paperChannel.delete().catch((cleanupError) => {
+            console.error(
+                '[startpaper] Failed to remove channel after persistence failure:',
+                cleanupError,
+            );
+        });
+        return interaction.editReply({
+            content: '❌ The session could not be saved. Please try again later.',
+            flags: 64,
+        });
+    }
 
     // Send embed and buttons to new paper channel
     const timeString = formatPaperTime(paperTime);
@@ -93,16 +106,12 @@ export default async function handleStartPaper(interaction) {
     });
 }
 
-function storeData(interaction, paperChannel, examiner, paperTime) {
+async function storeData(interaction, paperChannel, examiner, paperTime) {
     const guildId = interaction.guildId;
-
-    ensureGuildState(guildId);
-
-    if (!state.guilds[guildId].sessions[paperChannel.id]) {
-        state.guilds[guildId].sessions[paperChannel.id] = {
-            examinerId: examiner.id,
-            paperTimeMins: paperTime,
-            candidates: {},
-        };
-    }
+    await createSession(guildId, paperChannel.id, {
+        examinerId: examiner.id,
+        paperTimeMins: paperTime,
+        candidates: {},
+        createdAt: Date.now(),
+    });
 }

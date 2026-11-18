@@ -1,4 +1,4 @@
-import { state } from '../../data/state.js';
+import { getGuildData } from '../../utils/database/guildData.js';
 import { createProfileCommandButtons } from '../../utils/discord/buttons.js';
 import { generateProfileEmbed } from '../../utils/discord/embeds.js';
 
@@ -13,6 +13,15 @@ export default async function handleProfile(interaction) {
     const userId = user.id;
 
     await interaction.deferReply({ flags: 64 });
+
+    let guildData;
+    try {
+        guildData = await getGuildData(guildId);
+    } catch {
+        return interaction.editReply({
+            content: '❌ Could not load profile data. Please try again.',
+        });
+    }
 
     if (userOption?.bot) {
         return interaction.editReply({
@@ -30,11 +39,11 @@ export default async function handleProfile(interaction) {
 
     // Stats
     const sessionStats = {
-        totalSessions: countSessions(guildId, userId),
-        verifiedSessions: countVerifiedSessions(guildId, userId),
-        averageMarks: calculateAveragePercentage(guildId, userId),
-        highestMarks: getHighestMarks(guildId, userId),
-        recentSession: getMostRecentSession(guildId, userId),
+        totalSessions: countSessions(guildData, userId),
+        verifiedSessions: countVerifiedSessions(guildData, userId),
+        averageMarks: calculateAveragePercentage(guildData, userId),
+        highestMarks: getHighestMarks(guildData, userId),
+        recentSession: getMostRecentSession(guildData, userId),
     };
 
     const embed = generateProfileEmbed(user, member, sessionStats);
@@ -57,8 +66,7 @@ export default async function handleProfile(interaction) {
    Helpers (NEW STATE MODEL)
    ======================= */
 
-function countSessions(guildId, userId) {
-    const guild = state.guilds?.[guildId];
+function countSessions(guild, userId) {
     if (!guild?.sessions) return 0;
 
     let count = 0;
@@ -72,8 +80,7 @@ function countSessions(guildId, userId) {
     return count;
 }
 
-function countVerifiedSessions(guildId, userId) {
-    const guild = state.guilds?.[guildId];
+function countVerifiedSessions(guild, userId) {
     if (!guild?.sessions) return 0;
 
     let count = 0;
@@ -88,8 +95,7 @@ function countVerifiedSessions(guildId, userId) {
     return count;
 }
 
-function calculateAveragePercentage(guildId, userId) {
-    const guild = state.guilds?.[guildId];
+function calculateAveragePercentage(guild, userId) {
     if (!guild?.sessions) return null;
 
     let totalEarned = 0;
@@ -111,8 +117,7 @@ function calculateAveragePercentage(guildId, userId) {
     return ((totalEarned / totalMax) * 100).toFixed(2);
 }
 
-function getHighestMarks(guildId, userId) {
-    const guild = state.guilds?.[guildId];
+function getHighestMarks(guild, userId) {
     if (!guild?.sessions) return 0;
 
     let highest = 0;
@@ -130,8 +135,7 @@ function getHighestMarks(guildId, userId) {
     return highest;
 }
 
-function getMostRecentSession(guildId, userId) {
-    const guild = state.guilds?.[guildId];
+function getMostRecentSession(guild, userId) {
     if (!guild?.sessions) return null;
 
     let latestSession = null;

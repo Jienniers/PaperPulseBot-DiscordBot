@@ -1,6 +1,6 @@
 import { PermissionsBitField } from 'discord.js';
 
-import { ensureGuildState, state } from '../../data/state.js';
+import { setGuildField } from '../../utils/database/guildData.js';
 
 /**
  * @param {import('discord.js').ChatInputCommandInteraction} interaction
@@ -21,11 +21,9 @@ export default async function handleSet(interaction) {
         });
     }
 
-    ensureGuildState(guildId);
-
     // ✅ enforce only this choice
     if (setting === 'category') {
-        state.guilds[guildId].categoryId = value;
+        await setGuildField(guildId, 'categoryId', value);
 
         return interaction.editReply({
             content: `✅ Paper Category has been set to: ${value}`,

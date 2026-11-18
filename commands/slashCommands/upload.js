@@ -1,4 +1,4 @@
-import { state } from '../../data/state.js';
+import { getSession } from '../../utils/database/guildData.js';
 import { sendExaminerSubmissionEmbed } from '../../utils/discord/embeds.js';
 
 const MAX_PDF_SIZE_MB = 10; // Maximum allowed PDF size in MB
@@ -15,10 +15,10 @@ const ERROR_MESSAGES = {
  * Validates the uploaded file.
  * Throws an error object with a key from ERROR_MESSAGES if any check fails.
  */
-function validateUpload(interaction) {
+async function validateUpload(interaction) {
     const channelID = interaction.channel.id;
     const uploadedFile = interaction.options.getAttachment('file');
-    const currentChannel = state.guilds?.[interaction.guild.id]?.sessions?.[channelID];
+    const currentChannel = await getSession(interaction.guild.id, channelID);
 
     if (!currentChannel) throw { key: 'invalidChannel' };
     if (!uploadedFile) throw { key: 'noFile' };
@@ -34,7 +34,7 @@ function validateUpload(interaction) {
     if (!isPDF) throw { key: 'invalidFormat' };
     if (uploadedFile.size > MAX_PDF_SIZE_MB * 1024 * 1024) throw { key: 'fileTooLarge' };
 
-    return uploadedFile;
+    return { uploadedFile, examinerId };
 }
 
 /**
@@ -46,9 +46,9 @@ export default async function handleUpload(interaction) {
 
     await interaction.deferReply({ flags: 64 });
 
-    let attachment;
+    let attachment, examinerId;
     try {
-        attachment = validateUpload(interaction);
+        ({ uploadedFile: attachment, examinerId } = await validateUpload(interaction));
     } catch (err) {
         const message = ERROR_MESSAGES[err.key] ?? '❌ An unknown error occurred.';
         return interaction.editReply({ content: message });
@@ -58,7 +58,6 @@ export default async function handleUpload(interaction) {
         content: `✅ Received your PDF file: **${attachment.name}**`,
     });
 
-    const examinerId = state.guilds[interaction.guild.id].sessions[channelID].examinerId;
     if (!examinerId) return;
 
     const examinerUser = await interaction.client.users.fetch(examinerId);

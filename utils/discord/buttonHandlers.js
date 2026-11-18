@@ -1,11 +1,11 @@
 import { paperTimerIntervals } from '../../commands/messageCommands/add.js';
-import { state } from '../../data/state.js';
+import { getGuildData, getSession, unsetGuildField } from '../database/guildData.js';
 import { generateAllSessionsEmbed } from './embeds.js';
 
 async function handleCloseButton(interaction, channelID) {
     const guildId = interaction.guildId;
 
-    const session = state.guilds?.[guildId]?.sessions?.[channelID];
+    const session = await getSession(guildId, channelID);
 
     if (!session) {
         console.log('Session not found', interaction.guildId, channelID);
@@ -23,9 +23,6 @@ async function handleCloseButton(interaction, channelID) {
         });
     }
 
-    // remove session from memory
-    delete state.guilds[guildId].sessions[channelID];
-
     try {
         await interaction.channel.delete();
     } catch (err) {
@@ -36,6 +33,8 @@ async function handleCloseButton(interaction, channelID) {
             flags: 64,
         });
     }
+
+    await unsetGuildField(guildId, `sessions.${channelID}`);
 
     // Clear the paper timer interval if it exists
     if (paperTimerIntervals.has(channelID)) {
@@ -48,7 +47,7 @@ async function handleViewAllSessions(interaction, channelID, targetUserId) {
     const guildId = interaction.guildId;
     const userId = targetUserId ?? interaction.user.id;
 
-    const guild = state.guilds?.[guildId];
+    const guild = await getGuildData(guildId);
     if (!guild?.sessions) {
         return interaction.reply({
             content: 'No sessions found.',

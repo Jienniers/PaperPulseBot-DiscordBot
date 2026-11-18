@@ -1,5 +1,5 @@
-import { ensureGuildState, state } from '../../data/state.js';
 import formatPaperTime from '../../utils/common/time.js';
+import { getSession, setGuildField } from '../../utils/database/guildData.js';
 
 // Centralized messages
 const MESSAGES = {
@@ -19,10 +19,10 @@ export const paperTimerIntervals = new Map();
 /**
  * Validates the !add command input and returns candidates to add
  */
-function validateAddCommand(message) {
+async function validateAddCommand(message) {
     const channelID = message.channel.id;
 
-    const session = state.guilds?.[message.guild.id]?.sessions?.[channelID];
+    const session = await getSession(message.guild.id, channelID);
 
     if (!session) {
         console.log('Session not found', message.guildId, channelID);
@@ -63,7 +63,7 @@ export default async function handleAddCommand(message) {
 
     let validationResult;
     try {
-        validationResult = validateAddCommand(message);
+        validationResult = await validateAddCommand(message);
         if (!validationResult) return;
     } catch (err) {
         const content = MESSAGES[err.key] ?? '❌ An unknown error occurred.';
@@ -74,9 +74,7 @@ export default async function handleAddCommand(message) {
     const channel = message.channel;
 
     // Actually create candidate sessions here
-    for (const user of validCandidates) {
-        createCandidateSessionEntry(user, message, false, null);
-    }
+    await Promise.all(validCandidates.map((user) => createCandidateSessionEntry(user, message)));
 
     if (skipped) await message.reply(MESSAGES.skippedUsers);
 
@@ -84,7 +82,7 @@ export default async function handleAddCommand(message) {
     await channel.send(`📝 Following candidates have been added: ${candidateMentions}`);
 
     // set paper running status to true in state
-    state.guilds[message.guild.id].sessions[channel.id].status = true;
+    await setGuildField(message.guild.id, `sessions.${channel.id}.status`, true);
 
     await startPaperTimer(channel, paperTimeMins, message.guild.id);
 }
@@ -117,7 +115,11 @@ async function startPaperTimer(channel, paperMinutes, guildID) {
             await channel.send(`⏰ **Time's up!** Please stop writing and put your pen down.`);
 
             // set paper running status to false in state
-            state.guilds[guildID].sessions[channel.id].status = false;
+            try {
+                await setGuildField(guildID, `sessions.${channel.id}.status`, false);
+            } catch (error) {
+                console.error('[database] Failed to persist completed timer state:', error);
+            }
             return;
         }
 
@@ -130,30 +132,15 @@ async function startPaperTimer(channel, paperMinutes, guildID) {
     paperTimerIntervals.set(channel.id, interval);
 }
 
-function createCandidateSessionEntry(user, message, verified = false, marks = null) {
+async function createCandidateSessionEntry(user, message) {
     const guildId = message.guild.id;
     const channelID = message.channel.id;
 
-    // ensure structure exists
-    ensureGuildState(guildId);
-
-    if (!state.guilds[guildId].sessions[channelID]) {
-        state.guilds[guildId].sessions[channelID] = {
-            examinerId: null,
-            categoryId: null,
-            paperTimeMins: null,
-            createdAt: Date.now(),
-            candidates: {},
-        };
-    }
-
-    const session = state.guilds[guildId].sessions[channelID];
-
-    // store candidate inside session
-    session.candidates[user.id] = {
+    const candidate = {
         userId: user.id,
-        verified,
-        marks, // "70/100"
+        verified: false,
+        marks: null,
         addedAt: Date.now(),
     };
+    await setGuildField(guildId, `sessions.${channelID}.candidates.${user.id}`, candidate);
 }

@@ -1,4 +1,4 @@
-import { state } from '../../data/state.js';
+import { getSession } from '../../utils/database/guildData.js';
 import { getLeaderboardEmbed } from '../../utils/discord/embeds.js';
 
 /**
@@ -11,7 +11,7 @@ export default async function handleLeaderboard(interaction) {
 
     const channelId = channel.id;
 
-    const session = state.guilds?.[guildId]?.sessions?.[channelId];
+    const session = await getSession(guildId, channelId);
 
     if (!session || !session.candidates) {
         return interaction.editReply({
