@@ -1,4 +1,4 @@
-import { state } from '../../data/state.js';
+import { ensureGuildState, state } from '../../data/state.js';
 import formatPaperTime from '../../utils/common/time.js';
 
 // Centralized messages
@@ -135,9 +135,7 @@ function createCandidateSessionEntry(user, message, verified = false, marks = nu
     const channelID = message.channel.id;
 
     // ensure structure exists
-    if (!state.guilds[guildId]) {
-        state.guilds[guildId] = { sessions: {} };
-    }
+    ensureGuildState(guildId);
 
     if (!state.guilds[guildId].sessions[channelID]) {
         state.guilds[guildId].sessions[channelID] = {

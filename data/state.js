@@ -28,3 +28,11 @@
 export const state = {
     guilds: {},
 };
+
+export function ensureGuildState(guildId) {
+    if (!state.guilds[guildId]) {
+        state.guilds[guildId] = { sessions: {}, categoryId: null };
+    }
+
+    return state.guilds[guildId];
+}

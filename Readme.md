@@ -297,25 +297,23 @@ docker compose down -v
 
 PaperPulseBot keeps active state in memory and periodically persists it to MongoDB.
 
-MongoDB stores a single `BotState` document with a `state.guilds` object. The persisted structure is organized by guild ID, then by session channel ID:
+MongoDB stores one document per Discord guild in the shared `guilds` collection. Each document uses the guild ID as its string `_id`, and stores that guild's settings and sessions directly:
 
 ```js
 {
-  guilds: {
-    [guildId]: {
-      categoryId,
-      sessions: {
-        [channelId]: {
-          examinerId,
-          paperTimeMins,
-          status,
-          candidates: {
-            [userId]: {
-              userId,
-              verified,
-              marks,
-              addedAt
-            }
+  _id: "guildId",
+  categoryId,
+  sessions: {
+    [channelId]: {
+      examinerId,
+      paperTimeMins,
+      status,
+      candidates: {
+        [userId]: {
+          userId,
+          verified,
+          marks,
+          addedAt
           }
         }
       }

@@ -1,4 +1,4 @@
-import { state } from '../../data/state.js';
+import { ensureGuildState, state } from '../../data/state.js';
 import formatPaperTime from '../../utils/common/time.js';
 import { createPaperButtons } from '../../utils/discord/buttons.js';
 import { createPaperEmbed } from '../../utils/discord/embeds.js';
@@ -96,14 +96,9 @@ export default async function handleStartPaper(interaction) {
 function storeData(interaction, paperChannel, examiner, paperTime) {
     const guildId = interaction.guildId;
 
-    if (!state.guilds[guildId]) {
-        state.guilds[guildId] = {
-            sessions: {},
-            categoryId: null,
-        };
-    }
+    ensureGuildState(guildId);
 
-    if (!state.guilds[guildId].sessions[paperChannel]) {
+    if (!state.guilds[guildId].sessions[paperChannel.id]) {
         state.guilds[guildId].sessions[paperChannel.id] = {
             examinerId: examiner.id,
             paperTimeMins: paperTime,
