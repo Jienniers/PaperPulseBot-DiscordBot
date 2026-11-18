@@ -64,49 +64,6 @@ A **Discord bot** for running timed paper sessions inside a server. Built with *
 
 ---
 
-## 🧭 Typical Session Flow
-
-1. An administrator configures the paper category:
-
-    ```bash
-    /set setting:Paper Category value:<category-id>
-    ```
-
-2. A user starts a paper session:
-
-    ```bash
-    /startpaper paper:0580/12 time:60 examiner:@examiner
-    ```
-
-3. The bot creates a paper channel under the configured category.
-4. The examiner or session operator adds candidates in that channel:
-
-    ```bash
-    !add @candidate1 @candidate2
-    ```
-
-5. Candidates upload solved papers as PDFs:
-
-    ```bash
-    /upload file:<paper.pdf>
-    ```
-
-6. The examiner verifies candidates and awards marks:
-
-    ```bash
-    /verify user:@candidate
-    /award user:@candidate marks:70/100
-    ```
-
-7. Users can view profiles and leaderboards:
-
-    ```bash
-    /profile user:@candidate
-    /leaderboard
-    ```
-
----
-
 ## 🖼️ Screenshots
 
 ### Paper Session Channel Embed
@@ -152,7 +109,7 @@ TOKEN=your_discord_bot_token
 MONGO_URL=mongodb://localhost:27017/botData
 ```
 
-Required only for the optional slash-command management scripts:
+Required only for the **optional** slash-command management scripts:
 
 ```env
 CLIENT_ID=your_application_client_id
@@ -245,7 +202,7 @@ docker volume rm mongo-data
 
 ## 🛠️ Slash Command Scripts
 
-The bot registers global slash commands when it starts. These scripts are optional helpers for manual command management.
+The bot registers global slash commands when it starts. These scripts are **optional** helpers for manual command management.
 
 Register guild slash commands:
 
@@ -360,21 +317,6 @@ Check formatting:
 
 ```bash
 npm run format:check
-```
-
----
-
-## 🏗️ Project Structure
-
-```text
-commands/
-  messageCommands/      Message command handlers such as !add
-  slashCommands/        Slash command handlers
-data/                   Shared runtime state
-database/models/        Mongoose models
-docs/                   Project documentation and policies
-scripts/                Optional slash command management scripts
-utils/                  Discord, database, and shared helpers
 ```
 
 ---
